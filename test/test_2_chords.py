@@ -1,4 +1,5 @@
-from jchord.chords import Chord, ChordWithRoot, InvalidChord, CHORD_NAMES, CHORD_ALIASES
+from jchord.knowledge import CHORD_NAMES, CHORD_ALIASES
+from jchord.chords import Chord, ChordWithRoot, InvalidChord
 
 import pytest
 

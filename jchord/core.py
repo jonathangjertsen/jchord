@@ -1,11 +1,6 @@
 import itertools
 
-MAJOR_SCALE_OFFSETS = {1: 0, 2: 2, 3: 4, 4: 5, 5: 7, 6: 9, 7: 11}
-ACCIDENTALS = {"b", "#"}
-MAJOR_FROM_C = ["C", "D", "E", "F", "G", "A", "B"]
-ROMAN = ["III", "IV", "II", "I", "VII", "VI", "V"]
-LETTERS = ROMAN + MAJOR_FROM_C
-CHROMATIC = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"]
+from jchord.knowledge import MAJOR_SCALE_OFFSETS, CHROMATIC
 
 
 class InvalidDegree(Exception):

@@ -1,4 +1,5 @@
-from jchord.core import MAJOR_FROM_C, MAJOR_SCALE_OFFSETS, split_to_base_and_shift
+from jchord.knowledge import MAJOR_FROM_C, MAJOR_SCALE_OFFSETS
+from jchord.core import split_to_base_and_shift
 
 
 class InvalidNote(Exception):

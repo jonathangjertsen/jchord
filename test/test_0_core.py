@@ -1,8 +1,8 @@
+from jchord.knowledge import CHROMATIC
 from jchord.core import (
     CompositeObject,
     degree_to_semitone,
     InvalidDegree,
-    CHROMATIC,
     split_to_base_and_shift,
     shift_up,
     shift_down,

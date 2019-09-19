@@ -1,74 +1,10 @@
-from jchord.core import (
-    degree_to_semitone,
-    LETTERS,
-    ACCIDENTALS,
-    CompositeObject,
-    transpose,
-)
+from jchord.knowledge import LETTERS, ACCIDENTALS, CHORD_NAMES, CHORD_ALIASES
+from jchord.core import degree_to_semitone, CompositeObject, transpose
 from jchord.midi import get_midi
 
 
 class InvalidChord(Exception):
     pass
-
-
-CHORD_NAMES = {
-    # Major
-    "maj": ["3", "5"],
-    "maj7": ["3", "5", "7"],
-    "maj9": ["3", "5", "7", "9"],
-    "maj11": ["3", "5", "7", "9", "11"],
-    "maj13": ["3", "5", "7", "9", "11", "13"],
-    "6": ["3", "5", "6"],
-    "69": ["3", "5", "6", "9"],
-    "5": ["5"],
-    # Dominant
-    "7": ["3", "5", "b7"],
-    "9": ["3", "5", "b7", "9"],
-    "7#9": ["3", "5", "b7", "#9"],
-    "7b9": ["3", "5", "b7", "b9"],
-    "11": ["3", "5", "b7", "9", "11"],
-    "7b11": ["3", "5", "b7", "9", "b11"],
-    "7#11": ["3", "5", "b7", "9", "#11"],
-    "13": ["3", "5", "b7", "9", "11", "13"],
-    "7b13": ["3", "5", "b7", "9", "11", "b13"],
-    "7#13": ["3", "5", "b7", "9", "11", "#13"],
-    # Minor
-    "m": ["b3", "5"],
-    "m6": ["b3", "5", "6"],
-    "m7": ["b3", "5", "b7"],
-    "m9": ["b3", "5", "b7", "9"],
-    "m11": ["b3", "5", "b7", "9", "11"],
-    "m13": ["b3", "5", "b7", "9", "11", "13"],
-    # Diminished
-    "dim": ["b3", "b5"],
-    "m7b5": ["b3", "b5", "b7"],
-    "dim7": ["b3", "b5", "bb7"],
-    # Augmented
-    "aug": ["3", "#5"],
-    # Suspended
-    "sus2": ["2", "5"],
-    "sus4": ["4", "5"],
-    "7sus2": ["2", "5", "b7"],
-    "7sus4": ["4", "5", "b7"],
-}
-
-CHORD_ALIASES = {
-    # Major
-    "major": "maj",
-    "maj": "maj",
-    # Minor
-    "-": "m",
-    "min": "m",
-    "minor": "m",
-    # Dominant
-    "dom": "7",
-    # Diminished
-    "o": "dim7",
-    "ø": "m7b5",
-    # Augmented
-    "+": "aug",
-}
 
 
 class Chord(CompositeObject):

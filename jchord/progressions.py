@@ -1,9 +1,8 @@
 from math import ceil
 
+from jchord.knowledge import REPETITION_SYMBOL
 from jchord.core import CompositeObject
 from jchord.chords import ChordWithRoot
-
-REPETITION_SYMBOL = "--"
 
 
 class InvalidProgression(Exception):
