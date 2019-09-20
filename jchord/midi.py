@@ -14,3 +14,7 @@ def get_midi(note: Note) -> int:
         if name == candidate:
             return c0_code + offset + shift + 12 * octave
     raise InvalidNote(name)
+
+
+def midi_to_pitch(midi: int) -> float:
+    return 440 * (2 ** ((midi - 69) / 12))

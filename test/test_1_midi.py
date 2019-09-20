@@ -1,5 +1,5 @@
 from jchord.core import Note
-from jchord.midi import get_midi, InvalidNote
+from jchord.midi import get_midi, midi_to_pitch, InvalidNote
 
 import pytest
 
@@ -23,3 +23,11 @@ def test_get_midi(note, octave, midi):
 def test_get_midi_invalid_note():
     with pytest.raises(InvalidNote):
         get_midi(Note("bA", 0))
+
+
+@pytest.mark.parametrize(
+    "midi, pitch",
+    [(69, 440), (21, 27.5), (22, 29.135235), (108, 4186.009), (60, 261.62556)],
+)
+def test_midi_to_pitch(midi, pitch):
+    assert midi_to_pitch(midi) == pytest.approx(pitch)
