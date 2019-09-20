@@ -12,10 +12,7 @@ class InvalidChord(Exception):
 class Chord(CompositeObject):
     def __init__(self, name: str, semitones: List[int]):
         self.name = name
-
-        semitone_set = set(semitones)
-        semitone_set.add(0)
-        self.semitones = sorted(list(semitone_set))
+        self.semitones = sorted(list(set(semitones) | {0}))
 
     def __repr__(self) -> str:
         return "Chord(name={}, semitones={})".format(self.name, self.semitones)
