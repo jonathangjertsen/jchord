@@ -3,6 +3,7 @@ from jchord.core import (
     CompositeObject,
     degree_to_semitone,
     InvalidDegree,
+    note_diff,
     split_to_base_and_shift,
     shift_up,
     shift_down,
@@ -148,6 +149,22 @@ def test_shift_down(note_in, octave_in, note_out, octave_out):
 )
 def test_transpose(note_in, octave_in, shift, note_out, octave_out):
     assert transpose(note_in, octave_in, shift) == (note_out, octave_out)
+
+
+@pytest.mark.parametrize(
+    "note_low, note_high, diff",
+    [
+        ("A", "A", 0),
+        ("A", "A#", 1),
+        ("A", "B", 2),
+        ("A", "G", 10),
+        ("A#", "A", 11),
+        ("B", "A", 10),
+        ("G", "A", 2),
+    ],
+)
+def test_note_diff(note_low, note_high, diff):
+    assert note_diff(note_low, note_high) == diff
 
 
 def test_composite_object_equality():

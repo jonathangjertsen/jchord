@@ -78,6 +78,15 @@ def transpose(note, octave, shift):
     return note, octave
 
 
+def note_diff(note_low: str, note_high: str) -> int:
+    diff = 0
+    octave = 0
+    while note_low != note_high:
+        note_low, octave = shift_up(note_low, octave)
+        diff += 1
+    return diff
+
+
 class CompositeObject(object):
     def _keys(self):
         raise NotImplementedError
