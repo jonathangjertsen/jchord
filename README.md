@@ -1,6 +1,7 @@
 # jchord - Python toolkit for working with chord progressions
 
 [![Build Status](https://travis-ci.com/jonathangjertsen/jchord.svg?branch=master)](https://travis-ci.com/jonathangjertsen/jchord)
+[![codecov](https://codecov.io/gh/jonathangjertsen/jchord/branch/master/graph/badge.svg)](https://codecov.io/gh/jonathangjertsen/jchord)
 
 ```
 >>> from jchord.progressions import ChordProgression
