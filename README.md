@@ -1,5 +1,7 @@
 # jchord - Python toolkit for working with chord progressions
 
+[![Build Status](https://travis-ci.com/jonathangjertsen/jchord.svg?branch=master)](https://travis-ci.com/jonathangjertsen/jchord)
+
 ```
 >>> from jchord.progressions import ChordProgression
 >>> prog = ChordProgression.from_string("C -- Fm7 -- C -- G7 -- C -- E7 Am F Bm7b5 E7 Am9 F Bo C69 --")
