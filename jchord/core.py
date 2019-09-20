@@ -1,13 +1,18 @@
 import itertools
+from typing import Hashable
 
 from jchord.knowledge import MAJOR_SCALE_OFFSETS, CHROMATIC
+
+NoteAndOctave = (str, int)
 
 
 class InvalidDegree(Exception):
     pass
 
 
-def split_to_base_and_shift(note_or_degree, note_before_accidental):
+def split_to_base_and_shift(
+    note_or_degree: str, note_before_accidental: bool
+) -> NoteAndOctave:
     if "b" in note_or_degree and "#" in note_or_degree:
         raise InvalidDegree("Both sharp and flat in degree")
 
@@ -50,7 +55,7 @@ def degree_to_semitone(degree: str) -> int:
         raise InvalidDegree(degree) from error
 
 
-def shift_up(note, octave):
+def shift_up(note: str, octave: int) -> NoteAndOctave:
     for i, other in enumerate(CHROMATIC):
         if note == other:
             if i == len(CHROMATIC) - 1:
@@ -59,7 +64,7 @@ def shift_up(note, octave):
                 return CHROMATIC[i + 1], octave
 
 
-def shift_down(note, octave):
+def shift_down(note: str, octave: int) -> NoteAndOctave:
     for i, other in enumerate(CHROMATIC):
         if note == other:
             if i == 0:
@@ -68,7 +73,7 @@ def shift_down(note, octave):
                 return CHROMATIC[i - 1], octave
 
 
-def transpose(note, octave, shift):
+def transpose(note: str, octave: int, shift: int) -> NoteAndOctave:
     if shift > 0:
         for _ in itertools.repeat(None, shift):
             note, octave = shift_up(note, octave)
@@ -91,11 +96,11 @@ class CompositeObject(object):
     def _keys(self):
         raise NotImplementedError
 
-    def __eq__(self, other):
+    def __eq__(self, other: "CompositeObject") -> bool:
         try:
             return self._keys() == other._keys()
         except AttributeError:
             return False
 
-    def __hash__(self):
+    def __hash__(self) -> Hashable:
         return hash(self._keys())

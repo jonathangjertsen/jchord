@@ -1,3 +1,5 @@
+from typing import Hashable, List
+
 from jchord.knowledge import LETTERS, ACCIDENTALS, CHORD_NAMES, CHORD_ALIASES
 from jchord.core import degree_to_semitone, CompositeObject, transpose
 from jchord.midi import get_midi
@@ -8,29 +10,29 @@ class InvalidChord(Exception):
 
 
 class Chord(CompositeObject):
-    def __init__(self, name, semitones):
+    def __init__(self, name: str, semitones: List[int]):
         self.name = name
 
         semitone_set = set(semitones)
         semitone_set.add(0)
         self.semitones = sorted(list(semitone_set))
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return "Chord(name={}, semitones={})".format(self.name, self.semitones)
 
-    def _keys(self):
+    def _keys(self) -> Hashable:
         return tuple(self.semitones)
 
     @classmethod
-    def from_semitones(cls, name, semitones):
+    def from_semitones(cls, name: str, semitones: List[int]) -> "Chord":
         return cls(name, semitones)
 
     @classmethod
-    def from_degrees(cls, name, degrees):
+    def from_degrees(cls, name: str, degrees: List[str]) -> "Chord":
         return cls(name, [degree_to_semitone(degree) for degree in degrees])
 
     @classmethod
-    def from_name(cls, name):
+    def from_name(cls, name: str) -> "Chord":
         # Very special case: empty string is major
         if name == "":
             return cls.from_name("major")
@@ -49,34 +51,34 @@ class Chord(CompositeObject):
         # Nope
         raise InvalidChord("No chord found for name: {}".format(name))
 
-    def intervals(self):
+    def intervals(self) -> List[int]:
         intervals = []
         for i in range(1, len(self.semitones)):
             intervals.append(self.semitones[i] - self.semitones[i - 1])
         return intervals
 
-    def with_root(self, root):
+    def with_root(self, root: str) -> "ChordWithRoot":
         return ChordWithRoot(root + self.name, root, self)
 
 
 class ChordWithRoot(CompositeObject):
-    def __init__(self, name, root, chord: Chord, octave=4):
+    def __init__(self, name: str, root: str, chord: Chord, octave: int = 4):
         self.name = name
         self.root = root
         self.octave = octave
         self.chord = chord
         self.semitones = chord.semitones
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return "ChordWithRoot(name={}, root={}, chord={}, octave={})".format(
             self.name, self.root, self.chord, self.octave
         )
 
-    def _keys(self):
+    def _keys(self) -> Hashable:
         return (self.chord, self.root, self.octave)
 
     @classmethod
-    def from_name(cls, name, octave=4):
+    def from_name(cls, name: str, octave: int = 4) -> "ChordWithRoot":
         root = None
 
         for letter in LETTERS:
@@ -98,16 +100,16 @@ class ChordWithRoot(CompositeObject):
 
         return cls(name, root, Chord.from_name(name[len(root) :]), octave)
 
-    def intervals(self):
+    def intervals(self) -> List[int]:
         return self.chord.intervals()
 
-    def midi(self):
+    def midi(self) -> List[int]:
         midi = []
         for semitone in self.semitones:
             note, octave = transpose(self.root, self.octave, semitone)
             midi.append(get_midi(note, octave))
         return midi
 
-    def transpose(self, shift):
+    def transpose(self, shift: int) -> "ChordWithRoot":
         root, octave = transpose(self.root, self.octave, shift)
         return ChordWithRoot(root + self.chord.name, root, self.chord, octave)

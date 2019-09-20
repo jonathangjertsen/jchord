@@ -6,7 +6,7 @@ class InvalidNote(Exception):
     pass
 
 
-def get_midi(note, octave):
+def get_midi(note: str, octave: int) -> int:
     c0_code = 12
     note, shift = split_to_base_and_shift(note, note_before_accidental=True)
     for candidate, offset in zip(MAJOR_FROM_C, MAJOR_SCALE_OFFSETS.values()):

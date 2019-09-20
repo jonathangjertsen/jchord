@@ -1,4 +1,5 @@
 from math import ceil
+from typing import Hashable, List, Set
 
 from jchord.knowledge import REPETITION_SYMBOL
 from jchord.core import CompositeObject
@@ -9,7 +10,7 @@ class InvalidProgression(Exception):
     pass
 
 
-def string_to_progression(string):
+def string_to_progression(string: str) -> List[ChordWithRoot]:
     string = string.strip()
 
     if string == "":
@@ -33,23 +34,23 @@ def string_to_progression(string):
 
 
 class ChordProgression(CompositeObject):
-    def __init__(self, progression):
+    def __init__(self, progression: List[ChordWithRoot]):
         self.progression = progression
 
-    def _keys(self):
+    def _keys(self) -> Hashable:
         return tuple(self.progression)
 
     @classmethod
-    def from_string(cls, string):
+    def from_string(cls, string: str) -> "ChordProgression":
         return cls(string_to_progression(string))
 
     @classmethod
-    def from_txt(cls, filename):
+    def from_txt(cls, filename: str) -> "ChordProgression":
         with open(filename) as file:
             return cls(string_to_progression(file.read()))
 
     @classmethod
-    def from_xlsx(cls, filename):
+    def from_xlsx(cls, filename: str) -> "ChordProgression":
         from openpyxl import load_workbook
 
         workbook = load_workbook(filename)
@@ -63,13 +64,15 @@ class ChordProgression(CompositeObject):
                 names.append(name)
         return cls.from_string(" ".join(names))
 
-    def chords(self):
+    def chords(self) -> Set[ChordWithRoot]:
         return set(self.progression)
 
-    def midi(self):
+    def midi(self) -> List[List[int]]:
         return [chord.midi() for chord in self.progression]
 
-    def to_txt_string(self, chords_per_row=4, column_spacing=2, newline="\n"):
+    def to_txt_string(
+        self, chords_per_row: int = 4, column_spacing: int = 2, newline: str = "\n"
+    ) -> str:
         max_len = max(len(chord.name) for chord in self.progression)
         column_width = max_len + column_spacing
 
@@ -94,7 +97,13 @@ class ChordProgression(CompositeObject):
 
         return "".join(output) + newline
 
-    def to_txt(self, filename, chords_per_row=4, column_spacing=2, newline="\n"):
+    def to_txt(
+        self,
+        filename: str,
+        chords_per_row: int = 4,
+        column_spacing: int = 2,
+        newline: str = "\n",
+    ):
         output_str = self.to_txt_string(
             chords_per_row=chords_per_row,
             column_spacing=column_spacing,
@@ -103,7 +112,7 @@ class ChordProgression(CompositeObject):
         with open(filename, "w") as file:
             file.write(output_str)
 
-    def to_xlsx(self, filename, chords_per_row=4):
+    def to_xlsx(self, filename: str, chords_per_row: int = 4):
         from openpyxl import Workbook
 
         workbook = Workbook()
@@ -130,7 +139,12 @@ class ChordProgression(CompositeObject):
         workbook.save(filename)
 
     def to_midi(
-        self, filename, instrument=1, tempo=120, beats_per_chord=2, velocity=100
+        self,
+        filename: str,
+        instrument: int = 1,
+        tempo: int = 120,
+        beats_per_chord: int = 2,
+        velocity: int = 100,
     ):
         import mido
 
