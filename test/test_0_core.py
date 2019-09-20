@@ -3,6 +3,7 @@ from jchord.core import (
     CompositeObject,
     degree_to_semitone,
     InvalidDegree,
+    Note,
     note_diff,
     split_to_base_and_shift,
     shift_up,
@@ -72,7 +73,7 @@ def test_degree_to_semitone_invalid_degree(degree):
     ],
 )
 def test_split_to_base_and_shift_after(item, base, shift):
-    assert split_to_base_and_shift(item, note_before_accidental=True) == (base, shift)
+    assert split_to_base_and_shift(item, name_before_accidental=True) == (base, shift)
 
 
 @pytest.mark.parametrize(
@@ -88,7 +89,7 @@ def test_split_to_base_and_shift_after(item, base, shift):
     ],
 )
 def test_split_to_base_and_shift_before(item, base, shift):
-    assert split_to_base_and_shift(item, note_before_accidental=False) == (base, shift)
+    assert split_to_base_and_shift(item, name_before_accidental=False) == (base, shift)
 
 
 @pytest.mark.parametrize(
@@ -103,7 +104,7 @@ def test_split_to_base_and_shift_before(item, base, shift):
     ],
 )
 def test_shift_up(note_in, octave_in, note_out, octave_out):
-    assert shift_up(note_in, octave_in) == (note_out, octave_out)
+    assert shift_up((note_in, octave_in)) == (note_out, octave_out)
 
 
 @pytest.mark.parametrize(
@@ -118,7 +119,7 @@ def test_shift_up(note_in, octave_in, note_out, octave_out):
     ],
 )
 def test_shift_down(note_in, octave_in, note_out, octave_out):
-    assert shift_down(note_in, octave_in) == (note_out, octave_out)
+    assert shift_down((note_in, octave_in)) == (note_out, octave_out)
 
 
 @pytest.mark.parametrize(
@@ -148,7 +149,7 @@ def test_shift_down(note_in, octave_in, note_out, octave_out):
     ],
 )
 def test_transpose(note_in, octave_in, shift, note_out, octave_out):
-    assert transpose(note_in, octave_in, shift) == (note_out, octave_out)
+    assert transpose((note_in, octave_in), shift) == (note_out, octave_out)
 
 
 @pytest.mark.parametrize(

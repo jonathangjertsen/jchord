@@ -1,9 +1,10 @@
 import itertools
+from collections import namedtuple
 from typing import Hashable
 
 from jchord.knowledge import MAJOR_SCALE_OFFSETS, CHROMATIC
 
-NoteAndOctave = (str, int)
+Note = namedtuple("Note", "name octave")
 
 
 class InvalidDegree(Exception):
@@ -11,31 +12,31 @@ class InvalidDegree(Exception):
 
 
 def split_to_base_and_shift(
-    note_or_degree: str, note_before_accidental: bool
-) -> NoteAndOctave:
-    if "b" in note_or_degree and "#" in note_or_degree:
+    name_or_deree: str, name_before_accidental: bool
+) -> (str, int):
+    if "b" in name_or_deree and "#" in name_or_deree:
         raise InvalidDegree("Both sharp and flat in degree")
 
     shift = 0
-    if note_before_accidental:
-        while note_or_degree.endswith("b"):
+    if name_before_accidental:
+        while name_or_deree.endswith("b"):
             shift -= 1
-            note_or_degree = note_or_degree[:-1]
-        while note_or_degree.endswith("#"):
+            name_or_deree = name_or_deree[:-1]
+        while name_or_deree.endswith("#"):
             shift += 1
-            note_or_degree = note_or_degree[:-1]
+            name_or_deree = name_or_deree[:-1]
     else:
-        while note_or_degree.startswith("b"):
+        while name_or_deree.startswith("b"):
             shift -= 1
-            note_or_degree = note_or_degree[1:]
-        while note_or_degree.startswith("#"):
+            name_or_deree = name_or_deree[1:]
+        while name_or_deree.startswith("#"):
             shift += 1
-            note_or_degree = note_or_degree[1:]
-    return note_or_degree, shift
+            name_or_deree = name_or_deree[1:]
+    return name_or_deree, shift
 
 
 def degree_to_semitone(degree: str) -> int:
-    degree, shift = split_to_base_and_shift(degree, note_before_accidental=False)
+    degree, shift = split_to_base_and_shift(degree, name_before_accidental=False)
 
     # Now the remaining string should be an int
     try:
@@ -55,39 +56,41 @@ def degree_to_semitone(degree: str) -> int:
         raise InvalidDegree(degree) from error
 
 
-def shift_up(note: str, octave: int) -> NoteAndOctave:
+def shift_up(note: Note) -> Note:
+    name, octave = note
     for i, other in enumerate(CHROMATIC):
-        if note == other:
+        if name == other:
             if i == len(CHROMATIC) - 1:
-                return CHROMATIC[0], octave + 1
+                return Note(name=CHROMATIC[0], octave=octave + 1)
             else:
-                return CHROMATIC[i + 1], octave
+                return Note(name=CHROMATIC[i + 1], octave=octave)
 
 
-def shift_down(note: str, octave: int) -> NoteAndOctave:
+def shift_down(note: Note) -> Note:
+    name, octave = note
     for i, other in enumerate(CHROMATIC):
-        if note == other:
+        if name == other:
             if i == 0:
-                return CHROMATIC[-1], octave - 1
+                return Note(name=CHROMATIC[-1], octave=octave - 1)
             else:
-                return CHROMATIC[i - 1], octave
+                return Note(name=CHROMATIC[i - 1], octave=octave)
 
 
-def transpose(note: str, octave: int, shift: int) -> NoteAndOctave:
+def transpose(note: Note, shift: int) -> Note:
     if shift > 0:
         for _ in itertools.repeat(None, shift):
-            note, octave = shift_up(note, octave)
+            note = shift_up(note)
     else:
         for _ in itertools.repeat(None, -shift):
-            note, octave = shift_down(note, octave)
-    return note, octave
+            note = shift_down(note)
+    return note
 
 
-def note_diff(note_low: str, note_high: str) -> int:
+def note_diff(name_low: str, name_high: str) -> int:
     diff = 0
-    octave = 0
-    while note_low != note_high:
-        note_low, octave = shift_up(note_low, octave)
+    note = Note(name_low, 0)
+    while note.name != name_high:
+        note = shift_up(note)
         diff += 1
     return diff
 

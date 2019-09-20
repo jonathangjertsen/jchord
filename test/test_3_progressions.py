@@ -133,9 +133,14 @@ def test_to_xlsx():
 
 def test_progression_midi():
     assert ChordProgression.from_string("""C Fm G7""").midi() == [
-        [get_midi("C", 4), get_midi("E", 4), get_midi("G", 4)],
-        [get_midi("F", 4), get_midi("G#", 4), get_midi("C", 5)],
-        [get_midi("G", 4), get_midi("B", 4), get_midi("D", 5), get_midi("F", 5)],
+        [get_midi(("C", 4)), get_midi(("E", 4)), get_midi(("G", 4))],
+        [get_midi(("F", 4)), get_midi(("G#", 4)), get_midi(("C", 5))],
+        [
+            get_midi(("G", 4)),
+            get_midi(("B", 4)),
+            get_midi(("D", 5)),
+            get_midi(("F", 5)),
+        ],
     ]
 
 

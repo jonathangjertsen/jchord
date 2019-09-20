@@ -1,3 +1,4 @@
+from jchord.core import Note
 from jchord.midi import get_midi, InvalidNote
 
 import pytest
@@ -16,9 +17,9 @@ import pytest
     ],
 )
 def test_get_midi(note, octave, midi):
-    assert get_midi(note, octave) == midi
+    assert get_midi(Note(note, octave)) == midi
 
 
 def test_get_midi_invalid_note():
     with pytest.raises(InvalidNote):
-        get_midi("bA", 0)
+        get_midi(Note("bA", 0))

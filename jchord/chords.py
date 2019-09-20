@@ -61,7 +61,7 @@ class Chord(CompositeObject):
         return ChordWithRoot(root + self.name, root, self)
 
     def add_semitone(self, semitone: int):
-        self.semitones = sorted(list(set(self.semitones) | { semitone }))
+        self.semitones = sorted(list(set(self.semitones) | {semitone}))
 
 
 class ChordWithRoot(CompositeObject):
@@ -121,10 +121,10 @@ class ChordWithRoot(CompositeObject):
     def midi(self) -> List[int]:
         midi = []
         for semitone in self.semitones:
-            note, octave = transpose(self.root, self.octave, semitone)
-            midi.append(get_midi(note, octave))
+            note, octave = transpose((self.root, self.octave), semitone)
+            midi.append(get_midi((note, octave)))
         return midi
 
     def transpose(self, shift: int) -> "ChordWithRoot":
-        root, octave = transpose(self.root, self.octave, shift)
+        root, octave = transpose((self.root, self.octave), shift)
         return ChordWithRoot(root + self.chord.name, root, self.chord, octave)
