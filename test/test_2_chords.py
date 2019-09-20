@@ -89,7 +89,7 @@ def test_chord_add_root(name_in):
     )
 
 
-@pytest.mark.parametrize("name_in", ["goop", "blap", "m8"])
+@pytest.mark.parametrize("name_in", ["goop", "blap", "m8", "A/G/G"])
 def test_chord_from_invalid_name(name_in):
     with pytest.raises(InvalidChord):
         Chord.from_name(name_in)
@@ -104,6 +104,9 @@ def test_chord_from_invalid_name(name_in):
         ("Am", "A", [0, 3, 7]),
         ("A#m", "A#", [0, 3, 7]),
         ("Bmin7b5", "B", [0, 3, 6, 10]),
+        ("A/G", "A", [-2, 0, 4, 7]),
+        ("C#/C", "C#", [-1, 0, 4, 7]),
+        ("C/C#", "C", [-11, 0, 4, 7]),
     ],
 )
 def test_chord_with_root(name_in, root_out, semi_out):

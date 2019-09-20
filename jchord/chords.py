@@ -1,7 +1,7 @@
 from typing import Hashable, List
 
 from jchord.knowledge import LETTERS, ACCIDENTALS, CHORD_NAMES, CHORD_ALIASES
-from jchord.core import degree_to_semitone, CompositeObject, transpose
+from jchord.core import degree_to_semitone, note_diff, CompositeObject, transpose
 from jchord.midi import get_midi
 
 
@@ -60,6 +60,9 @@ class Chord(CompositeObject):
     def with_root(self, root: str) -> "ChordWithRoot":
         return ChordWithRoot(root + self.name, root, self)
 
+    def add_semitone(self, semitone: int):
+        self.semitones = sorted(list(set(self.semitones) | { semitone }))
+
 
 class ChordWithRoot(CompositeObject):
     def __init__(self, name: str, root: str, chord: Chord, octave: int = 4):
@@ -67,7 +70,10 @@ class ChordWithRoot(CompositeObject):
         self.root = root
         self.octave = octave
         self.chord = chord
-        self.semitones = chord.semitones
+
+    @property
+    def semitones(self):
+        return self.chord.semitones
 
     def __repr__(self) -> str:
         return "ChordWithRoot(name={}, root={}, chord={}, octave={})".format(
@@ -98,7 +104,16 @@ class ChordWithRoot(CompositeObject):
         else:
             root = root_no_accidental
 
-        return cls(name, root, Chord.from_name(name[len(root) :]), octave)
+        name_without_root = name[len(root) :]
+        has_slash = "/" in name_without_root
+
+        if has_slash:
+            name_without_root, bass = name_without_root.split("/")
+            chord = cls(name, root, Chord.from_name(name_without_root), octave)
+            chord.chord.add_semitone(-note_diff(bass, root))
+            return chord
+        else:
+            return cls(name, root, Chord.from_name(name_without_root), octave)
 
     def intervals(self) -> List[int]:
         return self.chord.intervals()
