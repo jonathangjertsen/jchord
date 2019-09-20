@@ -10,7 +10,7 @@ class InvalidProgression(Exception):
     pass
 
 
-def string_to_progression(string: str) -> List[ChordWithRoot]:
+def _string_to_progression(string: str) -> List[ChordWithRoot]:
     string = string.strip()
 
     if string == "":
@@ -42,12 +42,12 @@ class ChordProgression(CompositeObject):
 
     @classmethod
     def from_string(cls, string: str) -> "ChordProgression":
-        return cls(string_to_progression(string))
+        return cls(_string_to_progression(string))
 
     @classmethod
     def from_txt(cls, filename: str) -> "ChordProgression":
         with open(filename) as file:
-            return cls(string_to_progression(file.read()))
+            return cls(_string_to_progression(file.read()))
 
     @classmethod
     def from_xlsx(cls, filename: str) -> "ChordProgression":

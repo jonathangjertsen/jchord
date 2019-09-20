@@ -56,7 +56,7 @@ def degree_to_semitone(degree: str) -> int:
         raise InvalidDegree(degree) from error
 
 
-def shift_up(note: Note) -> Note:
+def _shift_up(note: Note) -> Note:
     name, octave = note
     for i, other in enumerate(CHROMATIC):
         if name == other:
@@ -66,7 +66,7 @@ def shift_up(note: Note) -> Note:
                 return Note(name=CHROMATIC[i + 1], octave=octave)
 
 
-def shift_down(note: Note) -> Note:
+def _shift_down(note: Note) -> Note:
     name, octave = note
     for i, other in enumerate(CHROMATIC):
         if name == other:
@@ -79,10 +79,10 @@ def shift_down(note: Note) -> Note:
 def transpose(note: Note, shift: int) -> Note:
     if shift > 0:
         for _ in itertools.repeat(None, shift):
-            note = shift_up(note)
+            note = _shift_up(note)
     else:
         for _ in itertools.repeat(None, -shift):
-            note = shift_down(note)
+            note = _shift_down(note)
     return note
 
 
@@ -90,7 +90,7 @@ def note_diff(name_low: str, name_high: str) -> int:
     diff = 0
     note = Note(name_low, 0)
     while note.name != name_high:
-        note = shift_up(note)
+        note = _shift_up(note)
         diff += 1
     return diff
 
