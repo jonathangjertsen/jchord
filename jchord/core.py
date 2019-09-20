@@ -95,6 +95,11 @@ def note_diff(name_low: str, name_high: str) -> int:
     return diff
 
 
+def note_to_pitch(note: Note) -> float:
+    from jchord import midi
+    return midi.midi_to_pitch(midi.get_midi(note))
+
+
 class CompositeObject(object):
     def _keys(self):
         raise NotImplementedError

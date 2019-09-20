@@ -5,6 +5,7 @@ from jchord.core import (
     InvalidDegree,
     Note,
     note_diff,
+    note_to_pitch,
     split_to_base_and_shift,
     _shift_up,
     _shift_down,
@@ -166,6 +167,20 @@ def test_transpose(note_in, octave_in, shift, note_out, octave_out):
 )
 def test_note_diff(note_low, note_high, diff):
     assert note_diff(note_low, note_high) == diff
+
+
+@pytest.mark.parametrize(
+    "note, octave, pitch",
+    [
+        ("A", 4, 440),
+        ("A", 0, 27.5),
+        ("A#", 0, 29.135235),
+        ("C", 8, 4186.009),
+        ("C", 4, 261.62556),
+    ],
+)
+def test_note_to_pitch(note, octave, pitch):
+    assert note_to_pitch((note, octave)) == pytest.approx(pitch)
 
 
 def test_composite_object_equality():
