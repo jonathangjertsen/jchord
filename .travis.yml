@@ -7,6 +7,6 @@ python:
   - "3.8-dev"
   - "nightly"
 install:
-  - pip install -r requirements_dev.txt
+  - pip install -r requirements_dev.txt && pip install .
 script:
   - pytest --cov=jchord --cov-report=term-missing
