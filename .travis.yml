@@ -9,4 +9,6 @@ python:
 install:
   - pip install -r requirements_dev.txt
 script:
-  - pytest --cov=jchord --cov-report=term-missing
+  - pytest --cov=jchord --cov-report=term
+after_success:
+  - codecov
