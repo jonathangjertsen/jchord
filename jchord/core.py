@@ -12,27 +12,27 @@ class InvalidDegree(Exception):
 
 
 def split_to_base_and_shift(
-    name_or_deree: str, name_before_accidental: bool
+    name_or_degree: str, name_before_accidental: bool
 ) -> (str, int):
-    if "b" in name_or_deree and "#" in name_or_deree:
+    if "b" in name_or_degree and "#" in name_or_degree:
         raise InvalidDegree("Both sharp and flat in degree")
 
     shift = 0
     if name_before_accidental:
-        while name_or_deree.endswith("b"):
+        while name_or_degree.endswith("b"):
             shift -= 1
-            name_or_deree = name_or_deree[:-1]
-        while name_or_deree.endswith("#"):
+            name_or_degree = name_or_degree[:-1]
+        while name_or_degree.endswith("#"):
             shift += 1
-            name_or_deree = name_or_deree[:-1]
+            name_or_degree = name_or_degree[:-1]
     else:
-        while name_or_deree.startswith("b"):
+        while name_or_degree.startswith("b"):
             shift -= 1
-            name_or_deree = name_or_deree[1:]
-        while name_or_deree.startswith("#"):
+            name_or_degree = name_or_degree[1:]
+        while name_or_degree.startswith("#"):
             shift += 1
-            name_or_deree = name_or_deree[1:]
-    return name_or_deree, shift
+            name_or_degree = name_or_degree[1:]
+    return name_or_degree, shift
 
 
 def degree_to_semitone(degree: str) -> int:
