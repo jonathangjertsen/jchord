@@ -188,7 +188,7 @@ def test_chord_with_root_invalid_name(name_in):
 
 
 @pytest.mark.parametrize("name_in, octave, midi", [("A", 0, [21, 25, 28])])
-def test_chord_get_midi(name_in, octave, midi):
+def test_chord_note_to_midi(name_in, octave, midi):
     assert ChordWithRoot.from_name(name_in, octave).midi() == midi
 
 

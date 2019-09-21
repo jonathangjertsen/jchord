@@ -2,7 +2,7 @@ import os
 
 import pytest
 
-from jchord.midi import get_midi
+from jchord.midi import note_to_midi
 from jchord.chords import ChordWithRoot
 from jchord.progressions import ChordProgression, InvalidProgression
 
@@ -133,13 +133,13 @@ def test_to_xlsx():
 
 def test_progression_midi():
     assert ChordProgression.from_string("""C Fm G7""").midi() == [
-        [get_midi(("C", 4)), get_midi(("E", 4)), get_midi(("G", 4))],
-        [get_midi(("F", 4)), get_midi(("G#", 4)), get_midi(("C", 5))],
+        [note_to_midi(("C", 4)), note_to_midi(("E", 4)), note_to_midi(("G", 4))],
+        [note_to_midi(("F", 4)), note_to_midi(("G#", 4)), note_to_midi(("C", 5))],
         [
-            get_midi(("G", 4)),
-            get_midi(("B", 4)),
-            get_midi(("D", 5)),
-            get_midi(("F", 5)),
+            note_to_midi(("G", 4)),
+            note_to_midi(("B", 4)),
+            note_to_midi(("D", 5)),
+            note_to_midi(("F", 5)),
         ],
     ]
 

@@ -6,7 +6,7 @@ class InvalidNote(Exception):
     pass
 
 
-def get_midi(note: Note) -> int:
+def note_to_midi(note: Note) -> int:
     c0_code = 12
     name, octave = note
     name, shift = split_to_base_and_shift(name, name_before_accidental=True)

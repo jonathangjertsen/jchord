@@ -17,7 +17,7 @@ from jchord.core import (
     split_to_base_and_shift,
     transpose,
 )
-from jchord.midi import get_midi
+from jchord.midi import note_to_midi
 
 
 class InvalidChord(Exception):
@@ -254,7 +254,7 @@ class ChordWithRoot(CompositeObject):
         midi = []
         for semitone in self.semitones:
             note, octave = transpose((self.root, self.octave), semitone)
-            midi.append(get_midi((note, octave)))
+            midi.append(note_to_midi((note, octave)))
         return midi
 
     def transpose(self, shift: int) -> "ChordWithRoot":

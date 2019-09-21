@@ -141,7 +141,7 @@ def note_diff(name_low: str, name_high: str) -> int:
 def note_to_pitch(note: Note) -> float:
     from jchord import midi
 
-    return midi.midi_to_pitch(midi.get_midi(note))
+    return midi.midi_to_pitch(midi.note_to_midi(note))
 
 
 class CompositeObject(object):
