@@ -2,10 +2,68 @@ import itertools
 from collections import namedtuple
 from typing import Hashable, List, Set
 
-from jchord.knowledge import MAJOR_SCALE_OFFSETS, CHROMATIC
+from jchord.knowledge import MAJOR_SCALE_OFFSETS, CHROMATIC, ENHARMONIC
 
-Note = namedtuple("Note", "name octave")
+class CompositeObject(object):
+    def _keys(self):
+        raise NotImplementedError
 
+    def __eq__(self, other: "CompositeObject") -> bool:
+        try:
+            return self._keys() == other._keys()
+        except AttributeError:
+            return False
+
+    def __hash__(self) -> Hashable:
+        return hash(self._keys())
+
+    def __iter__(self):
+        self.__i = 0
+        return self
+
+    def __next__(self):
+        self.__i += 1
+        try:
+            return self._keys()[self.__i - 1]
+        except IndexError:
+            del self.__i
+            raise StopIteration
+
+    def __repr__(self):
+        return "{}({})".format(type(self).__name__, ", ".join(repr(key) for key in self._keys()))
+
+
+class Note(CompositeObject):
+    def __init__(self, name, octave):
+        self.name = name
+        self.octave = octave
+
+    def _keys(self):
+        return (self.name, self.octave)
+
+    def __eq__(self, other):
+        try:
+            other_name = other.name
+            other_octave = other.octave
+        except AttributeError:
+            try:
+                if len(other) != 2:
+                    return False
+            except TypeError:
+                return False
+
+            other_name = other[0]
+            other_octave = other[1]
+        if self.octave != other_octave:
+            return False
+        if self.name == other_name:
+            return True
+        for sharp, flat in ENHARMONIC:
+            if self.name == sharp:
+                return other_name == flat
+            elif self.name == flat:
+                return other_name == sharp
+        return False
 
 class InvalidDegree(Exception):
     pass
@@ -144,15 +202,4 @@ def note_to_pitch(note: Note) -> float:
     return midi.midi_to_pitch(midi.note_to_midi(note))
 
 
-class CompositeObject(object):
-    def _keys(self):
-        raise NotImplementedError
 
-    def __eq__(self, other: "CompositeObject") -> bool:
-        try:
-            return self._keys() == other._keys()
-        except AttributeError:
-            return False
-
-    def __hash__(self) -> Hashable:
-        return hash(self._keys())
