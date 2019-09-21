@@ -5,13 +5,7 @@ MAJOR_FROM_C = ["C", "D", "E", "F", "G", "A", "B"]
 ROMAN = ["III", "IV", "II", "I", "VII", "VI", "V"]
 LETTERS = ROMAN + MAJOR_FROM_C
 CHROMATIC = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"]
-ENHARMONIC = [
-    ("C#", "Db"),
-    ("D#", "Eb"),
-    ("F#", "Gb"),
-    ("G#", "Ab"),
-    ("A#", "Bb"),
-]
+ENHARMONIC = [("C#", "Db"), ("D#", "Eb"), ("F#", "Gb"), ("G#", "Ab"), ("A#", "Bb")]
 CHORD_NAMES = {
     # Major
     "maj": ["3", "5"],

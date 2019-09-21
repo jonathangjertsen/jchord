@@ -4,6 +4,7 @@ from typing import Hashable, List, Set
 
 from jchord.knowledge import MAJOR_SCALE_OFFSETS, CHROMATIC, ENHARMONIC
 
+
 class CompositeObject(object):
     def _keys(self):
         raise NotImplementedError
@@ -30,7 +31,9 @@ class CompositeObject(object):
             raise StopIteration
 
     def __repr__(self):
-        return "{}({})".format(type(self).__name__, ", ".join(repr(key) for key in self._keys()))
+        return "{}({})".format(
+            type(self).__name__, ", ".join(repr(key) for key in self._keys())
+        )
 
 
 class Note(CompositeObject):
@@ -64,6 +67,7 @@ class Note(CompositeObject):
             elif self.name == flat:
                 return other_name == sharp
         return False
+
 
 class InvalidDegree(Exception):
     pass
@@ -200,6 +204,3 @@ def note_to_pitch(note: Note) -> float:
     from jchord import midi
 
     return midi.midi_to_pitch(midi.note_to_midi(note))
-
-
-

@@ -116,6 +116,7 @@ def test_split_to_base_and_shift_after(item, base, shift):
 def test_split_to_base_and_shift_before(item, base, shift):
     assert split_to_base_and_shift(item, name_before_accidental=False) == (base, shift)
 
+
 @pytest.mark.parametrize(
     "name, octave, the_repr",
     [
@@ -123,7 +124,7 @@ def test_split_to_base_and_shift_before(item, base, shift):
         ("A", 1, "Note('A', 1)"),
         ("G#", 1, "Note('G#', 1)"),
         ("Db", 133, "Note('Db', 133)"),
-    ]
+    ],
 )
 def test_note_repr(name, octave, the_repr):
     assert repr(Note(name, octave)) == the_repr
@@ -131,11 +132,7 @@ def test_note_repr(name, octave, the_repr):
 
 @pytest.mark.parametrize(
     "sharp, flat, octave",
-    [
-        (sharp, flat, octave)
-        for sharp, flat in ENHARMONIC
-        for octave in range(-2, 2)
-    ]
+    [(sharp, flat, octave) for sharp, flat in ENHARMONIC for octave in range(-2, 2)],
 )
 def test_note_eq(sharp, flat, octave):
     assert Note(sharp, octave) == Note(flat, octave)
@@ -143,12 +140,7 @@ def test_note_eq(sharp, flat, octave):
 
 
 @pytest.mark.parametrize(
-    "note, octave",
-    [
-        (note, octave)
-        for note in CHROMATIC
-        for octave in range(-2, 2)
-    ]
+    "note, octave", [(note, octave) for note in CHROMATIC for octave in range(-2, 2)]
 )
 def test_note_eq_tuple(note, octave):
     assert Note(note, octave) == (note, octave)
@@ -158,13 +150,13 @@ def test_note_eq_tuple(note, octave):
     "note, octave, other",
     [
         ("A", 0, None),
-        ("A", 0, ("A", )),
+        ("A", 0, ("A",)),
         ("A", 0, ("A", 1)),
         ("A", 0, ("Ab", 0)),
         ("A", 0, ("A#", 0)),
         ("A", 0, ("E", 0)),
         ("A", 0, ("A", 0, 0)),
-    ]
+    ],
 )
 def test_note_neq(note, octave, other):
     assert Note(note, octave) != other
