@@ -1,4 +1,4 @@
-from jchord.knowledge import MAJOR_FROM_C, MAJOR_SCALE_OFFSETS
+from jchord.knowledge import CHROMATIC, MAJOR_FROM_C, MAJOR_SCALE_OFFSETS
 from jchord.core import Note, split_to_base_and_shift
 
 
@@ -14,6 +14,10 @@ def note_to_midi(note: Note) -> int:
         if name == candidate:
             return c0_code + offset + shift + 12 * octave
     raise InvalidNote(name)
+
+
+def midi_to_note(midi: int) -> Note:
+    return Note(CHROMATIC[midi % 12], (midi - 12) // 12)
 
 
 def midi_to_pitch(midi: int) -> float:
