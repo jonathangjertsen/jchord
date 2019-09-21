@@ -13,6 +13,7 @@ from jchord.core import (
     note_diff,
     CompositeObject,
     semitone_to_degree_options,
+    split_to_base_and_shift,
     transpose,
 )
 from jchord.midi import get_midi
@@ -20,6 +21,76 @@ from jchord.midi import get_midi
 
 class InvalidChord(Exception):
     pass
+
+
+def _chord_options_single_semitone(semitone):
+    interval_options = [
+        "{} interval".format(interval)
+        for interval in semitone_to_degree_options(semitone)
+    ]
+    if semitone in DYADS:
+        return [DYADS[semitone]] + interval_options
+    else:
+        return interval_options
+
+
+def _chord_options_two_semitones(semitones):
+    if 7 in semitones:
+        for semitone in semitones:
+            if semitone != 7 and semitone in TRIADS_WITH_FIFTH:
+                return [TRIADS_WITH_FIFTH[semitone]]
+    elif 6 in semitones:
+        if 3 in semitones:
+            return ["dim"]
+
+    return [
+        option if "(no5)" in option else "{}(no5)".format(option)
+        for option in semitones_to_chord_name_options(semitones | {7})
+        if "/" not in option
+    ]
+
+
+def _chord_options_triad_with_extension(upper_note, lower_triad):
+    if upper_note == 11:
+        return [
+            "{}maj7".format(option)
+            for option in semitones_to_chord_name_options(set(lower_triad))
+        ]
+    elif upper_note == 10:
+        options = [
+            "{}7".format(option)
+            for option in semitones_to_chord_name_options(set(lower_triad))
+        ]
+        if "dim7" in options:
+            options[options.index("dim7")] = "min7b5"
+        return options
+    elif upper_note == 9:
+        if lower_triad == [3, 6]:
+            return ["dim7"]
+    return []
+
+
+def _chord_options_triad_with_lower_note(lower_note, upper_triad):
+    bass_degree = semitone_to_degree_options(12 - lower_note)[0]
+    upper_triad_shifted = [semitone - lower_note for semitone in upper_triad]
+    options = [
+        "{}/{}".format(option, bass_degree)
+        for option in semitones_to_chord_name_options(set(upper_triad_shifted))
+    ]
+    base_degree, _ = split_to_base_and_shift(bass_degree, name_before_accidental=False)
+    return [
+        option
+        for option in options
+        if not ((bass_degree in option and "(no{})".format(base_degree) in option))
+    ]
+
+
+def _chord_options_three_semitones(semitones_sorted):
+    return _chord_options_triad_with_extension(
+        upper_note=semitones_sorted[2], lower_triad=semitones_sorted[:2]
+    ) + _chord_options_triad_with_lower_note(
+        lower_note=semitones_sorted[0], upper_triad=semitones_sorted[1:]
+    )
 
 
 def semitones_to_chord_name_options(semitones: Set[int]) -> Set[str]:
@@ -34,47 +105,11 @@ def semitones_to_chord_name_options(semitones: Set[int]) -> Set[str]:
     if len(semitones) == 0:
         return ["note"]
     elif len(semitones) == 1:
-        semitone = semitones_sorted[0]
-        interval_options = [
-            "{} interval".format(interval)
-            for interval in semitone_to_degree_options(semitone)
-        ]
-        if semitone in DYADS:
-            return [DYADS[semitone]] + interval_options
-        else:
-            return interval_options
+        return _chord_options_single_semitone(semitones_sorted[0])
     elif len(semitones) == 2:
-        if 7 in semitones:
-            for semitone in semitones:
-                if semitone != 7 and semitone in TRIADS_WITH_FIFTH:
-                    return [TRIADS_WITH_FIFTH[semitone]]
-        elif 6 in semitones:
-            if 3 in semitones:
-                return ["dim"]
-        else:
-            return [
-                option if "(no5)" in option else "{}(no5)".format(option)
-                for option in semitones_to_chord_name_options(semitones | {7})
-            ]
+        return _chord_options_two_semitones(semitones)
     elif len(semitones) == 3:
-        upper_note = semitones_sorted[2]
-        lower_triad = semitones_sorted[:2]
-        if upper_note == 11:
-            return [
-                "{}maj7".format(option)
-                for option in semitones_to_chord_name_options(set(lower_triad))
-            ]
-        elif upper_note == 10:
-            options = [
-                "{}7".format(option)
-                for option in semitones_to_chord_name_options(set(lower_triad))
-            ]
-            if "dim7" in options:
-                options[options.index("dim7")] = "min7b5"
-            return options
-        elif upper_note == 9:
-            if lower_triad == [3, 6]:
-                return ["dim7"]
+        return _chord_options_three_semitones(semitones_sorted)
     return []
 
 
