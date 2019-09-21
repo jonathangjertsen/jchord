@@ -1,7 +1,20 @@
-from typing import Hashable, List
+from typing import Hashable, List, Optional, Set
 
-from jchord.knowledge import LETTERS, ACCIDENTALS, CHORD_NAMES, CHORD_ALIASES
-from jchord.core import degree_to_semitone, note_diff, CompositeObject, transpose
+from jchord.knowledge import (
+    LETTERS,
+    ACCIDENTALS,
+    CHORD_NAMES,
+    CHORD_ALIASES,
+    TRIADS_WITH_FIFTH,
+    DYADS,
+)
+from jchord.core import (
+    degree_to_semitone,
+    note_diff,
+    CompositeObject,
+    semitone_to_degree_options,
+    transpose,
+)
 from jchord.midi import get_midi
 
 
@@ -9,7 +22,65 @@ class InvalidChord(Exception):
     pass
 
 
+def semitones_to_chord_name_options(semitones: Set[int]) -> Set[str]:
+    semitones_no_octaves = semitones.copy()
+    for semitone in semitones:
+        if semitone % 12 == 0:
+            semitones_no_octaves.remove(semitone)
+    semitones = semitones_no_octaves
+
+    semitones_sorted = list(sorted(semitones))
+
+    if len(semitones) == 0:
+        return ["note"]
+    elif len(semitones) == 1:
+        semitone = semitones_sorted[0]
+        interval_options = [
+            "{} interval".format(interval)
+            for interval in semitone_to_degree_options(semitone)
+        ]
+        if semitone in DYADS:
+            return [DYADS[semitone]] + interval_options
+        else:
+            return interval_options
+    elif len(semitones) == 2:
+        if 7 in semitones:
+            for semitone in semitones:
+                if semitone != 7 and semitone in TRIADS_WITH_FIFTH:
+                    return [TRIADS_WITH_FIFTH[semitone]]
+        elif 6 in semitones:
+            if 3 in semitones:
+                return ["dim"]
+        else:
+            return [
+                option if "(no5)" in option else "{}(no5)".format(option)
+                for option in semitones_to_chord_name_options(semitones | {7})
+            ]
+    elif len(semitones) == 3:
+        upper_note = semitones_sorted[2]
+        lower_triad = semitones_sorted[:2]
+        if upper_note == 11:
+            return [
+                "{}maj7".format(option)
+                for option in semitones_to_chord_name_options(set(lower_triad))
+            ]
+        elif upper_note == 10:
+            options = [
+                "{}7".format(option)
+                for option in semitones_to_chord_name_options(set(lower_triad))
+            ]
+            if "dim7" in options:
+                options[options.index("dim7")] = "min7b5"
+            return options
+        elif upper_note == 9:
+            if lower_triad == [3, 6]:
+                return ["dim7"]
+    return []
+
+
 class Chord(CompositeObject):
+    UNNAMED = "???"
+
     def __init__(self, name: str, semitones: List[int]):
         self.name = name
         self.semitones = sorted(list(set(semitones) | {0}))
@@ -21,7 +92,13 @@ class Chord(CompositeObject):
         return tuple(self.semitones)
 
     @classmethod
-    def from_semitones(cls, name: str, semitones: List[int]) -> "Chord":
+    def from_semitones(cls, name: Optional[str], semitones: List[int]) -> "Chord":
+        if name is None:
+            name_options = semitones_to_chord_name_options(semitones)
+            if name_options:
+                name = name_options[0]
+            else:
+                name = cls.UNNAMED
         return cls(name, semitones)
 
     @classmethod

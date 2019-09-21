@@ -1,5 +1,10 @@
 from jchord.knowledge import CHORD_NAMES, CHORD_ALIASES
-from jchord.chords import Chord, ChordWithRoot, InvalidChord
+from jchord.chords import (
+    Chord,
+    ChordWithRoot,
+    InvalidChord,
+    semitones_to_chord_name_options,
+)
 
 import pytest
 
@@ -16,6 +21,45 @@ import pytest
 )
 def test_chord_from_semitones(semi_in, semi_out):
     assert Chord.from_semitones("unnamed", semi_in).semitones == semi_out
+
+
+@pytest.mark.parametrize(
+    "semitones, options",
+    [
+        (set(list(range(100))), []),
+        (set(), ["note"]),
+        ({0}, ["note"]),
+        ({3}, ["min(no5)", "b3 interval", "#2 interval"]),
+        ({4}, ["(no5)", "3 interval", "b4 interval"]),
+        ({7}, ["5", "5 interval"]),
+        ({13}, ["b9 interval", "#8 interval"]),
+        ({12}, ["note"]),
+        ({2, 7}, ["sus2"]),
+        ({3, 7}, ["min"]),
+        ({4, 7}, [""]),
+        ({5, 7}, ["sus4"]),
+        ({6, 7}, ["lyd"]),
+        ({3, 6}, ["dim"]),
+        ({4, 7, 11}, ["maj7"]),
+        ({4, 7, 10}, ["7"]),
+        ({3, 7, 10}, ["min7"]),
+        ({3, 6, 10}, ["min7b5"]),
+        ({3, 6, 9}, ["dim7"]),
+        ({4, 7, 11}, ["maj7"]),
+        ({3, 10}, ["min7(no5)"]),
+        ({4, 10}, ["7(no5)"]),
+        ({4, 11}, ["maj7(no5)"]),
+        ({3, 11}, ["minmaj7(no5)"]),
+        ({7, 11}, ["maj7(no3)"]),
+        ({7, 10}, ["7(no3)"]),
+    ],
+)
+def test_semitones_to_chord_options(semitones, options):
+    assert semitones_to_chord_name_options(semitones) == options
+    if options:
+        assert Chord.from_semitones(None, semitones).name == options[0]
+    else:
+        assert Chord.from_semitones(None, semitones).name == Chord.UNNAMED
 
 
 @pytest.mark.parametrize(

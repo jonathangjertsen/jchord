@@ -1,6 +1,6 @@
 import itertools
 from collections import namedtuple
-from typing import Hashable, Set
+from typing import Hashable, List, Set
 
 from jchord.knowledge import MAJOR_SCALE_OFFSETS, CHROMATIC
 
@@ -56,25 +56,43 @@ def degree_to_semitone(degree: str) -> int:
         raise InvalidDegree(degree) from error
 
 
-def semitone_to_degree_options(semitone: int, max_accidentals: int = 1) -> Set[str]:
+def semitone_to_degree_options(semitone: int, max_accidentals: int = 1) -> List[str]:
     degrees = MAJOR_SCALE_OFFSETS.copy()
     degrees.update(
         {degree + 7: semitone + 12 for degree, semitone in MAJOR_SCALE_OFFSETS.items()}
     )
 
-    options = set()
-
     if semitone < 0 or semitone >= 24:
-        return options
+        return []
+
+    options_with_priority = []
 
     for cand_degree, cand_semitone in degrees.items():
         for n_accidentals in range(max_accidentals + 1):
             if semitone == cand_semitone - n_accidentals:
-                options.add("{}{}".format("b" * n_accidentals, cand_degree))
+                options_with_priority.append(
+                    ("{}{}".format("b" * n_accidentals, cand_degree), n_accidentals)
+                )
             if semitone == cand_semitone + n_accidentals:
-                options.add("{}{}".format("#" * n_accidentals, cand_degree))
+                options_with_priority.append(
+                    (
+                        "{}{}".format("#" * n_accidentals, cand_degree),
+                        n_accidentals + 0.5,
+                    )
+                )
 
-    return options
+    sorted_options = [
+        option
+        for option, priority in sorted(
+            options_with_priority, key=lambda opt_pri: opt_pri[1]
+        )
+    ]
+    sorted_options_no_duplicates = []
+    for option in sorted_options:
+        if sorted_options_no_duplicates and sorted_options_no_duplicates[-1] == option:
+            continue
+        sorted_options_no_duplicates.append(option)
+    return sorted_options_no_duplicates
 
 
 def _shift_up(note: Note) -> Note:
