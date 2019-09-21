@@ -62,21 +62,24 @@ def test_degree_to_semitone_invalid_degree(degree):
         assert degree_to_semitone(degree)
 
 
-@pytest.mark.parametrize("semitone, n_accidentals, options", [
-    (-1, 0, set()),
-    (24, 0, set()),
-    (0, 0, { "1" }),
-    (0, 1, { "1" }),
-    (0, 2, { "1", "bb2" }),
-    (0, 3, { "1", "bb2" }),
-    (0, 4, { "1", "bb2", "bbbb3" }),
-    (3, 0, set()),
-    (3, 1, { "b3", "#2" }),
-    (4, 0, { "3" }),
-    (4, 1, { "3", "b4" }),
-    (8, 1, { "b6", "#5" }),
-    (17, 1, { "11", "#10" }),
-])
+@pytest.mark.parametrize(
+    "semitone, n_accidentals, options",
+    [
+        (-1, 0, set()),
+        (24, 0, set()),
+        (0, 0, {"1"}),
+        (0, 1, {"1"}),
+        (0, 2, {"1", "bb2"}),
+        (0, 3, {"1", "bb2"}),
+        (0, 4, {"1", "bb2", "bbbb3"}),
+        (3, 0, set()),
+        (3, 1, {"b3", "#2"}),
+        (4, 0, {"3"}),
+        (4, 1, {"3", "b4"}),
+        (8, 1, {"b6", "#5"}),
+        (17, 1, {"11", "#10"}),
+    ],
+)
 def test_semitone_to_degree_options(semitone, n_accidentals, options):
     assert semitone_to_degree_options(semitone, n_accidentals) == options
 
