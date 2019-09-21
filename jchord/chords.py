@@ -12,6 +12,7 @@ from jchord.core import (
     degree_to_semitone,
     note_diff,
     CompositeObject,
+    Note,
     semitone_to_degree_options,
     split_to_base_and_shift,
     transpose,
@@ -198,6 +199,21 @@ class ChordWithRoot(CompositeObject):
 
     def _keys(self) -> Hashable:
         return (self.chord, self.root, self.octave)
+
+    @classmethod
+    def from_root_and_semitones(
+        cls, root: str, semitones: List[int], octave: int = 4
+    ) -> "ChordWithRoot":
+        chord = Chord.from_semitones(None, semitones)
+        if "/" in chord.name:
+            chord_name, bass_degree = chord.name.split("/")
+            new_root = transpose(
+                Note(root, 0), 12 - degree_to_semitone(bass_degree)
+            ).name
+            name = "{}{}/{}".format(new_root, chord_name, root)
+        else:
+            name = root + chord.name
+        return cls(name, root, chord, octave)
 
     @classmethod
     def from_name(cls, name: str, octave: int = 4) -> "ChordWithRoot":

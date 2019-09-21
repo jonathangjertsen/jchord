@@ -218,3 +218,24 @@ def test_chord_transpose(name_in, name_out, shift):
 )
 def test_chord_repr(name_in, repr_out):
     assert repr(ChordWithRoot.from_name(name_in)) == repr_out
+
+
+@pytest.mark.parametrize(
+    "root, semitones, name",
+    [
+        ("A", {3}, "Amin(no5)"),
+        ("B", {4}, "B(no5)"),
+        ("C", {7}, "C5"),
+        ("C#", {3, 7}, "C#min"),
+        ("Db", {4, 7}, "Db"),
+        ("F#", {5, 7}, "F#sus4"),
+        ("A", {3, 6, 9}, "Adim7"),
+        ("G", {4, 8, 11}, "Gaugmaj7"),
+        ("A", {0, 7, 10, 13}, "Edim/A"),
+        ("B", {3, 10}, "Bmin7(no5)"),
+        ("Bb", {4, 10}, "Bb7(no5)"),
+        ("E#", {4, 11}, "E#maj7(no5)"),
+    ],
+)
+def test_chord_from_root_and_semitone(root, semitones, name):
+    assert ChordWithRoot.from_root_and_semitones(root, semitones).name == name
