@@ -239,3 +239,16 @@ def test_chord_repr(name_in, repr_out):
 )
 def test_chord_from_root_and_semitone(root, semitones, name):
     assert ChordWithRoot.from_root_and_semitones(root, semitones).name == name
+
+
+@pytest.mark.parametrize(
+    "midi, name",
+    [
+        ({22, 26, 29}, "A#"),
+        ({22, 23, 24, 25, 26}, "A#???"),
+        ({22, 25, 29}, "A#min"),
+        ({23, 26, 30, 34}, "Bminmaj7"),
+    ],
+)
+def test_chord_from_midi(midi, name):
+    assert ChordWithRoot.from_midi(midi).name == name
