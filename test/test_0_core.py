@@ -176,6 +176,7 @@ def test__shift_down(note_in, octave_in, note_out, octave_out):
 def test_transpose(note_in, octave_in, shift, note_out, octave_out):
     assert transpose((note_in, octave_in), shift) == (note_out, octave_out)
 
+
 @pytest.mark.parametrize(
     "note_in, octave_in, shift, note_out, octave_out",
     [
