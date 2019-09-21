@@ -34,7 +34,7 @@ def _chord_options_single_semitone(semitone):
         return interval_options
 
 
-def _chord_options_two_semitones(semitones):
+def _chord_options_two_semitones(semitones, _rec):
     if 7 in semitones:
         for semitone in semitones:
             if semitone != 7 and semitone in TRIADS_WITH_FIFTH:
@@ -42,24 +42,26 @@ def _chord_options_two_semitones(semitones):
     elif 6 in semitones:
         if 3 in semitones:
             return ["dim"]
-
+    elif 8 in semitones:
+        if 4 in semitones:
+            return ["aug"]
     return [
         option if "(no5)" in option else "{}(no5)".format(option)
-        for option in semitones_to_chord_name_options(semitones | {7})
+        for option in semitones_to_chord_name_options(semitones | {7}, _rec - 1)
         if "/" not in option
     ]
 
 
-def _chord_options_triad_with_extension(upper_note, lower_triad):
+def _chord_options_triad_with_extension(upper_note, lower_triad, _rec):
     if upper_note == 11:
         return [
             "{}maj7".format(option)
-            for option in semitones_to_chord_name_options(set(lower_triad))
+            for option in semitones_to_chord_name_options(set(lower_triad), _rec - 1)
         ]
     elif upper_note == 10:
         options = [
             "{}7".format(option)
-            for option in semitones_to_chord_name_options(set(lower_triad))
+            for option in semitones_to_chord_name_options(set(lower_triad), _rec - 1)
         ]
         if "dim7" in options:
             options[options.index("dim7")] = "min7b5"
@@ -70,12 +72,14 @@ def _chord_options_triad_with_extension(upper_note, lower_triad):
     return []
 
 
-def _chord_options_triad_with_lower_note(lower_note, upper_triad):
+def _chord_options_triad_with_lower_note(lower_note, upper_triad, _rec):
     bass_degree = semitone_to_degree_options(12 - lower_note)[0]
     upper_triad_shifted = [semitone - lower_note for semitone in upper_triad]
     options = [
         "{}/{}".format(option, bass_degree)
-        for option in semitones_to_chord_name_options(set(upper_triad_shifted))
+        for option in semitones_to_chord_name_options(
+            set(upper_triad_shifted), _rec - 1
+        )
     ]
     base_degree, _ = split_to_base_and_shift(bass_degree, name_before_accidental=False)
     return [
@@ -85,15 +89,18 @@ def _chord_options_triad_with_lower_note(lower_note, upper_triad):
     ]
 
 
-def _chord_options_three_semitones(semitones_sorted):
+def _chord_options_three_semitones(semitones_sorted, _rec):
     return _chord_options_triad_with_extension(
-        upper_note=semitones_sorted[2], lower_triad=semitones_sorted[:2]
+        upper_note=semitones_sorted[2], lower_triad=semitones_sorted[:2], _rec=_rec
     ) + _chord_options_triad_with_lower_note(
-        lower_note=semitones_sorted[0], upper_triad=semitones_sorted[1:]
+        lower_note=semitones_sorted[0], upper_triad=semitones_sorted[1:], _rec=_rec
     )
 
 
-def semitones_to_chord_name_options(semitones: Set[int]) -> Set[str]:
+def semitones_to_chord_name_options(semitones: Set[int], _rec=5) -> Set[str]:
+    if _rec == 0:
+        return []
+
     semitones_no_octaves = semitones.copy()
     for semitone in semitones:
         if semitone % 12 == 0:
@@ -107,9 +114,9 @@ def semitones_to_chord_name_options(semitones: Set[int]) -> Set[str]:
     elif len(semitones) == 1:
         return _chord_options_single_semitone(semitones_sorted[0])
     elif len(semitones) == 2:
-        return _chord_options_two_semitones(semitones)
+        return _chord_options_two_semitones(semitones, _rec)
     elif len(semitones) == 3:
-        return _chord_options_three_semitones(semitones_sorted)
+        return _chord_options_three_semitones(semitones_sorted, _rec)
     return []
 
 
