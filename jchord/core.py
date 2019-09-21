@@ -1,6 +1,6 @@
 import itertools
 from collections import namedtuple
-from typing import Hashable
+from typing import Hashable, Set
 
 from jchord.knowledge import MAJOR_SCALE_OFFSETS, CHROMATIC
 
@@ -56,6 +56,24 @@ def degree_to_semitone(degree: str) -> int:
         raise InvalidDegree(degree) from error
 
 
+def semitone_to_degree_options(semitone: int, max_accidentals: int=1) -> Set[str]:
+    degrees = MAJOR_SCALE_OFFSETS.copy()
+    degrees.update({ degree + 7: semitone + 12 for degree, semitone in MAJOR_SCALE_OFFSETS.items()})
+
+    options = set()
+
+    if semitone < 0 or semitone >= 24:
+        return options
+
+    for cand_degree, cand_semitone in degrees.items():
+        for n_accidentals in range(max_accidentals + 1):
+            if semitone == cand_semitone - n_accidentals:
+                options.add("{}{}".format("b" * n_accidentals, cand_degree))
+            if semitone == cand_semitone + n_accidentals:
+                options.add("{}{}".format("#" * n_accidentals, cand_degree))
+
+    return options
+
 def _shift_up(note: Note) -> Note:
     name, octave = note
     for i, other in enumerate(CHROMATIC):
@@ -97,6 +115,7 @@ def note_diff(name_low: str, name_high: str) -> int:
 
 def note_to_pitch(note: Note) -> float:
     from jchord import midi
+
     return midi.midi_to_pitch(midi.get_midi(note))
 
 
