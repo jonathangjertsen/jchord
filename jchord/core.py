@@ -125,6 +125,10 @@ def transpose(note: Note, shift: int) -> Note:
     return note
 
 
+def transpose_degree(note: Note, shift: str) -> Note:
+    return transpose(note, degree_to_semitone(shift))
+
+
 def note_diff(name_low: str, name_high: str) -> int:
     diff = 0
     note = Note(name_low, 0)

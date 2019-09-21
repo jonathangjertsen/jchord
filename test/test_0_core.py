@@ -11,6 +11,7 @@ from jchord.core import (
     _shift_up,
     _shift_down,
     transpose,
+    transpose_degree,
 )
 
 import pytest
@@ -174,6 +175,23 @@ def test__shift_down(note_in, octave_in, note_out, octave_out):
 )
 def test_transpose(note_in, octave_in, shift, note_out, octave_out):
     assert transpose((note_in, octave_in), shift) == (note_out, octave_out)
+
+@pytest.mark.parametrize(
+    "note_in, octave_in, shift, note_out, octave_out",
+    [
+        ("C", 0, "b2", "C#", 0),
+        ("C#", 0, "#1", "D", 0),
+        ("D", 0, "b2", "D#", 0),
+        ("B", 0, "b2", "C", 1),
+        ("B", 1, "#1", "C", 2),
+        ("B", 110, "#1", "C", 111),
+        ("C", 4, "5", "G", 4),
+        ("C", 4, "12", "G", 5),
+        ("A", 3, "b3", "C", 4),
+    ],
+)
+def test_transpose_degree(note_in, octave_in, shift, note_out, octave_out):
+    assert transpose_degree((note_in, octave_in), shift) == (note_out, octave_out)
 
 
 @pytest.mark.parametrize(
