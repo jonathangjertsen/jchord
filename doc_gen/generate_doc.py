@@ -273,8 +273,11 @@ def generate_doc(filename):
     data = collect_doc_data()
     readme_string = assemble_docs(data)
 
-    with open(filename, "w") as readme:
-        readme.write(readme_string)
+    if filename:
+        with open(filename, "w") as readme:
+            readme.write(readme_string)
+    else:
+        print(readme_string)
 
 
 if __name__ == "__main__":
@@ -282,8 +285,8 @@ if __name__ == "__main__":
     parser.add_argument(
         "-o, --output",
         dest="output",
-        help="Where to store the output",
-        default=os.path.join(os.path.dirname(__file__), "..", "readme.md"),
+        help="Where to store the output. If not provided, documentation is printed",
+        default=None,
     )
     args = parser.parse_args()
 

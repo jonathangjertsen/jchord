@@ -9,6 +9,6 @@ python:
 install:
   - pip install -r requirements_dev.txt
 script:
-  - pytest --cov=jchord --cov-report=term
+  - pytest --cov=jchord --cov-report=term -vvv
 after_success:
   - codecov

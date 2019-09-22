@@ -40,7 +40,7 @@ F      Bo     C69    --
 To run the tests:
 
 ```
-pytest --cov-report term-missing --cov jchord
+pytest --cov-report term-missing --cov jchord -vvv
 ```
 
 Make sure all tests pass and that the code has 100% test coverage.
@@ -58,7 +58,7 @@ black .
 To generate documentation, run the documentation generation script:
 
 ```
-python doc_gen/generate_doc.py
+python doc_gen/generate_doc.py -o readme.md
 ```
 
 The script appends documentation from each source module to `doc_gen/index.md`. If the script ran successfully, README.md should contain a section called "Documentation" below.
