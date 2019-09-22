@@ -1,3 +1,4 @@
+import argparse
 from collections import defaultdict
 import os
 import importlib
@@ -268,15 +269,22 @@ def assemble_docs(data):
     )
 
 
-def generate_doc():
+def generate_doc(filename):
     data = collect_doc_data()
     readme_string = assemble_docs(data)
 
-    with open(
-        os.path.join(os.path.dirname(__file__), "..", "readme.md"), "w"
-    ) as readme:
+    with open(filename, "w") as readme:
         readme.write(readme_string)
 
 
 if __name__ == "__main__":
-    generate_doc()
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        "-o, --output",
+        dest="output",
+        help="Where to store the output",
+        default=os.path.join(os.path.dirname(__file__), "..", "readme.md"),
+    )
+    args = parser.parse_args()
+
+    generate_doc(args.output)
