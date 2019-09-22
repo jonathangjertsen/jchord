@@ -24,10 +24,12 @@ def shell_exec(*args, can_skip=False, pass_msg="", skip_msg="", **kwargs):
                 == "YES"
             )
             if not skip:
-                raise ShellExecFailed("Did not continue after failed step.")
+                raise ShellExecFailed(
+                    "Did not continue after failed step: {}".format(args)
+                )
             print(skip_msg)
         else:
-            raise ShellExecFailed("Unskippable step failed.")
+            raise ShellExecFailed("Unskippable step failed: {}".format(args))
     print(pass_msg)
     return proc
 
@@ -73,23 +75,22 @@ def deploy():
     )
 
     # Create a tag for the release
-    proc = shell_exec(
-        ["git", "tag", "v" + version],
-        pass_msg="Created tag v" + version,
-        stderr=subprocess.PIPE,
-    )
-    if proc.returncode != 0:
-        if "already exists" in proc.stderr.decode("utf-8"):
-            if input("Tag already exists. Delete it?") == "y":
-                shell_exec(
-                    ["git", "tag", "-d", "v" + version],
-                    pass_msg="Deleted tag v" + version,
-                )
-                shell_exec(
-                    ["git", "tag", "v" + version], pass_msg="Created tag v" + version
-                )
+    try:
+        proc = shell_exec(
+            ["git", "tag", "v" + version],
+            pass_msg="Created tag v" + version,
+            stderr=subprocess.PIPE,
+        )
+    except ShellExecFailed:
+        if input("Tag already exists. Delete it (YES/n)?") == "YES":
+            shell_exec(
+                ["git", "tag", "-d", "v" + version], pass_msg="Deleted tag v" + version
+            )
+            shell_exec(
+                ["git", "tag", "v" + version], pass_msg="Created tag v" + version
+            )
         else:
-            raise ShellExecFailed(proc.stderr.decode("utf-8"))
+            raise
 
     # Push latest master to GitHub
     shell_exec(
