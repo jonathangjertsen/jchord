@@ -5,13 +5,8 @@ from jchord.core import (
     InvalidDegree,
     Note,
     note_diff,
-    note_to_pitch,
     semitone_to_degree_options,
     split_to_base_and_shift,
-    _shift_up,
-    _shift_down,
-    transpose,
-    transpose_degree,
 )
 
 import pytest
@@ -128,7 +123,7 @@ def test_split_to_base_and_shift_before(item, base, shift):
 )
 def test_note_repr(name, octave, the_repr):
     assert repr(Note(name, octave)) == the_repr
-    assert Note(name, octave) == eval(the_repr) 
+    assert Note(name, octave) == eval(the_repr)
 
 
 @pytest.mark.parametrize(
@@ -164,44 +159,14 @@ def test_note_neq(note, octave, other):
 
 
 @pytest.mark.parametrize(
-    "note_in, octave_in, note_out, octave_out",
-    [
-        ("C", 0, "C#", 0),
-        ("C#", 0, "D", 0),
-        ("D", 0, "D#", 0),
-        ("B", 0, "C", 1),
-        ("B", 1, "C", 2),
-        ("B", 110, "C", 111),
-    ],
-)
-def test__shift_up(note_in, octave_in, note_out, octave_out):
-    assert _shift_up((note_in, octave_in)) == (note_out, octave_out)
-
-
-@pytest.mark.parametrize(
-    "note_in, octave_in, note_out, octave_out",
-    [
-        ("C#", 0, "C", 0),
-        ("D", 0, "C#", 0),
-        ("D#", 0, "D", 0),
-        ("C", 0, "B", -1),
-        ("C", 1, "B", 0),
-        ("C", 110, "B", 109),
-    ],
-)
-def test__shift_down(note_in, octave_in, note_out, octave_out):
-    assert _shift_down((note_in, octave_in)) == (note_out, octave_out)
-
-
-@pytest.mark.parametrize(
     "note_in, octave_in, shift, note_out, octave_out",
+    # [
+    #    (note, octave, n * 12, note, octave + n)
+    #    for n in range(-2, 2)
+    #    for octave in range(-2, 2)
+    #    for note in CHROMATIC
+    # ]
     [
-        (note, octave, n * 12, note, octave + n)
-        for n in range(-2, 2)
-        for octave in range(-2, 2)
-        for note in CHROMATIC
-    ]
-    + [
         ("C", 0, 1, "C#", 0),
         ("C#", 0, 1, "D", 0),
         ("D", 0, 1, "D#", 0),
@@ -220,7 +185,7 @@ def test__shift_down(note_in, octave_in, note_out, octave_out):
     ],
 )
 def test_transpose(note_in, octave_in, shift, note_out, octave_out):
-    assert transpose((note_in, octave_in), shift) == (note_out, octave_out)
+    assert Note(note_in, octave_in).transpose(shift) == (note_out, octave_out)
 
 
 @pytest.mark.parametrize(
@@ -238,7 +203,7 @@ def test_transpose(note_in, octave_in, shift, note_out, octave_out):
     ],
 )
 def test_transpose_degree(note_in, octave_in, shift, note_out, octave_out):
-    assert transpose_degree((note_in, octave_in), shift) == (note_out, octave_out)
+    assert Note(note_in, octave_in).transpose_degree(shift) == (note_out, octave_out)
 
 
 @pytest.mark.parametrize(
@@ -258,7 +223,7 @@ def test_note_diff(note_low, note_high, diff):
 
 
 @pytest.mark.parametrize(
-    "note, octave, pitch",
+    "name, octave, pitch",
     [
         ("A", 4, 440),
         ("A", 0, 27.5),
@@ -267,8 +232,8 @@ def test_note_diff(note_low, note_high, diff):
         ("C", 4, 261.62556),
     ],
 )
-def test_note_to_pitch(note, octave, pitch):
-    assert note_to_pitch((note, octave)) == pytest.approx(pitch)
+def test_note_pitch(name, octave, pitch):
+    assert Note(name, octave).pitch() == pytest.approx(pitch)
 
 
 def test_composite_object_equality():

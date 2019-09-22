@@ -1,3 +1,17 @@
+"""
+Contains various literals that are used for computations throughout the library.
+
+* `REPETITION_SYMBOL` (`str`): The symbol that's used to indicate repetition in textual representations of chord progressions.
+* `MAJOR_SCALE_OFFSETS` (`Dict[int, int]`): Maps the scale degrees of the major scale to number of semitones from the root.
+* `ACCIDENTALS` (`Set[str]`): The set of accidentals.
+* `MAJOR_FROM_C` (`List[str]`): A list of the 7 note names in the C major scale.
+* `CHROMATIC` (`List[str]`): A list of the 12 chromatic notes starting from C. Only sharp notes are included here.
+* `ENHARMONIC` (`List[Tuple[str, str]])`): A list of the 5 pairs of enharmonic note names.
+* `CHORD_NAMES` (`Dict[str, List[str]]`): Maps chord names to the list of scale degrees in the chord, not including the root.
+* `CHORD_ALIASES`: (`Dict[str, str]`): Maps alternative chord names to the canonical chord name in `CHORD_NAMES`.
+* `DYADS`: (`Dict[int, str]`): A collection of two-note chords with names. Maps the number of semitones between the root and the other note to the chord name.
+* `TRIADS_WITH_FIFTH` (`Dict[int, str]`): A collection of three-note chords with names. All of these triads include a fifth. Maps the semitone that is not the root or the fifth to the chord name.
+"""
 REPETITION_SYMBOL = "--"
 MAJOR_SCALE_OFFSETS = {1: 0, 2: 2, 3: 4, 4: 5, 5: 7, 6: 9, 7: 11}
 ACCIDENTALS = {"b", "#"}

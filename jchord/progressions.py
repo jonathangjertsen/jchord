@@ -1,15 +1,18 @@
+"""
+Tools for working with chord progressions.
+"""
 from collections import defaultdict, namedtuple
 from math import ceil
 from typing import Hashable, List, Set
 
 from jchord.knowledge import REPETITION_SYMBOL
-from jchord.core import CompositeObject
+from jchord.core import CompositeObject, Note
 from jchord.chords import ChordWithRoot
 from jchord.midi import group_notes_to_chords, read_midi_file
 
 
 class InvalidProgression(Exception):
-    pass
+    """Raised when encountering what seems like an invalid chord progression."""
 
 
 def _string_to_progression(string: str) -> List[ChordWithRoot]:
@@ -36,23 +39,27 @@ def _string_to_progression(string: str) -> List[ChordWithRoot]:
 
 
 class ChordProgression(CompositeObject):
+    """Represents a chord progression."""
     def __init__(self, progression: List[ChordWithRoot]):
         self.progression = progression
 
     def _keys(self) -> Hashable:
-        return (self.progression, )
+        return (self.progression,)
 
     @classmethod
     def from_string(cls, string: str) -> "ChordProgression":
+        """Creates a `ChordProgression` from its string representation."""
         return cls(_string_to_progression(string))
 
     @classmethod
     def from_txt(cls, filename: str) -> "ChordProgression":
+        """Creates a `ChordProgression` from a text file with its string representation."""
         with open(filename) as file:
             return cls(_string_to_progression(file.read()))
 
     @classmethod
     def from_xlsx(cls, filename: str) -> "ChordProgression":
+        """Creates a `ChordProgression` from an Excel file."""
         from openpyxl import load_workbook
 
         workbook = load_workbook(filename)
@@ -68,6 +75,11 @@ class ChordProgression(CompositeObject):
 
     @classmethod
     def from_midi_file(cls, filename: str) -> "ChordProgression":
+        """Creates a `ChordProgression` from an MIDI file.
+
+        There is no attempt at quantization at this time, so the notes must be played
+        at the exact same time to be grouped together as chords.
+        """
         notes = read_midi_file(filename)
         chords = group_notes_to_chords(notes)
         progression = []
@@ -76,14 +88,17 @@ class ChordProgression(CompositeObject):
         return cls(progression)
 
     def chords(self) -> Set[ChordWithRoot]:
+        """Returns the set of chords in the progression."""
         return set(self.progression)
 
     def midi(self) -> List[List[int]]:
+        """Returns the MIDI values for each chord in the progression."""
         return [chord.midi() for chord in self.progression]
 
-    def to_txt_string(
+    def to_string(
         self, chords_per_row: int = 4, column_spacing: int = 2, newline: str = "\n"
     ) -> str:
+        """Returns the string representation of the chord progression."""
         max_len = max(len(chord.name) for chord in self.progression)
         column_width = max_len + column_spacing
 
@@ -115,7 +130,8 @@ class ChordProgression(CompositeObject):
         column_spacing: int = 2,
         newline: str = "\n",
     ):
-        output_str = self.to_txt_string(
+        """Saves the string representation of the chord progression to a text file."""
+        output_str = self.to_string(
             chords_per_row=chords_per_row,
             column_spacing=column_spacing,
             newline=newline,
@@ -124,6 +140,7 @@ class ChordProgression(CompositeObject):
             file.write(output_str)
 
     def to_xlsx(self, filename: str, chords_per_row: int = 4):
+        """Saves the chord progression to an Excel file."""
         from openpyxl import Workbook
 
         workbook = Workbook()
@@ -157,6 +174,7 @@ class ChordProgression(CompositeObject):
         beats_per_chord: int = 2,
         velocity: int = 100,
     ):
+        """Saves the chord progression to a MIDI file."""
         import mido
 
         mid = mido.MidiFile()
@@ -191,18 +209,21 @@ class ChordProgression(CompositeObject):
 
 
 SongSection = namedtuple("SongSection", "name, progression")
+SongSection.__doc__ = """Represents a section in a Song."""
 
 
 class Song(CompositeObject):
+    """Represents a song (a series of sections)."""
     def __init__(self, sections: List[SongSection]):
         self.sections = sections
 
     def _keys(self):
-        return (self.sections, )
+        return (self.sections,)
 
-    def to_txt_string(
+    def to_string(
         self, chords_per_row: int = 4, column_spacing: int = 2, newline: str = "\n"
     ):
+        """Returns the string representation of the song."""
         out = []
         prev_section = None
         multiplier = 1
@@ -228,7 +249,7 @@ class Song(CompositeObject):
                 )
             )
             out.append(
-                section.progression.to_txt_string(
+                section.progression.to_string(
                     chords_per_row=chords_per_row,
                     column_spacing=column_spacing,
                     newline=newline,

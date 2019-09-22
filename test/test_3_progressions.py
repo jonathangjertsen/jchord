@@ -2,6 +2,7 @@ import os
 
 import pytest
 
+from jchord.core import Note
 from jchord.midi import note_to_midi
 from jchord.chords import Chord, ChordWithRoot
 from jchord.progressions import ChordProgression, InvalidProgression, Song, SongSection
@@ -167,12 +168,12 @@ def test_progression_from_midi():
     assert ChordProgression.from_midi_file(midi_filename) == original
 
 
-def test_song_to_txt_string():
+def test_song_to_string():
     intro = SongSection("Intro", ChordProgression.from_string("""C Fm G7"""))
     main = SongSection("Main", ChordProgression.from_string("""C Fm C G7 C E7 Am G"""))
     song = Song([intro, main, main])
     assert (
-        song.to_txt_string()
+        song.to_string()
         == """Intro
 =====
 C   Fm  G7
@@ -183,6 +184,7 @@ C   Fm  C   G7
 C   E7  Am  G
 """
     )
+
 
 def test_song_repr():
     intro = SongSection("Intro", ChordProgression.from_string("""C Fm G7"""))

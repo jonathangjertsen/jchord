@@ -1,4 +1,5 @@
 from jchord.knowledge import CHORD_NAMES, CHORD_ALIASES
+from jchord.core import Note
 from jchord.chords import (
     Chord,
     ChordWithRoot,
@@ -130,11 +131,19 @@ def test_chord_repr(name_in, repr_out):
     assert Chord.from_name(name_in) == eval(repr_out)
 
 
-@pytest.mark.parametrize("name_in", list(CHORD_NAMES) + list(CHORD_ALIASES))
-def test_chord_add_root(name_in):
-    assert Chord.from_name(name_in).with_root("A#") == ChordWithRoot.from_name(
-        "A#" + name_in
-    )
+@pytest.mark.parametrize(
+    "name_in, octave",
+    [
+        (name, octave)
+        for name in list(CHORD_NAMES) + list(CHORD_ALIASES)
+        for octave in range(-2, 2)
+    ],
+)
+def test_chord_add_root(name_in, octave):
+    name_then_root = Chord.from_name(name_in).with_root(Note("A#", octave))
+    name_and_root = ChordWithRoot.from_name("A#" + name_in, octave=octave)
+    print(name_and_root._keys())
+    assert name_then_root == name_and_root
 
 
 @pytest.mark.parametrize("name_in", ["goop", "blap", "m8", "A/G/G"])
@@ -159,7 +168,7 @@ def test_chord_from_invalid_name(name_in):
 )
 def test_chord_with_root(name_in, root_out, semi_out):
     assert ChordWithRoot.from_name(name_in).semitones == semi_out
-    assert ChordWithRoot.from_name(name_in).root == root_out
+    assert ChordWithRoot.from_name(name_in).root.name == root_out
 
 
 @pytest.mark.parametrize(
@@ -200,26 +209,11 @@ def test_chord_transpose(name_in, name_out, shift):
     )
 
 
-@pytest.mark.parametrize(
-    "name_in, repr_out",
-    [
-        (
-            "Amajor",
-            "ChordWithRoot(name='Amajor', root='A', chord=Chord(name='major', semitones=[0, 4, 7]), octave=4)",
-        ),
-        (
-            "Bminor",
-            "ChordWithRoot(name='Bminor', root='B', chord=Chord(name='minor', semitones=[0, 3, 7]), octave=4)",
-        ),
-        (
-            "D",
-            "ChordWithRoot(name='D', root='D', chord=Chord(name='major', semitones=[0, 4, 7]), octave=4)",
-        ),
-    ],
-)
-def test_chord_repr(name_in, repr_out):
-    assert repr(ChordWithRoot.from_name(name_in)) == repr_out
-    assert ChordWithRoot.from_name(name_in) == eval(repr_out)
+@pytest.mark.parametrize("name_in", ["Amajor", "Bminor", "D"])
+def test_chord_repr(name_in):
+    assert ChordWithRoot.from_name(name_in) == eval(
+        repr(ChordWithRoot.from_name(name_in))
+    )
 
 
 @pytest.mark.parametrize(
@@ -240,7 +234,7 @@ def test_chord_repr(name_in, repr_out):
     ],
 )
 def test_chord_from_root_and_semitone(root, semitones, name):
-    assert ChordWithRoot.from_root_and_semitones(root, semitones).name == name
+    assert ChordWithRoot.from_root_and_semitones(Note(root, 4), semitones).name == name
 
 
 @pytest.mark.parametrize(
