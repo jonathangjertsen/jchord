@@ -12,11 +12,14 @@ def test_doc_up_to_date():
 
     try:
         subprocess.run(
-            "python doc_gen/generate_doc.py -o {}".format(tmp_doc_filename),
+            ["python", "doc_gen/generate_doc.py", "-o", tmp_doc_filename],
             cwd=root_dir,
         )
         assert filecmp.cmp(
             tmp_doc_filename, real_readme_filename
         ), "Documentation is out of date. Run 'python doc_gen/generate_doc.py' to update."
     finally:
-        os.remove(tmp_doc_filename)
+        try:
+            os.remove(tmp_doc_filename)
+        except FileNotFoundError:
+            pass
