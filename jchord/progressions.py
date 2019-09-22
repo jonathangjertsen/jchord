@@ -1,4 +1,4 @@
-from collections import defaultdict
+from collections import defaultdict, namedtuple
 from math import ceil
 from typing import Hashable, List, Set
 
@@ -188,3 +188,53 @@ class ChordProgression(CompositeObject):
                 )
 
         mid.save(filename)
+
+
+SongSection = namedtuple("SongSection", "name, progression")
+
+
+class Song(CompositeObject):
+    def __init__(self, sections: List[SongSection]):
+        self.sections = sections
+
+    def to_txt_string(
+        self, chords_per_row: int = 4, column_spacing: int = 2, newline: str = "\n"
+    ):
+        out = []
+        prev_section = None
+        multiplier = 1
+        for i, section in enumerate(self.sections):
+            if multiplier > 1:
+                multiplier -= 1
+                continue
+
+            for j in range(i + 1, len(self.sections)):
+                if self.sections[j] is self.sections[i]:
+                    multiplier += 1
+                else:
+                    break
+
+            if multiplier > 1:
+                section_name = "{} (x{})".format(section.name, multiplier)
+            else:
+                section_name = section.name
+
+            out.append(
+                "{}{}{}{}".format(
+                    section_name, newline, "=" * len(section_name), newline
+                )
+            )
+            out.append(
+                section.progression.to_txt_string(
+                    chords_per_row=chords_per_row,
+                    column_spacing=column_spacing,
+                    newline=newline,
+                )
+            )
+            out.append(newline)
+            prev_section = section
+        combined = "".join(out)
+        combined = combined.replace(3 * newline, 2 * newline)
+        combined = combined.strip() + newline
+        combined = newline.join(line.strip() for line in combined.split(newline))
+        return combined
