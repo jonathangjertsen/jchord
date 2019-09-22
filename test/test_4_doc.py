@@ -11,11 +11,9 @@ def test_doc_up_to_date():
     tmp_doc_filename = os.path.join(
         os.path.dirname(__file__), "test_data", "test_doc.md"
     )
-    with open(
-        os.path.join(os.path.dirname(__file__), "..", "readme.md")
-    ) as readme_file:
+    root_dir = os.path.dirname(__file__).replace("/test", "")
+    with open(os.path.join(root_dir, "readme.md")) as readme_file:
         readme = readme_file.read()
-    root_dir = os.path.join(os.path.dirname(__file__), "..")
 
     proc = subprocess.run(
         ["python", "doc_gen/generate_doc.py"], cwd=root_dir, stdout=subprocess.PIPE
