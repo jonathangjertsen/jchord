@@ -40,6 +40,7 @@ def _string_to_progression(string: str) -> List[ChordWithRoot]:
 
 class ChordProgression(CompositeObject):
     """Represents a chord progression."""
+
     def __init__(self, progression: List[ChordWithRoot]):
         self.progression = progression
 
@@ -214,6 +215,7 @@ SongSection.__doc__ = """Represents a section in a Song."""
 
 class Song(CompositeObject):
     """Represents a song (a series of sections)."""
+
     def __init__(self, sections: List[SongSection]):
         self.sections = sections
 

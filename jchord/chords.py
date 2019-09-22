@@ -220,6 +220,7 @@ class Chord(CompositeObject):
 
 class ChordWithRoot(CompositeObject):
     """Represents a chord with a chord quality and a root note."""
+
     def __init__(self, name: str, root: Note, chord: Chord):
         self.name = name
         self.root = root
