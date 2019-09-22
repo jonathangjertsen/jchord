@@ -1,6 +1,10 @@
 import subprocess
 
 def deploy():
+    proc = subprocess.run(["pytest"])
+    if proc.returncode != 0:
+        return
+
     proc = subprocess.run(["python", "setup.py", "sdist", "bdist_wheel"])
     if proc.returncode != 0:
         return
