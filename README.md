@@ -58,7 +58,7 @@ black .
 To generate documentation, run the documentation generation script:
 
 ```
-python doc_gen/generate_doc.py -o readme.md
+python doc_gen/generate_doc.py -o README.md
 ```
 
 The script appends documentation from each source module to `doc_gen/index.md`. If the script ran successfully, README.md should contain a section called "Documentation" below.

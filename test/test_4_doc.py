@@ -1,5 +1,5 @@
 import filecmp
-import os
+from os.path import dirname, join
 import subprocess
 
 
@@ -8,11 +8,9 @@ def normalize(string):
 
 
 def test_doc_up_to_date():
-    tmp_doc_filename = os.path.join(
-        os.path.dirname(__file__), "test_data", "test_doc.md"
-    )
-    root_dir = os.path.dirname(__file__).replace("/test", "")
-    with open(os.path.join(root_dir, "readme.md")) as readme_file:
+    tmp_doc_filename = join(dirname(__file__), "test_data", "test_doc.md")
+    root_dir = dirname(dirname(__file__))
+    with open(join(root_dir, "README.md")) as readme_file:
         readme = readme_file.read()
 
     proc = subprocess.run(
@@ -20,4 +18,4 @@ def test_doc_up_to_date():
     )
     assert normalize(proc.stdout.decode("utf-8")) == normalize(
         readme
-    ), "Documentation is out of date. Run 'python doc_gen/generate_doc.py -o readme.md' to update."
+    ), "Documentation is out of date. Run 'python doc_gen/generate_doc.py -o README.md' to update."
