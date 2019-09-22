@@ -65,11 +65,12 @@ def deploy():
         version = version_file.read().strip()
 
     # Create a commit for the release
-    if input("Create commit for release?").strip() == "y":
-        shell_exec(
-            ["git", "commit", "--allow-empty", "-m", "Commit for release v" + version],
-            pass_msg="Created commit for release",
-        )
+    shell_exec(
+        ["git", "commit", "--allow-empty", "-m", "Commit for release v" + version],
+        can_skip=True,
+        pass_msg="Created commit for release",
+        skip_msg="Skipped creating commit for release",
+    )
 
     # Create a tag for the release
     proc = shell_exec(
