@@ -1,3 +1,4 @@
+from collections import defaultdict
 import os
 import importlib
 import inspect
@@ -11,82 +12,124 @@ def normalize_docstring(string):
     return string.replace("    ", "")
 
 
-def collect_doc_data():
+def get_relative_name(fully_qualified_name):
+    if "." in fully_qualified_name:
+        return fully_qualified_name.split(".")[-1]
+    else:
+        return fully_qualified_name
+
+
+def load_index_md():
     with open(os.path.join(os.path.dirname(__file__), "index.md")) as index:
-        readme_top = index.read()
+        return index.read()
 
+
+def load_pydocmd_yml():
     with open(os.path.join(os.path.dirname(__file__), "pydocmd.yml")) as file:
-        data = yaml.safe_load(file)
+        return yaml.safe_load(file)["generate"][0]["docs.md"]
 
-    modules = data["generate"][0]["docs.md"]
+
+def get_module(module_def):
+    if isinstance(module_def, str):
+        module_name = module_def
+        definitions = []
+        module = importlib.import_module(module_def)
+    else:
+        for module_name, definitions in module_def.items():
+            module = importlib.import_module(module_name)
+            break
+    return module_name, module, definitions
+
+
+def get_exception_doc_data(exception):
+    return {"name": exception.__name__, "doc": normalize_docstring(exception.__doc__)}
+
+
+def get_function_doc_data(function):
+    return {
+        "signature": function.__name__ + str(inspect.signature(function)),
+        "doc": normalize_docstring(function.__doc__),
+    }
+
+
+def get_method_doc_data(method, method_name):
+    try:
+        signature = str(inspect.signature(method))
+    except TypeError:
+        signature = "(self)"
+
+    return {
+        "signature": method_name + signature,
+        "doc": normalize_docstring(method.__doc__),
+    }
+
+
+def get_class_doc_data(class_, methods_docs):
+    return {
+        "name": class_.__name__,
+        "doc": normalize_docstring(class_.__doc__),
+        "methods": methods_docs,
+    }
+
+
+def get_module_doc_data(module_name, module, docs):
+    return {
+        "name": module_name,
+        "doc": normalize_docstring(module.__doc__),
+        "functions": docs["function"],
+        "classes": docs["class"],
+        "exceptions": docs["exception"],
+    }
+
+
+def get_function_or_exception_doc(module, definition):
+    function_or_exception = getattr(module, get_relative_name(definition))
+    if isinstance(function_or_exception, type):
+        return "exception", get_exception_doc_data(function_or_exception)
+    else:
+        return "function", get_function_doc_data(function_or_exception)
+
+
+def get_class_doc(module, definition):
+    for class_name, methods in definition.items():
+        class_ = getattr(module, get_relative_name(class_name))
+        methods_docs = []
+        for method_def in methods:
+            method_name = get_relative_name(method_def)
+            methods_docs.append(
+                get_method_doc_data(getattr(class_, method_name), method_name)
+            )
+        return "class", get_class_doc_data(class_, methods_docs)
+
+
+def get_doc(module, definition):
+    if isinstance(definition, str):
+        return get_function_or_exception_doc(module, definition)
+    else:
+        return get_class_doc(module, definition)
+
+
+def get_module_docs(module, definitions):
+    docs = defaultdict(list)
+    for definition in definitions:
+        doc_type, doc = get_doc(module, definition)
+        docs[doc_type].append(doc)
+    return docs
+
+
+def get_doc_data(readme_top, modules):
     doc_data = {"index": readme_top, "modules": []}
     for module_def in modules:
-        if isinstance(module_def, str):
-            module_name = module_def
-            definitions = []
-            module = importlib.import_module(module_def)
-        else:
-            for module_name, definitions in module_def.items():
-                module = importlib.import_module(module_name)
-                break
-
-        function_docs = []
-        class_docs = []
-        exception_docs = []
-
-        for definition in definitions:
-            if isinstance(definition, str):
-                function = getattr(module, definition.split(".")[-1])
-                if isinstance(function, type):
-                    exception_docs.append(
-                        {
-                            "name": function.__name__,
-                            "doc": normalize_docstring(function.__doc__),
-                        }
-                    )
-                else:
-                    function_docs.append(
-                        {
-                            "signature": function.__name__
-                            + str(inspect.signature(function)),
-                            "doc": normalize_docstring(function.__doc__),
-                        }
-                    )
-            else:
-                for class_name, methods in definition.items():
-                    class_ = getattr(module, class_name.split(".")[-1])
-                    methods_docs = []
-                    for method_def in methods:
-                        method_name = method_def.split(".")[-1]
-                        method = getattr(class_, method_name)
-                        try:
-                            signature = str(inspect.signature(method))
-                        except TypeError:
-                            signature = "(self)"
-                        methods_docs.append(
-                            {
-                                "signature": method_name + signature,
-                                "doc": normalize_docstring(method.__doc__),
-                            }
-                        )
-                    class_docs.append(
-                        {
-                            "name": class_.__name__,
-                            "doc": normalize_docstring(class_.__doc__),
-                            "methods": methods_docs,
-                        }
-                    )
-
-        doc_data["modules"].append(
-            {
-                "name": module_name,
-                "doc": normalize_docstring(module.__doc__),
-                "functions": function_docs,
-                "classes": class_docs,
-                "exceptions": exception_docs,
-            }
+        module_name, module, definitions = get_module(module_def)
+        doc = get_module_doc_data(
+            module_name, module, get_module_docs(module, definitions)
         )
+        doc_data["modules"].append(doc)
     return doc_data
+
+
+def collect_doc_data():
+    return get_doc_data(load_index_md(), load_pydocmd_yml())
 
 
 def assemble_class_docs(class_):
