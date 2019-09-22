@@ -155,3 +155,13 @@ def test_progression_to_midi():
         )
     finally:
         os.remove(midi_filename)
+
+
+def test_progression_from_midi():
+    midi_filename = os.path.join(
+        os.path.dirname(__file__), "test_data", "test_progression.midi"
+    )
+
+    original = ChordProgression.from_string("""C Fm C G7 C E7 Am G G G G G""")
+    original.to_midi(midi_filename)
+    assert ChordProgression.from_midi_file(midi_filename) == original

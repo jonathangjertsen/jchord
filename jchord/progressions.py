@@ -1,9 +1,11 @@
+from collections import defaultdict
 from math import ceil
 from typing import Hashable, List, Set
 
 from jchord.knowledge import REPETITION_SYMBOL
 from jchord.core import CompositeObject
 from jchord.chords import ChordWithRoot
+from jchord.midi import group_notes_to_chords, read_midi_file
 
 
 class InvalidProgression(Exception):
@@ -63,6 +65,15 @@ class ChordProgression(CompositeObject):
                     name = REPETITION_SYMBOL
                 names.append(name)
         return cls.from_string(" ".join(names))
+
+    @classmethod
+    def from_midi_file(cls, filename: str) -> "ChordProgression":
+        notes = read_midi_file(filename)
+        chords = group_notes_to_chords(notes)
+        progression = []
+        for time, chord in chords.items():
+            progression.append(ChordWithRoot.from_midi([note.note for note in chord]))
+        return cls(progression)
 
     def chords(self) -> Set[ChordWithRoot]:
         return set(self.progression)
