@@ -11,8 +11,8 @@ def normalize(string):
 
 
 @pytest.mark.skipif(
-    sys.version_info < (3, 6) or sys.version_info > (3, 8),
-    reason="Only need to generate documentation for Python 3.6-3.8",
+    sys.version_info < (3, 7) or sys.version_info > (3, 8),
+    reason="Only need to generate documentation for Python 3.7-3.8",
 )
 def test_doc_up_to_date():
     tmp_doc_filename = join(dirname(__file__), "test_data", "test_doc.md")
