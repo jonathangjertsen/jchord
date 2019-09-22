@@ -170,6 +170,7 @@ def test_progression_from_midi():
     finally:
         os.remove(midi_filename)
 
+
 def test_song_to_string():
     intro = SongSection("Intro", ChordProgression.from_string("""C Fm G7"""))
     main = SongSection("Main", ChordProgression.from_string("""C Fm C G7 C E7 Am G"""))
