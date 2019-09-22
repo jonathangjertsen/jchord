@@ -128,6 +128,7 @@ def test_split_to_base_and_shift_before(item, base, shift):
 )
 def test_note_repr(name, octave, the_repr):
     assert repr(Note(name, octave)) == the_repr
+    assert Note(name, octave) == eval(the_repr) 
 
 
 @pytest.mark.parametrize(

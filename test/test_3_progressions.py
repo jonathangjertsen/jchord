@@ -3,7 +3,7 @@ import os
 import pytest
 
 from jchord.midi import note_to_midi
-from jchord.chords import ChordWithRoot
+from jchord.chords import Chord, ChordWithRoot
 from jchord.progressions import ChordProgression, InvalidProgression, Song, SongSection
 
 
@@ -183,3 +183,9 @@ C   Fm  C   G7
 C   E7  Am  G
 """
     )
+
+def test_song_repr():
+    intro = SongSection("Intro", ChordProgression.from_string("""C Fm G7"""))
+    main = SongSection("Main", ChordProgression.from_string("""C Fm C G7 C E7 Am G"""))
+    song = Song([intro, main, main])
+    assert song == eval(repr(song))

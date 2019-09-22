@@ -129,7 +129,7 @@ class Chord(CompositeObject):
         self.semitones = sorted(list(set(semitones) | {0}))
 
     def __repr__(self) -> str:
-        return "Chord(name={}, semitones={})".format(self.name, self.semitones)
+        return "Chord(name='{}', semitones={})".format(self.name, self.semitones)
 
     def _keys(self) -> Hashable:
         return tuple(self.semitones)
@@ -193,7 +193,7 @@ class ChordWithRoot(CompositeObject):
         return self.chord.semitones
 
     def __repr__(self) -> str:
-        return "ChordWithRoot(name={}, root={}, chord={}, octave={})".format(
+        return "ChordWithRoot(name='{}', root='{}', chord={}, octave={})".format(
             self.name, self.root, self.chord, self.octave
         )
 

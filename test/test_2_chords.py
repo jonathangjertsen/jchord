@@ -119,14 +119,15 @@ def test_chord_intervals(name_in, int_out):
 @pytest.mark.parametrize(
     "name_in, repr_out",
     [
-        ("major", "Chord(name=major, semitones=[0, 4, 7])"),
-        ("minor", "Chord(name=minor, semitones=[0, 3, 7])"),
-        ("5", "Chord(name=5, semitones=[0, 7])"),
-        ("", "Chord(name=major, semitones=[0, 4, 7])"),
+        ("major", "Chord(name='major', semitones=[0, 4, 7])"),
+        ("minor", "Chord(name='minor', semitones=[0, 3, 7])"),
+        ("5", "Chord(name='5', semitones=[0, 7])"),
+        ("", "Chord(name='major', semitones=[0, 4, 7])"),
     ],
 )
 def test_chord_repr(name_in, repr_out):
     assert repr(Chord.from_name(name_in)) == repr_out
+    assert Chord.from_name(name_in) == eval(repr_out)
 
 
 @pytest.mark.parametrize("name_in", list(CHORD_NAMES) + list(CHORD_ALIASES))
@@ -204,20 +205,21 @@ def test_chord_transpose(name_in, name_out, shift):
     [
         (
             "Amajor",
-            "ChordWithRoot(name=Amajor, root=A, chord=Chord(name=major, semitones=[0, 4, 7]), octave=4)",
+            "ChordWithRoot(name='Amajor', root='A', chord=Chord(name='major', semitones=[0, 4, 7]), octave=4)",
         ),
         (
             "Bminor",
-            "ChordWithRoot(name=Bminor, root=B, chord=Chord(name=minor, semitones=[0, 3, 7]), octave=4)",
+            "ChordWithRoot(name='Bminor', root='B', chord=Chord(name='minor', semitones=[0, 3, 7]), octave=4)",
         ),
         (
             "D",
-            "ChordWithRoot(name=D, root=D, chord=Chord(name=major, semitones=[0, 4, 7]), octave=4)",
+            "ChordWithRoot(name='D', root='D', chord=Chord(name='major', semitones=[0, 4, 7]), octave=4)",
         ),
     ],
 )
 def test_chord_repr(name_in, repr_out):
     assert repr(ChordWithRoot.from_name(name_in)) == repr_out
+    assert ChordWithRoot.from_name(name_in) == eval(repr_out)
 
 
 @pytest.mark.parametrize(

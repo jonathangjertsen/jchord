@@ -40,7 +40,7 @@ class ChordProgression(CompositeObject):
         self.progression = progression
 
     def _keys(self) -> Hashable:
-        return tuple(self.progression)
+        return (self.progression, )
 
     @classmethod
     def from_string(cls, string: str) -> "ChordProgression":
@@ -196,6 +196,9 @@ SongSection = namedtuple("SongSection", "name, progression")
 class Song(CompositeObject):
     def __init__(self, sections: List[SongSection]):
         self.sections = sections
+
+    def _keys(self):
+        return (self.sections, )
 
     def to_txt_string(
         self, chords_per_row: int = 4, column_spacing: int = 2, newline: str = "\n"
