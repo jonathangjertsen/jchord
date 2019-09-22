@@ -164,9 +164,11 @@ def test_progression_from_midi():
     )
 
     original = ChordProgression.from_string("""C Fm C G7 C E7 Am G G G G G""")
-    original.to_midi(midi_filename)
-    assert ChordProgression.from_midi_file(midi_filename) == original
-
+    try:
+        original.to_midi(midi_filename)
+        assert ChordProgression.from_midi_file(midi_filename) == original
+    finally:
+        os.remove(midi_filename)
 
 def test_song_to_string():
     intro = SongSection("Intro", ChordProgression.from_string("""C Fm G7"""))
