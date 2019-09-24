@@ -27,13 +27,12 @@ F      Bo     C69    --
 
 # Install
 
-* git clone it, then `pip install -e .`
-* Install the right requirements:
-    * All functionality: `pip install -r requirements_full.txt`
-    * No XLSX or MIDI conversion: `pip install -r requirements_minimal.txt`
-    * Package development: `pip install -r requirements_dev.txt`
+* `pip install jchord`
+* If you want to use the MIDI and XLSX functionality, also `pip install mido openpyxl`
 
 # Development
+
+Clone the repo, and in the folder run `pip install -r requirements_dev.txt`
 
 ## Testing
 

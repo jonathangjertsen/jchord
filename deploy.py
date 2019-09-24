@@ -8,7 +8,7 @@ class ShellExecFailed(Exception):
 
 def shell_exec(*args, can_skip=False, pass_msg="", skip_msg="", **kwargs):
     if can_skip:
-        skip = input("Skip step: {} (YES/n)?".format(args))
+        skip = input("Skip step: {} (YES/n)?".format(args)) == "YES"
         if skip:
             print(skip_msg)
             return
