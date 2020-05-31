@@ -107,11 +107,7 @@ class ChordProgression(CompositeObject):
         output = []
         prev_chord = None
         for chord in self.progression:
-            if prev_chord == chord:
-                chord_name = REPETITION_SYMBOL
-            else:
-                chord_name = chord.name
-
+            chord_name = REPETITION_SYMBOL if prev_chord == chord else chord.name
             output.append(chord_name)
             output.append(" " * (column_width - len(chord_name)))
 
@@ -151,11 +147,7 @@ class ChordProgression(CompositeObject):
         column = 1
         prev_chord = None
         for chord in self.progression:
-            if prev_chord == chord:
-                chord_name = REPETITION_SYMBOL
-            else:
-                chord_name = chord.name
-
+            chord_name = REPETITION_SYMBOL if prev_chord == chord else chord.name
             worksheet.cell(row=row, column=column).value = chord_name
 
             column += 1

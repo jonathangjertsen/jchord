@@ -90,7 +90,8 @@ def _chord_options_triad_with_lower_note(lower_note, upper_triad, _rec):
     return [
         option
         for option in options
-        if not ((bass_degree in option and "(no{})".format(base_degree) in option))
+        if bass_degree not in option
+        or "(no{})".format(base_degree) not in option
     ]
 
 
@@ -120,7 +121,7 @@ def semitones_to_chord_name_options(semitones: Set[int], _rec=5) -> List[str]:
 
     semitones_sorted = list(sorted(semitones))
 
-    if len(semitones) == 0:
+    if not semitones:
         return ["note"]
     elif len(semitones) == 1:
         return _chord_options_single_semitone(semitones_sorted[0])
@@ -154,10 +155,7 @@ class Chord(CompositeObject):
         """
         if name is None:
             name_options = semitones_to_chord_name_options(semitones)
-            if name_options:
-                name = name_options[0]
-            else:
-                name = cls.UNNAMED
+            name = name_options[0] if name_options else cls.UNNAMED
         return cls(name, semitones)
 
     @classmethod
@@ -201,10 +199,10 @@ class Chord(CompositeObject):
         * `Chord.from_name("minor").intervals() == [3, 4]`
         * `Chord.from_name("major7").intervals() == [4, 3, 4]`
         """
-        intervals = []
-        for i in range(1, len(self.semitones)):
-            intervals.append(self.semitones[i] - self.semitones[i - 1])
-        return intervals
+        return [
+            self.semitones[i] - self.semitones[i - 1]
+            for i in range(1, len(self.semitones))
+        ]
 
     def with_root(self, root: Note) -> "ChordWithRoot":
         """Returns a `ChordWithRoot` based on the chord and the provided root."""

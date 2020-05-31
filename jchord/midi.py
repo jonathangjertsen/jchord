@@ -85,8 +85,7 @@ def _events_to_notes(events: list) -> List[PlayedNote]:
 def read_midi_file(filename: str) -> List[PlayedNote]:
     """Reads the MIDI file for the given filename and returns the corresponding list of `PlayedNote`s."""
     events = _read_midi_file_to_events(filename)
-    notes = _events_to_notes(events)
-    return notes
+    return _events_to_notes(events)
 
 
 def group_notes_to_chords(notes: List[PlayedNote]) -> Dict[float, PlayedNote]:
