@@ -26,46 +26,49 @@ def test_chord_from_semitones(semi_in, semi_out):
 
 
 @pytest.mark.parametrize(
-    "semitones, options",
+    "semitones, options, selected",
     [
-        (set(list(range(100))), []),
-        (set(), ["note"]),
-        ({0}, ["note"]),
-        ({3}, ["min(no5)", "b3 interval", "#2 interval"]),
-        ({4}, ["(no5)", "3 interval", "b4 interval"]),
-        ({7}, ["5", "5 interval"]),
-        ({13}, ["b9 interval", "#8 interval"]),
-        ({12}, ["note"]),
-        ({2, 7}, ["sus2"]),
-        ({3, 7}, ["min"]),
-        ({4, 7}, [""]),
-        ({5, 7}, ["sus4"]),
-        ({6, 7}, ["lyd"]),
-        ({3, 6}, ["dim"]),
-        ({4, 8}, ["aug"]),
-        ({4, 7, 11}, ["maj7", "min/b6"]),
-        ({4, 7, 10}, ["7", "dim/b6"]),
-        ({3, 7, 10}, ["min7", "/6"]),
-        ({3, 6, 10}, ["min7b5", "min/6"]),
-        ({3, 6, 9}, ["dim7", "dim/6"]),
-        ({4, 8, 11}, ["augmaj7", "/b6"]),
-        ({0, 7, 10, 13}, ["dim/4", "phryg7"]),
-        ({1, 2, 3}, []),
-        ({3, 10}, ["min7(no5)"]),
-        ({4, 10}, ["7(no5)"]),
-        ({4, 11}, ["maj7(no5)"]),
-        ({3, 11}, ["minmaj7(no5)"]),
-        ({7, 11}, ["maj7(no3)"]),
-        ({7, 10}, ["7(no3)"]),
+        (set(list(range(100))), [], Chord.UNNAMED),
+        (set(), ["note"], "note"),
+        ({0}, ["note"], "note"),
+        ({3}, ["min(no5)", "b3 interval", "#2 interval"], "min(no5)"),
+        ({4}, ["(no5)", "3 interval", "b4 interval"], "(no5)"),
+        ({7}, ["5", "5 interval"], "5"),
+        ({13}, ["b9 interval", "#8 interval"], "b9 interval"),
+        ({12}, ["note"], "note"),
+        ({2, 7}, ["sus2"], "sus2"),
+        ({3, 7}, ["min"], "min"),
+        ({4, 7}, [""], ""),
+        ({5, 7}, ["sus4"], "sus4"),
+        ({6, 7}, ["lyd"], "lyd"),
+        ({3, 6}, ["dim"], "dim"),
+        ({4, 8}, ["aug"], "aug"),
+        ({4, 7, 11}, ["maj7", "min/b6"], "maj7"),
+        ({4, 7, 10}, ["7", "dim/b6"], "7"),
+        ({3, 7, 10}, ["min7", "/6"], "min7"),
+        ({3, 6, 10}, ["min7b5", "min/6"], "min7b5"),
+        ({3, 6, 9}, ["dim7", "dim/6"], "dim7"),
+        ({4, 8, 11}, ["augmaj7", "/b6"], "augmaj7"),
+        ({0, 7, 10, 13}, ["dim/4", "phryg7"], "phryg7"),
+        ({1, 2, 3}, [], Chord.UNNAMED),
+        ({3, 10}, ["min7(no5)"], "min7(no5)"),
+        ({4, 10}, ["7(no5)"], "7(no5)"),
+        ({4, 11}, ["maj7(no5)"], "maj7(no5)"),
+        ({3, 11}, ["minmaj7(no5)"], "minmaj7(no5)"),
+        ({7, 11}, ["maj7(no3)"], "maj7(no3)"),
+        ({7, 10}, ["7(no3)"], "7(no3)"),
+        ({7, 12, 16}, [""], ""),
+        ({7, 12, 15}, ["min"], "min"),
+        ({7, 10, 12, 15}, ["min7"], "min7"),
+        ({2, 7, 10, 12}, ["7sus2"], "7sus2"),
+        ({5, 7, 10, 12}, ["7sus4"], "7sus4"),
+        ({2, 7, 11, 12}, ["maj7sus2"], "maj7sus4"),
     ],
 )
-def test_semitones_to_chord_options(semitones, options):
+def test_semitones_to_chord_options(semitones, options, selected):
     computed_options = semitones_to_chord_name_options(semitones)
-    assert computed_options == options
-    if options:
-        assert Chord.from_semitones(None, semitones).name == select_name(options)
-    else:
-        assert Chord.from_semitones(None, semitones).name == Chord.UNNAMED
+    assert set(computed_options) >= set(options)
+    Chord.from_semitones(None, semitones).name == selected
 
 
 @pytest.mark.parametrize(

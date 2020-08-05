@@ -56,16 +56,21 @@ def _chord_options_two_semitones(semitones, _rec):
         if "/" not in option
     ]
 
+def _with_extension(base, extension):
+    if "sus" in base:
+        return "{}{}".format(extension, base)
+    else:
+        return "{}{}".format(base, extension)
 
 def _chord_options_triad_with_extension(upper_note, lower_triad, _rec):
     if upper_note == 11:
         return [
-            "{}maj7".format(option)
+            _with_extension(option, "maj7")
             for option in semitones_to_chord_name_options(set(lower_triad), _rec - 1)
         ]
     elif upper_note == 10:
         options = [
-            "{}7".format(option)
+            _with_extension(option, "7")
             for option in semitones_to_chord_name_options(set(lower_triad), _rec - 1)
         ]
         if "dim7" in options:
