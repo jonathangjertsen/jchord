@@ -5,6 +5,7 @@ from jchord.chords import (
     ChordWithRoot,
     InvalidChord,
     semitones_to_chord_name_options,
+    select_name,
 )
 
 import pytest
@@ -48,7 +49,7 @@ def test_chord_from_semitones(semi_in, semi_out):
         ({3, 6, 10}, ["min7b5", "min/6"]),
         ({3, 6, 9}, ["dim7", "dim/6"]),
         ({4, 8, 11}, ["augmaj7", "/b6"]),
-        ({0, 7, 10, 13}, ["dim/4"]),
+        ({0, 7, 10, 13}, ["dim/4", "phryg7"]),
         ({1, 2, 3}, []),
         ({3, 10}, ["min7(no5)"]),
         ({4, 10}, ["7(no5)"]),
@@ -59,9 +60,10 @@ def test_chord_from_semitones(semi_in, semi_out):
     ],
 )
 def test_semitones_to_chord_options(semitones, options):
-    assert semitones_to_chord_name_options(semitones) == options
+    computed_options = semitones_to_chord_name_options(semitones)
+    assert computed_options == options
     if options:
-        assert Chord.from_semitones(None, semitones).name == options[0]
+        assert Chord.from_semitones(None, semitones).name == select_name(options)
     else:
         assert Chord.from_semitones(None, semitones).name == Chord.UNNAMED
 
@@ -227,7 +229,7 @@ def test_chord_repr(name_in):
         ("F#", {5, 7}, "F#sus4"),
         ("A", {3, 6, 9}, "Adim7"),
         ("G", {4, 8, 11}, "Gaugmaj7"),
-        ("A", {0, 7, 10, 13}, "Edim/A"),
+        ("A", {0, 7, 10, 13}, "Aphryg7"),
         ("B", {3, 10}, "Bmin7(no5)"),
         ("Bb", {4, 10}, "Bb7(no5)"),
         ("E#", {4, 11}, "E#maj7(no5)"),
@@ -241,7 +243,7 @@ def test_chord_from_root_and_semitone(root, semitones, name):
     "midi, name",
     [
         ({22, 26, 29}, "A#"),
-        ({22, 23, 24, 25, 26}, "A#???"),
+        ({22, 23, 24, 25, 26}, "A#<unknown>"),
         ({22, 25, 29}, "A#min"),
         ({23, 26, 30, 34}, "Bminmaj7"),
     ],

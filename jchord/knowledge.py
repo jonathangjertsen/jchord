@@ -76,7 +76,11 @@ CHORD_ALIASES = {
     # Augmented
     "+": "aug",
 }
-DYADS = {3: "min(no5)", 4: "(no5)", 7: "5"}
+DYADS = {
+    3: "min(no5)",
+    4: "(no5)",
+    7: "5"
+}
 TRIADS_WITH_FIFTH = {
     1: "phryg",
     2: "sus2",

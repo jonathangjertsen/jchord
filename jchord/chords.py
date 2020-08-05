@@ -112,29 +112,81 @@ def semitones_to_chord_name_options(semitones: Set[int], _rec=5) -> List[str]:
     if _rec == 0:
         return []
 
+    # Remove octaves
     semitones_no_octaves = semitones.copy()
     for semitone in semitones:
         if semitone % 12 == 0:
             semitones_no_octaves.remove(semitone)
     semitones = semitones_no_octaves
 
+    # Ensure the notes are sorted
     semitones_sorted = list(sorted(semitones))
 
+    # Try known strategies for chords with up to 4 notes
     if len(semitones) == 0:
-        return ["note"]
+        result = ["note"]
     elif len(semitones) == 1:
-        return _chord_options_single_semitone(semitones_sorted[0])
+        result = _chord_options_single_semitone(semitones_sorted[0])
     elif len(semitones) == 2:
-        return _chord_options_two_semitones(semitones, _rec)
+        result = _chord_options_two_semitones(semitones, _rec)
     elif len(semitones) == 3:
-        return _chord_options_three_semitones(semitones_sorted, _rec)
-    return []
+        result = _chord_options_three_semitones(semitones_sorted, _rec)
+    else:
+        # Not implemented
+        result = []
+
+    # Try moving everything into the same octave
+    semitones_single_octave = { semitone % 12 for semitone in semitones }
+    if semitones != semitones_single_octave:
+        result_single_octave = semitones_to_chord_name_options(semitones_single_octave, _rec - 1)
+
+        # We lose information about the particular intervals here, so remove all 'interval' candidates
+        result_single_octave = [result for result in result_single_octave if not "interval" in result]
+        result += result_single_octave
+
+    # Ensure all results are unique
+    result_no_duplicates = []
+    for res in result:
+        if res not in result_no_duplicates:
+            result_no_duplicates.append(res)
+    result = result_no_duplicates
+
+    return result
+
+
+def remove_if_possible(options, predicate):
+    """
+    Removes all entries in options where the predicate is true,
+    unless that would leave an empty list of options.
+    """
+    pred_vec = [predicate(option) for option in options]
+    if any(pred_vec) and not all(pred_vec):
+        options = [
+            option
+            for option, pred
+            in zip(options, pred_vec)
+            if not pred
+        ]
+    return options
+
+
+def select_name(options):
+    """
+    Select the best available name.
+    Current strategy: remove chords with ugly names, then arbitrarily select
+    the first of the remainder.
+    """
+    options = remove_if_possible(options, lambda option: "interval" in option)
+    options = remove_if_possible(options, lambda option: "(no5)" in option)
+    options = remove_if_possible(options, lambda option: "/" in option)
+
+    return options[0]
 
 
 class Chord(CompositeObject):
     """Represents a chord quality (no root)."""
 
-    UNNAMED = "???"
+    UNNAMED = "<unknown>"
 
     def __init__(self, name: str, semitones: List[int]):
         self.name = name
@@ -155,7 +207,7 @@ class Chord(CompositeObject):
         if name is None:
             name_options = semitones_to_chord_name_options(semitones)
             if name_options:
-                name = name_options[0]
+                name = select_name(name_options)
             else:
                 name = cls.UNNAMED
         return cls(name, semitones)
