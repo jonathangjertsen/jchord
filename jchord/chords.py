@@ -136,12 +136,16 @@ def semitones_to_chord_name_options(semitones: Set[int], _rec=5) -> List[str]:
         result = []
 
     # Try moving everything into the same octave
-    semitones_single_octave = { semitone % 12 for semitone in semitones }
+    semitones_single_octave = {semitone % 12 for semitone in semitones}
     if semitones != semitones_single_octave:
-        result_single_octave = semitones_to_chord_name_options(semitones_single_octave, _rec - 1)
+        result_single_octave = semitones_to_chord_name_options(
+            semitones_single_octave, _rec - 1
+        )
 
         # We lose information about the particular intervals here, so remove all 'interval' candidates
-        result_single_octave = [result for result in result_single_octave if not "interval" in result]
+        result_single_octave = [
+            result for result in result_single_octave if not "interval" in result
+        ]
         result += result_single_octave
 
     # Ensure all results are unique
@@ -161,12 +165,7 @@ def remove_if_possible(options, predicate):
     """
     pred_vec = [predicate(option) for option in options]
     if any(pred_vec) and not all(pred_vec):
-        options = [
-            option
-            for option, pred
-            in zip(options, pred_vec)
-            if not pred
-        ]
+        options = [option for option, pred in zip(options, pred_vec) if not pred]
     return options
 
 
