@@ -99,13 +99,15 @@ def _chord_options_triad_with_lower_note(lower_note, upper_triad, _rec):
     ]
 
 
-def _chord_options_three_semitones(semitones_sorted, _rec):
+def _chord_options_three_semitones(semitones, _rec):
     return _chord_options_triad_with_extension(
-        upper_note=semitones_sorted[2], lower_triad=semitones_sorted[:2], _rec=_rec
+        upper_note=semitones[2], lower_triad=semitones[:2], _rec=_rec
     ) + _chord_options_triad_with_lower_note(
-        lower_note=semitones_sorted[0], upper_triad=semitones_sorted[1:], _rec=_rec
+        lower_note=semitones[0], upper_triad=semitones[1:], _rec=_rec
     )
 
+def _chord_options_upper_extensions(semitones, _rec):
+    return []
 
 def semitones_to_chord_name_options(semitones: Set[int], _rec=5) -> List[str]:
     """Returns a set of chord names corresponding to the given set of semitones.
@@ -117,28 +119,33 @@ def semitones_to_chord_name_options(semitones: Set[int], _rec=5) -> List[str]:
     if _rec == 0:
         return []
 
-    # Remove octaves
-    semitones_no_octaves = semitones.copy()
-    for semitone in semitones:
-        if semitone % 12 == 0:
-            semitones_no_octaves.remove(semitone)
-    semitones = semitones_no_octaves
-
     # Ensure the notes are sorted
-    semitones_sorted = list(sorted(semitones))
+    semitones = list(sorted(semitones))
+
+    # Remove octaves
+    semitones_no_octaves = set()
+    for semitone in semitones:
+        is_octave = False
+        for seen_semitone in semitones_no_octaves | { 0 }:
+            if (seen_semitone - semitone) % 12 == 0:
+                is_octave = True
+                break
+        if not is_octave:
+            semitones_no_octaves.add(semitone)
+    semitones = semitones_no_octaves
+    semitones = list(sorted(semitones))
 
     # Try known strategies for chords with up to 4 notes
     if len(semitones) == 0:
         result = ["note"]
     elif len(semitones) == 1:
-        result = _chord_options_single_semitone(semitones_sorted[0])
+        result = _chord_options_single_semitone(semitones[0])
     elif len(semitones) == 2:
         result = _chord_options_two_semitones(semitones, _rec)
     elif len(semitones) == 3:
-        result = _chord_options_three_semitones(semitones_sorted, _rec)
+        result = _chord_options_three_semitones(semitones, _rec)
     else:
-        # Not implemented
-        result = []
+        result = _chord_options_upper_extensions(semitones, _rec)
 
     # Try moving everything into the same octave
     semitones_single_octave = {semitone % 12 for semitone in semitones}
