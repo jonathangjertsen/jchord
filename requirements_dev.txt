@@ -3,4 +3,4 @@
 codecov==2.0.16
 pytest==6.0.2
 pytest-cov==2.8.1
-PyYAML==5.3
+PyYAML==5.3.1
