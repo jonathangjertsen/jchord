@@ -1,6 +1,6 @@
 -e .
 -r requirements_full.txt
-codecov==2.0.16
+codecov==2.1.11
 pytest==6.0.2
 pytest-cov==2.8.1
 PyYAML==5.3
