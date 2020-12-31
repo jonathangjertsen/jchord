@@ -56,11 +56,13 @@ def _chord_options_two_semitones(semitones, _rec):
         if "/" not in option
     ]
 
+
 def _with_extension(base, extension):
     if "sus" in base:
         return "{}{}".format(extension, base)
     else:
         return "{}{}".format(base, extension)
+
 
 def _chord_options_triad_with_extension(upper_note, lower_triad, _rec):
     if upper_note == 11:
@@ -106,8 +108,10 @@ def _chord_options_three_semitones(semitones, _rec):
         lower_note=semitones[0], upper_triad=semitones[1:], _rec=_rec
     )
 
+
 def _chord_options_upper_extensions(semitones, _rec):
     return []
+
 
 def semitones_to_chord_name_options(semitones: Set[int], _rec=5) -> List[str]:
     """Returns a set of chord names corresponding to the given set of semitones.
@@ -126,7 +130,7 @@ def semitones_to_chord_name_options(semitones: Set[int], _rec=5) -> List[str]:
     semitones_no_octaves = set()
     for semitone in semitones:
         is_octave = False
-        for seen_semitone in semitones_no_octaves | { 0 }:
+        for seen_semitone in semitones_no_octaves | {0}:
             if (seen_semitone - semitone) % 12 == 0:
                 is_octave = True
                 break

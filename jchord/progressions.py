@@ -43,6 +43,7 @@ class ChordProgression(CompositeObject):
 
     class _DummyChord(object):
         """Mocks a ChordWithProgression object"""
+
         def midi(self):
             return []
 
@@ -192,30 +193,29 @@ class ChordProgression(CompositeObject):
         # Ensure beats_per_chord is a list
         if isinstance(beats_per_chord, int):
             beats_per_chord = [beats_per_chord for _ in range(len(self.progression))]
-        assert len(beats_per_chord) == len(self.progression), "len(beats_per_chord) is {}, which is not equal to the number of chords in the progression ({})".format(len(beats_per_chord), len(self.progression))
+        assert len(beats_per_chord) == len(
+            self.progression
+        ), "len(beats_per_chord) is {}, which is not equal to the number of chords in the progression ({})".format(
+            len(beats_per_chord), len(self.progression)
+        )
 
-        seconds_per_chord = [
-            (60 / tempo) * bpc
-            for bpc in beats_per_chord
-        ]
+        seconds_per_chord = [(60 / tempo) * bpc for bpc in beats_per_chord]
         ticks_per_chord = [
-            int(mido.second2tick(
-                spc, mid.ticks_per_beat, mido.bpm2tempo(tempo)
-            ))
+            int(mido.second2tick(spc, mid.ticks_per_beat, mido.bpm2tempo(tempo)))
             for spc in seconds_per_chord
         ]
 
         track.append(mido.Message("program_change", program=instrument))
-        for i, notes, tpc in zip(range(len(self.progression)), self.midi(), ticks_per_chord):
+        for i, notes, tpc in zip(
+            range(len(self.progression)), self.midi(), ticks_per_chord
+        ):
             for note in notes:
                 track.append(
                     mido.Message("note_on", note=note, velocity=velocity, time=0)
                 )
 
             # Hack due to mido requiring "delta times"
-            track.append(
-                mido.Message("note_off", note=0, velocity=0, time=tpc)
-            )
+            track.append(mido.Message("note_off", note=0, velocity=0, time=tpc))
 
             for i, note in enumerate(notes):
                 track.append(
