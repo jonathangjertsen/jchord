@@ -126,7 +126,7 @@ To decide which parts should be present in the documentation, go and edit `doc_g
         * Method `ChordProgression.to_string(self, chords_per_row: int = 4, column_spacing: int = 2, newline: str = '\n') -> str`
         * Method `ChordProgression.to_txt(self, filename: str, chords_per_row: int = 4, column_spacing: int = 2, newline: str = '\n')`
         * Method `ChordProgression.to_xlsx(self, filename: str, chords_per_row: int = 4)`
-        * Method `ChordProgression.to_midi(self, filename: str, instrument: int = 1, tempo: int = 120, beats_per_chord: int = 2, velocity: int = 100)`
+        * Method `ChordProgression.to_midi(self, filename: str, instrument: int = 1, tempo: int = 120, beats_per_chord: Union[int, list] = 2, velocity: int = 100)`
     * Class <a href='#SongSection'>`SongSection`</a>
         * Method `SongSection.name(self)`
         * Method `SongSection.progression(self)`
@@ -611,7 +611,7 @@ Saves the string representation of the chord progression to a text file.
 Saves the chord progression to an Excel file.
 
 
-###### `to_midi(self, filename: str, instrument: int = 1, tempo: int = 120, beats_per_chord: int = 2, velocity: int = 100)`
+###### `to_midi(self, filename: str, instrument: int = 1, tempo: int = 120, beats_per_chord: Union[int, list] = 2, velocity: int = 100)`
 
 Saves the chord progression to a MIDI file.
 

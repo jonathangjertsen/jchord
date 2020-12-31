@@ -3,7 +3,7 @@ Tools for working with chord progressions.
 """
 from collections import defaultdict, namedtuple
 from math import ceil
-from typing import Hashable, List, Set
+from typing import Hashable, List, Set, Union
 
 from jchord.knowledge import REPETITION_SYMBOL
 from jchord.core import CompositeObject, Note
@@ -40,6 +40,13 @@ def _string_to_progression(string: str) -> List[ChordWithRoot]:
 
 class ChordProgression(CompositeObject):
     """Represents a chord progression."""
+
+    class _DummyChord(object):
+        """Mocks a ChordWithProgression object"""
+        def midi(self):
+            return []
+
+    DUMMY_CHORD = _DummyChord()
 
     def __init__(self, progression: List[ChordWithRoot]):
         self.progression = progression
@@ -172,7 +179,7 @@ class ChordProgression(CompositeObject):
         filename: str,
         instrument: int = 1,
         tempo: int = 120,
-        beats_per_chord: int = 2,
+        beats_per_chord: Union[int, list] = 2,
         velocity: int = 100,
     ):
         """Saves the chord progression to a MIDI file."""
@@ -182,15 +189,24 @@ class ChordProgression(CompositeObject):
         track = mido.MidiTrack()
         mid.tracks.append(track)
 
-        seconds_per_chord = (60 / tempo) * beats_per_chord
-        ticks_per_chord = int(
-            mido.second2tick(
-                seconds_per_chord, mid.ticks_per_beat, mido.bpm2tempo(tempo)
-            )
-        )
+        # Ensure beats_per_chord is a list
+        if isinstance(beats_per_chord, int):
+            beats_per_chord = [beats_per_chord for _ in range(len(self.progression))]
+        assert len(beats_per_chord) == len(self.progression), "len(beats_per_chord) is {}, which is not equal to the number of chords in the progression ({})".format(len(beats_per_chord), len(self.progression))
+
+        seconds_per_chord = [
+            (60 / tempo) * bpc
+            for bpc in beats_per_chord
+        ]
+        ticks_per_chord = [
+            int(mido.second2tick(
+                spc, mid.ticks_per_beat, mido.bpm2tempo(tempo)
+            ))
+            for spc in seconds_per_chord
+        ]
 
         track.append(mido.Message("program_change", program=instrument))
-        for i, notes in enumerate(self.midi()):
+        for i, notes, tpc in zip(range(len(self.progression)), self.midi(), ticks_per_chord):
             for note in notes:
                 track.append(
                     mido.Message("note_on", note=note, velocity=velocity, time=0)
@@ -198,10 +214,10 @@ class ChordProgression(CompositeObject):
 
             # Hack due to mido requiring "delta times"
             track.append(
-                mido.Message("note_off", note=0, velocity=0, time=ticks_per_chord)
+                mido.Message("note_off", note=0, velocity=0, time=tpc)
             )
 
-            for note in notes:
+            for i, note in enumerate(notes):
                 track.append(
                     mido.Message("note_off", note=note, velocity=velocity, time=0)
                 )
