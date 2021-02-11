@@ -82,13 +82,16 @@ def deploy():
             stderr=subprocess.PIPE,
         )
     except ShellExecFailed:
-        if input("Tag already exists. Delete it (YES/n)?") == "YES":
+        backup_option = input("Tag already exists. What to do (DELETE/IGNORE/ABORT)?")
+        if backup_option == "DELETE":
             shell_exec(
                 ["git", "tag", "-d", "v" + version], pass_msg="Deleted tag v" + version
             )
             shell_exec(
                 ["git", "tag", "v" + version], pass_msg="Created tag v" + version
             )
+        elif backup_option == "IGNORE":
+            pass
         else:
             raise
 
@@ -110,7 +113,7 @@ def deploy():
 # Release v{version}
 
 * Changelog:
-    * 
+    *
 * On PyPI: https://pypi.org/project/jchord/{version}/
 """.format(
             version=version
