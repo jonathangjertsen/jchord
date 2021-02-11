@@ -1,6 +1,7 @@
 import os
 
-from jchord.chords import ChordWithRoot, InvalidChord
+from jchord.core import Note
+from jchord.chords import Chord, ChordWithRoot, InvalidChord
 from jchord.progressions import ChordProgression
 
 
@@ -43,3 +44,48 @@ def test_github_issue_56():
 
     assert generated_bytes == reference_bytes
     os.remove(midi_filename_generated)
+
+
+def test_github_issue_61():
+    """https://github.com/jonathangjertsen/jchord/issues/61"""
+    prog = ChordProgression.from_string("4F -- 3Am -- 4Dm7 -- 4F --")
+    assert prog == ChordProgression(
+        [
+            ChordWithRoot(
+                name="F",
+                root=Note("F", 4),
+                chord=Chord(name="major", semitones=[0, 4, 7]),
+            ),
+            ChordWithRoot(
+                name="F",
+                root=Note("F", 4),
+                chord=Chord(name="major", semitones=[0, 4, 7]),
+            ),
+            ChordWithRoot(
+                name="Am", root=Note("A", 3), chord=Chord(name="m", semitones=[0, 3, 7])
+            ),
+            ChordWithRoot(
+                name="Am", root=Note("A", 3), chord=Chord(name="m", semitones=[0, 3, 7])
+            ),
+            ChordWithRoot(
+                name="Dm7",
+                root=Note("D", 4),
+                chord=Chord(name="m7", semitones=[0, 3, 7, 10]),
+            ),
+            ChordWithRoot(
+                name="Dm7",
+                root=Note("D", 4),
+                chord=Chord(name="m7", semitones=[0, 3, 7, 10]),
+            ),
+            ChordWithRoot(
+                name="F",
+                root=Note("F", 4),
+                chord=Chord(name="major", semitones=[0, 4, 7]),
+            ),
+            ChordWithRoot(
+                name="F",
+                root=Note("F", 4),
+                chord=Chord(name="major", semitones=[0, 4, 7]),
+            ),
+        ]
+    )
