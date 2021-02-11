@@ -174,6 +174,48 @@ def test_chord_from_name_semitones(name_in, semi_out):
 def test_chord_from_name_modifications(name_in, modifications):
     assert Chord.from_name(name_in).modifications == modifications
 
+# These could be improved
+@pytest.mark.parametrize(
+    "name_in, name_out",
+    [
+        ("", ""),
+        ("major", ""),
+        ("minor", "min"),
+        ("min", "min"),
+        ("m", "min"),
+        ("sus2", "sus2"),
+        ("sus4", "sus4"),
+        ("7sus4", "7sus4"),
+        ("m7sus4b9no5", Chord.UNNAMED),
+        ("augsus2", Chord.UNNAMED),
+        ("major7", "maj7"),
+        ("m7b5", "min7b5"),
+        ("min7b5", "min7b5"),
+        ("ø", "min7b5"),
+        ("o", "dim7"),
+        ("13", Chord.UNNAMED),
+        ("13no5no7b11#9", Chord.UNNAMED),
+        ("13b11#9no5no7", "maj7sus4(no5)/b6"),
+        ("7#9", Chord.UNNAMED),
+        ("7b9", Chord.UNNAMED),
+        ("7b11", Chord.UNNAMED),
+        ("7#11", Chord.UNNAMED),
+        ("7b13", Chord.UNNAMED),
+        ("7#13", Chord.UNNAMED),
+        ("addb9", "dim/7"),
+        ("add9", "min7(no5)/b6"),
+        ("add#9", "minmaj7(no5)/b6"),
+        ("addb11", ""),
+        ("add11", Chord.UNNAMED),
+        ("add#11", Chord.UNNAMED),
+        ("addb13", Chord.UNNAMED),
+        ("add13", Chord.UNNAMED),
+        ("add#13", "7"),
+    ],
+)
+def test_chord_name_roundtrip(name_in, name_out):
+    assert Chord.from_semitones(None, Chord.from_name(name_in).semitones).name == name_out
+
 
 @pytest.mark.parametrize(
     "name_in, int_out",
