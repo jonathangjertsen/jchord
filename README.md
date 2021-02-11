@@ -204,7 +204,7 @@ Base class for objects which can be represented by a few attributes.
 Subclasses must implement a `_keys()` function which returns a hashable
 representation of these attributes (e.g. returns them as a tuple).
 
-A CompositeObject is considered equal to another if the return value of their 
+A CompositeObject is considered equal to another if the return value of their
 `_keys()` function is equal.
 
 Iterating over a CompositeObject is like iterating over the return value of its
@@ -225,7 +225,7 @@ Returns a hashable representation of the attributes that the object wraps.
 
 #### `split_to_base_and_shift(name_or_degree: str, name_before_accidental: bool) -> (<class 'str'>, <class 'int'>)`
 
-Takes a string representation of a note name or a degree. Returns a 
+Takes a string representation of a note name or a degree. Returns a
 tuple where the first element is the string representation of the degree
 with accidentals removed, and the second element is the number of semitones
 needed to account fo accidentals.

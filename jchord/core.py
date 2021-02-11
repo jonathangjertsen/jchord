@@ -19,7 +19,7 @@ class CompositeObject(object):
     Subclasses must implement a `_keys()` function which returns a hashable
     representation of these attributes (e.g. returns them as a tuple).
 
-    A CompositeObject is considered equal to another if the return value of their 
+    A CompositeObject is considered equal to another if the return value of their
     `_keys()` function is equal.
 
     Iterating over a CompositeObject is like iterating over the return value of its
@@ -115,22 +115,22 @@ class Note(CompositeObject):
         return midi.midi_to_pitch(midi.note_to_midi(self))
 
     def _shift_up(self: "Note") -> "Note":
-        name, octave = self
         for i, other in enumerate(CHROMATIC):
-            if name == other:
+            if self == Note(other, octave=self.octave):
                 if i == len(CHROMATIC) - 1:
-                    return Note(name=CHROMATIC[0], octave=octave + 1)
+                    return Note(name=CHROMATIC[0], octave=self.octave + 1)
                 else:
-                    return Note(name=CHROMATIC[i + 1], octave=octave)
+                    return Note(name=CHROMATIC[i + 1], octave=self.octave)
+        raise RuntimeError("Can't shift up {}".format(self))
 
     def _shift_down(self: "Note") -> "Note":
-        name, octave = self
         for i, other in enumerate(CHROMATIC):
-            if name == other:
+            if self == Note(other, octave=self.octave):
                 if i == 0:
-                    return Note(name=CHROMATIC[-1], octave=octave - 1)
+                    return Note(name=CHROMATIC[-1], octave=self.octave - 1)
                 else:
-                    return Note(name=CHROMATIC[i - 1], octave=octave)
+                    return Note(name=CHROMATIC[i - 1], octave=self.octave)
+        raise RuntimeError("Can't shift down {}".format(self))
 
     def transpose(self: "Note", shift: int) -> "Note":
         """Transposes the note by the given number of semitones.
@@ -163,7 +163,7 @@ class Note(CompositeObject):
 def split_to_base_and_shift(
     name_or_degree: str, name_before_accidental: bool
 ) -> (str, int):
-    """Takes a string representation of a note name or a degree. Returns a 
+    """Takes a string representation of a note name or a degree. Returns a
     tuple where the first element is the string representation of the degree
     with accidentals removed, and the second element is the number of semitones
     needed to account fo accidentals.
