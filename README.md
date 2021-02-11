@@ -465,7 +465,9 @@ The name of the chord does not get re-calculated, so use with care.
 
 #### `ChordWithRoot`
 
+
 Represents a chord with a chord quality and a root note.
+
 
 ##### Methods
 

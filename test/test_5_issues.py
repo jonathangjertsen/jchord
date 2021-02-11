@@ -46,8 +46,8 @@ def test_github_issue_56():
     os.remove(midi_filename_generated)
 
 
-def test_github_issue_61():
-    """https://github.com/jonathangjertsen/jchord/issues/61"""
+def test_github_issue_61_progression():
+    """https://github.com/jonathangjertsen/jchord/issues/61#issuecomment-777575298"""
     prog = ChordProgression.from_string("4F -- 3Am -- 4Dm7 -- 4F --")
     assert prog == ChordProgression(
         [
@@ -89,3 +89,14 @@ def test_github_issue_61():
             ),
         ]
     )
+
+
+def test_github_issue_61_slash_chord_with_octave():
+    """https://github.com/jonathangjertsen/jchord/issues/61#issuecomment-777625321"""
+    chord = ChordWithRoot.from_name("5C/E")
+    assert chord == ChordWithRoot(
+        name="C/E",
+        root=Note("C", 5),
+        chord=Chord(name="major", semitones=[-8, 0, 4, 7]),
+    )
+    assert chord.bass == Note("E", 4)

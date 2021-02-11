@@ -320,7 +320,9 @@ class Chord(CompositeObject):
 
 
 class ChordWithRoot(CompositeObject):
-    """Represents a chord with a chord quality and a root note."""
+    """
+    Represents a chord with a chord quality and a root note.
+    """
 
     def __init__(self, name: str, root: Note, chord: Chord):
         self.name = name
@@ -339,6 +341,15 @@ class ChordWithRoot(CompositeObject):
 
     def _keys(self) -> Hashable:
         return (self.chord, self.root)
+
+    @property
+    def bass(self) -> Note:
+        """
+        Returns the lowest note in the chord.
+
+        Unless the chord is a slash chord, this is the same as self.root.
+        """
+        return self.root.transpose(min(self.chord.semitones))
 
     @classmethod
     def from_root_and_semitones(
