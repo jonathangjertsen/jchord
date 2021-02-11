@@ -142,10 +142,9 @@ def _separate_octave(name: str) -> Tuple[Optional[int], str]:
             break
 
     if found_octave_str is not None:
-        name = name[len(found_octave_str):]
+        name = name[len(found_octave_str) :]
 
     return found_octave, name
-
 
 
 def semitones_to_chord_name_options(semitones: Set[int], _rec=5) -> List[str]:

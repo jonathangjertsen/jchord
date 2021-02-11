@@ -182,7 +182,9 @@ def test_progression_from_midi():
 
 def test_song_to_string():
     intro = SongSection("Intro", ChordProgression.from_string("""C Fm G7"""))
-    main = SongSection("Main", ChordProgression.from_string("""C Fm C G7 +11C -3E7 0Am G"""))
+    main = SongSection(
+        "Main", ChordProgression.from_string("""C Fm C G7 +11C -3E7 0Am G""")
+    )
     song = Song([intro, main, main])
     assert (
         song.to_string()
