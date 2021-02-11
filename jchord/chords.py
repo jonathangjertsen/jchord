@@ -318,7 +318,7 @@ _MODIFICATIONS = [
     _ChordModification(token="b13", apply=_semitone_replacer(21, 10, 14, 17, 20)),
     _ChordModification(token="#13", apply=_semitone_replacer(21, 10, 14, 17, 22)),
     *[
-        _ChordModification(token=f"inv{x}", apply=_semitone_rotator(x))
+        _ChordModification(token="inv{}".format(x), apply=_semitone_rotator(x))
         for x in range(1, 10)
     ],
 ]
