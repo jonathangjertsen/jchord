@@ -88,7 +88,19 @@ def test_chord_from_degrees(deg_in, semi_out):
     [
         ("", [0, 4, 7]),
         ("major", [0, 4, 7]),
+        ("inv1", [4, 7, 12]),
+        ("inv2", [7, 12, 16]),
+        ("inv3", [12, 16, 19]),
+        ("inv4", [16, 19, 24]),
+        ("inv5", [19, 24, 28]),
+        ("inv6", [24, 28, 31]),
+        ("inv7", [28, 31, 36]),
         ("minor", [0, 3, 7]),
+        ("sus2", [0, 2, 7]),
+        ("sus4", [0, 5, 7]),
+        ("7sus4", [0, 5, 7, 10]),
+        ("m7sus4b9no5", [0, 3, 5, 10, 13]),
+        ("augsus2", [0, 2, 8]),
         ("major7", [0, 4, 7, 11]),
         ("m7b5", [0, 3, 6, 10]),
         ("min7b5", [0, 3, 6, 10]),
@@ -96,10 +108,71 @@ def test_chord_from_degrees(deg_in, semi_out):
         ("o", [0, 3, 6, 9]),
         ("min", [0, 3, 7]),
         ("m", [0, 3, 7]),
+        ("13", [0, 4, 7, 10, 14, 17, 21]),
+        ("13no5no7b11#9", [0, 4, 10, 15, 16, 21]),
+        ("13b11#9no5no7", [0, 4, 15, 16, 21]),
+        ("13b11#9no5no7inv2", [12, 15, 16, 21]),
+        ("7#9", [0, 4, 7, 10, 15]),
+        ("7b9", [0, 4, 7, 10, 13]),
+        ("7b11", [0, 4, 7, 10, 14, 16]),
+        ("7#11", [0, 4, 7, 10, 14, 18]),
+        ("7b13", [0, 4, 7, 10, 14, 17, 20]),
+        ("7#13", [0, 4, 7, 10, 14, 17, 22]),
+        ("addb9", [0, 4, 7, 13]),
+        ("add9", [0, 4, 7, 14]),
+        ("add#9", [0, 4, 7, 15]),
+        ("addb11", [0, 4, 7, 16]),
+        ("add11", [0, 4, 7, 17]),
+        ("add#11", [0, 4, 7, 18]),
+        ("addb13", [0, 4, 7, 20]),
+        ("add13", [0, 4, 7, 21]),
+        ("add#13", [0, 4, 7, 22]),
     ],
 )
-def test_chord_from_degrees(name_in, semi_out):
+def test_chord_from_name_semitones(name_in, semi_out):
     assert Chord.from_name(name_in).semitones == semi_out
+
+
+@pytest.mark.parametrize(
+    "name_in, modifications",
+    [
+        ("", []),
+        ("major", []),
+        ("minor", []),
+        ("sus2", ["sus2"]),
+        ("sus4", ["sus4"]),
+        ("7sus4", ["sus4"]),
+        ("m7sus4b9no5", ["sus4", "b9", "no5"]),
+        ("augsus2", ["sus2"]),
+        ("major7", []),
+        ("m7b5", ["b5"]),
+        ("min7b5", ["b5"]),
+        ("ø", []),
+        ("o", []),
+        ("min", []),
+        ("m", []),
+        ("13", []),
+        ("13no5no7b11#9", ["no5", "no7", "b11", "#9"]),
+        ("13b11#9no5no7", ["b11", "#9", "no5", "no7"]),
+        ("7#9", ["#9"]),
+        ("7b9", ["b9"]),
+        ("7b11", ["b11"]),
+        ("7#11", ["#11"]),
+        ("7b13", ["b13"]),
+        ("7#13", ["#13"]),
+        ("addb9", ["addb9"]),
+        ("add9", ["add9"]),
+        ("add#9", ["add#9"]),
+        ("addb11", ["addb11"]),
+        ("add11", ["add11"]),
+        ("add#11", ["add#11"]),
+        ("addb13", ["addb13"]),
+        ("add13", ["add13"]),
+        ("add#13", ["add#13"]),
+    ],
+)
+def test_chord_from_name_modifications(name_in, modifications):
+    assert Chord.from_name(name_in).modifications == modifications
 
 
 @pytest.mark.parametrize(
@@ -118,7 +191,7 @@ def test_chord_from_degrees(name_in, semi_out):
         ("m", [3, 4]),
     ],
 )
-def test_chord_intervals(name_in, int_out):
+def test_chord_from_name_intervals(name_in, int_out):
     assert Chord.from_name(name_in).intervals() == int_out
 
 
@@ -192,7 +265,7 @@ def test_chord_with_root(name_in, root_out, semi_out):
         ("Dbm", [3, 4]),
     ],
 )
-def test_chord_intervals(name_in, int_out):
+def test_chord_with_root_intervals(name_in, int_out):
     assert ChordWithRoot.from_name(name_in).intervals() == int_out
 
 

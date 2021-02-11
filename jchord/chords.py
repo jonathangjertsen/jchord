@@ -1,6 +1,7 @@
 """
 Tools for working with chords.
 """
+from collections import deque
 from typing import Hashable, List, Optional, Set, Tuple
 
 from jchord.knowledge import (
@@ -232,6 +233,105 @@ def select_name(options):
     return options[0]
 
 
+### Chord modifications - undocumented section
+
+
+class _ChordModification(object):
+    def __init__(self, token, apply):
+        self.token = token
+        self.apply = apply
+
+    def matches(self, name):
+        return name.endswith(self.token)
+
+    def strip_modifier(self, name):
+        return name[: -len(self.token)]
+
+    def resolve(self, cls, name):
+        base_chord = cls.from_name(self.strip_modifier(name))
+        self.apply(base_chord)
+        base_chord.name += self.token
+        base_chord.modifications.append(self.token)
+        return base_chord
+
+
+def _semitone_subtractor(*semitones):
+    def _remover(chord):
+        for semitone in semitones:
+            for octave in range(9):
+                chord.remove_semitone(semitone + octave * 12)
+
+    return _remover
+
+
+def _semitone_adder(*semitones):
+    def _adder(chord):
+        for semitone in semitones:
+            chord.add_semitone(semitone)
+
+    return _adder
+
+
+def _semitone_replacer(remove, *adds):
+    def _replacer(chord):
+        for octave in range(9):
+            chord.remove_semitone(remove + octave * 12)
+        for add in adds:
+            chord.add_semitone(add)
+
+    return _replacer
+
+
+def _semitone_rotator(x):
+    return lambda chord: chord.rotate_semitones(x)
+
+
+_MODIFICATIONS = [
+    _ChordModification(token="no2", apply=_semitone_subtractor(1, 2)),
+    _ChordModification(token="no3", apply=_semitone_subtractor(3, 4)),
+    _ChordModification(token="no4", apply=_semitone_subtractor(5)),
+    _ChordModification(token="no#4", apply=_semitone_subtractor(6)),
+    _ChordModification(token="nob5", apply=_semitone_subtractor(6)),
+    _ChordModification(token="no5", apply=_semitone_subtractor(7)),
+    _ChordModification(token="no6", apply=_semitone_subtractor(8, 9)),
+    _ChordModification(token="no7", apply=_semitone_subtractor(10, 11)),
+    _ChordModification(token="no8", apply=_semitone_subtractor(12)),
+    _ChordModification(token="no9", apply=_semitone_subtractor(14)),
+    _ChordModification(token="addb9", apply=_semitone_adder(13)),
+    _ChordModification(token="add9", apply=_semitone_adder(14)),
+    _ChordModification(token="add#9", apply=_semitone_adder(15)),
+    _ChordModification(token="addb11", apply=_semitone_adder(16)),
+    _ChordModification(token="add11", apply=_semitone_adder(17)),
+    _ChordModification(token="add#11", apply=_semitone_adder(18)),
+    _ChordModification(token="addb13", apply=_semitone_adder(20)),
+    _ChordModification(token="add13", apply=_semitone_adder(21)),
+    _ChordModification(token="add#13", apply=_semitone_adder(22)),
+    _ChordModification(token="sus2", apply=_semitone_replacer(4, 2)),
+    _ChordModification(token="sus4", apply=_semitone_replacer(4, 5)),
+    _ChordModification(token="#4", apply=_semitone_replacer(5, 6)),
+    _ChordModification(token="b5", apply=_semitone_replacer(7, 6)),
+    _ChordModification(token="#5", apply=_semitone_replacer(7, 8)),
+    _ChordModification(token="b9", apply=_semitone_replacer(14, 10, 13)),
+    _ChordModification(token="#9", apply=_semitone_replacer(14, 10, 15)),
+    _ChordModification(token="b11", apply=_semitone_replacer(17, 10, 14, 16)),
+    _ChordModification(token="#11", apply=_semitone_replacer(17, 10, 14, 18)),
+    _ChordModification(token="b13", apply=_semitone_replacer(21, 10, 14, 17, 20)),
+    _ChordModification(token="#13", apply=_semitone_replacer(21, 10, 14, 17, 22)),
+    *[
+        _ChordModification(token=f"inv{x}", apply=_semitone_rotator(x))
+        for x in range(1, 10)
+    ],
+]
+
+# Ensure we see the more specific ones first
+_tokens = set()
+for _modification in reversed(_MODIFICATIONS):
+    assert not any(token.endswith(_modification.token) for token in _tokens)
+    _tokens.add(_modification.token)
+
+### Chord modifications - end of undocumented section
+
+
 class Chord(CompositeObject):
     """Represents a chord quality (no root)."""
 
@@ -240,6 +340,7 @@ class Chord(CompositeObject):
     def __init__(self, name: str, semitones: List[int]):
         self.name = name
         self.semitones = sorted(list(set(semitones) | {0}))
+        self.modifications = []
 
     def __repr__(self) -> str:
         return "Chord(name='{}', semitones={})".format(self.name, self.semitones)
@@ -280,6 +381,11 @@ class Chord(CompositeObject):
         if name == "":
             return cls.from_name("major")
 
+        # Recursively resolve modifications
+        for modification in _MODIFICATIONS:
+            if modification.matches(name):
+                return modification.resolve(cls, name)
+
         # Look it up in the canonical names
         if name in CHORD_NAMES:
             return cls.from_degrees(name, CHORD_NAMES[name])
@@ -317,6 +423,24 @@ class Chord(CompositeObject):
         The name of the chord does not get re-calculated, so use with care.
         """
         self.semitones = sorted(list(set(self.semitones) | {semitone}))
+
+    def remove_semitone(self, semitone: int):
+        """
+        Removes the given semitone (as a difference from the root degree) to the chord.
+
+        The name of the chord does not get re-calculated, so use with care.
+        """
+        self.semitones = sorted(list(set(self.semitones) - {semitone}))
+
+    def rotate_semitones(self, n: int):
+        """
+        Rotates the semitones
+
+        The name of the chord does not get re-calculated, so use with care.
+        """
+        for i in range(n):
+            self.semitones[i % len(self.semitones)] += 12
+        self.semitones = sorted(list(set(self.semitones)))
 
 
 class ChordWithRoot(CompositeObject):
