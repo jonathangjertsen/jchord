@@ -54,6 +54,15 @@ def test_repetition():
     ]
 
 
+def test_explicit_octave():
+    assert ChordProgression.from_string("4C -- +3Fm -2G7").progression == [
+        ChordWithRoot.from_name("+4C"),
+        ChordWithRoot.from_name("4C"),
+        ChordWithRoot.from_name("3Fm"),
+        ChordWithRoot.from_name("-2G7"),
+    ]
+
+
 def test_repeat_nothing():
     with pytest.raises(InvalidProgression):
         assert ChordProgression.from_string("-- C Fm")
@@ -173,7 +182,7 @@ def test_progression_from_midi():
 
 def test_song_to_string():
     intro = SongSection("Intro", ChordProgression.from_string("""C Fm G7"""))
-    main = SongSection("Main", ChordProgression.from_string("""C Fm C G7 C E7 Am G"""))
+    main = SongSection("Main", ChordProgression.from_string("""C Fm C G7 +11C -3E7 0Am G"""))
     song = Song([intro, main, main])
     assert (
         song.to_string()

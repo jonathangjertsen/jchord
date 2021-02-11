@@ -107,7 +107,7 @@ To decide which parts should be present in the documentation, go and edit `doc_g
         * Method `ChordWithRoot.__init__(self, name: str, root: jchord.core.Note, chord: jchord.chords.Chord)`
         * Method `ChordWithRoot.from_root_and_semitones(root: jchord.core.Note, semitones: List[int]) -> 'ChordWithRoot'`
         * Method `ChordWithRoot.from_midi(midi: Set[int]) -> 'ChordWithRoot'`
-        * Method `ChordWithRoot.from_name(name: str, octave: int = 4) -> 'ChordWithRoot'`
+        * Method `ChordWithRoot.from_name(name: str) -> 'ChordWithRoot'`
         * Method `ChordWithRoot.semitones(self)`
         * Method `ChordWithRoot.intervals(self) -> List[int]`
         * Method `ChordWithRoot.midi(self) -> List[int]`
@@ -490,7 +490,7 @@ Creates a ChordWithRoot from a set of MIDI note values.
 
 
 
-###### `from_name(name: str, octave: int = 4) -> 'ChordWithRoot'`
+###### `from_name(name: str) -> 'ChordWithRoot'`
 
 Creates a ChordWithRoot from a name.
 

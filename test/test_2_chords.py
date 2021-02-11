@@ -146,7 +146,7 @@ def test_chord_repr(name_in, repr_out):
 )
 def test_chord_add_root(name_in, octave):
     name_then_root = Chord.from_name(name_in).with_root(Note("A#", octave))
-    name_and_root = ChordWithRoot.from_name("A#" + name_in, octave=octave)
+    name_and_root = ChordWithRoot.from_name("{}A#{}".format(octave, name_in))
     print(name_and_root._keys())
     assert name_then_root == name_and_root
 
@@ -202,9 +202,9 @@ def test_chord_with_root_invalid_name(name_in):
         assert ChordWithRoot.from_name(name_in)
 
 
-@pytest.mark.parametrize("name_in, octave, midi", [("A", 0, [21, 25, 28])])
-def test_chord_note_to_midi(name_in, octave, midi):
-    assert ChordWithRoot.from_name(name_in, octave).midi() == midi
+@pytest.mark.parametrize("name_in, midi", [("0A", [21, 25, 28])])
+def test_chord_note_to_midi(name_in, midi):
+    assert ChordWithRoot.from_name(name_in).midi() == midi
 
 
 @pytest.mark.parametrize("name_in, shift, name_out", [("A", 2, "B")])

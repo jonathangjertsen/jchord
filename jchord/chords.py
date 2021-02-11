@@ -1,7 +1,7 @@
 """
 Tools for working with chords.
 """
-from typing import Hashable, List, Optional, Set
+from typing import Hashable, List, Optional, Set, Tuple
 
 from jchord.knowledge import (
     LETTERS,
@@ -111,6 +111,41 @@ def _chord_options_three_semitones(semitones, _rec):
 
 def _chord_options_upper_extensions(semitones, _rec):
     return []
+
+
+def _separate_octave(name: str) -> Tuple[Optional[int], str]:
+    # Probably too generous to check from -15 to +15
+    max_octave_abs = 15
+
+    # Need to check absolute octave in reverse order so that "10" is detected before "1"
+    # and "-10" is detected before "-1"
+    found_octave = None
+    found_octave_str = None
+    for octave in range(max_octave_abs, -1, -1):
+        unsigned_octave = str(octave)
+        pos_octave = "+" + unsigned_octave
+        neg_octave = "-" + unsigned_octave
+
+        if name.startswith(unsigned_octave):
+            found_octave_str = unsigned_octave
+            found_octave = octave
+            break
+
+        if name.startswith(pos_octave):
+            found_octave_str = pos_octave
+            found_octave = octave
+            break
+
+        if name.startswith(neg_octave):
+            found_octave_str = neg_octave
+            found_octave = -octave
+            break
+
+    if found_octave_str is not None:
+        name = name[len(found_octave_str):]
+
+    return found_octave, name
+
 
 
 def semitones_to_chord_name_options(semitones: Set[int], _rec=5) -> List[str]:
@@ -337,11 +372,16 @@ class ChordWithRoot(CompositeObject):
         return cls.from_root_and_semitones(root, semitones)
 
     @classmethod
-    def from_name(cls, name: str, octave: int = 4) -> "ChordWithRoot":
+    def from_name(cls, name: str) -> "ChordWithRoot":
         """Creates a ChordWithRoot from a name.
 
         `semitones_to_chord_name_options` is used to guess a good name for the chord.
         """
+        # First determine the octave
+        octave, name = _separate_octave(name)
+        if octave is None:
+            octave = 4
+
         root = None
 
         for letter in LETTERS:
