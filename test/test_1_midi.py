@@ -1,7 +1,9 @@
-from jchord.core import Note
-from jchord.midi import note_to_midi, midi_to_pitch, midi_to_note, InvalidNote
+import os
 
 import pytest
+
+from jchord.core import Note
+from jchord.midi import note_to_midi, midi_to_pitch, midi_to_note, PlayedNote, InvalidNote, read_midi_file
 
 
 @pytest.mark.parametrize(
@@ -32,3 +34,16 @@ def test_note_to_midi_invalid_note():
 )
 def test_midi_to_pitch(midi, pitch):
     assert midi_to_pitch(midi) == pytest.approx(pitch)
+
+
+def test_read_midi_file():
+    midi_filename_reference = os.path.join(
+        os.path.dirname(__file__), "test_data", "issue_56.mid"
+    )
+    midi_filename_generated = os.path.join(
+        os.path.dirname(__file__), "test_data", "issue_56_generated.mid"
+    )
+
+    out = read_midi_file(midi_filename_reference)
+    for x in out:
+        print(x)

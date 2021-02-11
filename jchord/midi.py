@@ -1,7 +1,7 @@
 """
 Tools for working with MIDI.
 """
-from collections import defaultdict, namedtuple
+from collections import defaultdict, namedtuple, OrderedDict
 from typing import Dict, List
 
 from jchord.knowledge import CHROMATIC, MAJOR_FROM_C, MAJOR_SCALE_OFFSETS
@@ -36,11 +36,14 @@ def midi_to_pitch(midi: int) -> float:
     return 440 * (2 ** ((midi - 69) / 12))
 
 
-def _read_midi_file_to_events(filename: str) -> list:
+def _read_midi_file_to_events(filename: str) -> OrderedDict:
+    """
+    Sorted mapping from timestamp -> [List of PlayedNote's]
+    """
     from mido import MidiFile
 
     mid = MidiFile(filename)
-    events = defaultdict(list)
+    events = OrderedDict()
     time = 0
 
     for msg in mid:
@@ -49,22 +52,25 @@ def _read_midi_file_to_events(filename: str) -> list:
         if msg.type not in {"note_on", "note_off"}:
             continue
         time += msg.time
-        events[time].append(msg)
+        if time in events:
+            events[time].append(msg)
+        else:
+            events[time] = []
 
     return events
 
 
-def _events_to_notes(events: list) -> List[PlayedNote]:
+def _events_to_notes(events: OrderedDict) -> List[PlayedNote]:
     notes = []
     times = list(events.keys())
 
+    # Iterate over all timestamps that have some events
     for i, time in enumerate(times):
         events_for_time = events[time]
         for event in events_for_time:
             if event.type != "note_on":
                 continue
-
-            for j in range(i, len(times)):
+            for j in range(i + 1, len(times)):
                 time_end = times[j]
                 events_for_end_time = events[time_end]
                 found = False
