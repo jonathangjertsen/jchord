@@ -4,7 +4,7 @@ from jchord.midi_effects import (
     Chain,
     Doubler,
     Arpeggiator,
-    AlternatingInverter,
+    VelocityControl,
     Spreader,
     Transposer,
 )
@@ -36,7 +36,6 @@ progression.to_midi(
                 sticky=True,
             ),
         ),
-        velocity=50,
     )
 )
 
