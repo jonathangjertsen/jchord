@@ -101,6 +101,11 @@ class Note(CompositeObject):
                 return other_name == sharp
         return False
 
+    def __sub__(self, other):
+        """Returns the number of semitones between the two notes"""
+        from jchord import midi
+        return midi.note_to_midi(self) - midi.note_to_midi(other)
+
     def pitch(self) -> float:
         """Returns the absolute pitch of the note in Hz.
 
