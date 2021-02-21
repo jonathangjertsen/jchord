@@ -149,14 +149,17 @@ class Arpeggiator(MidiEffect):
         total_duration = 0
         i = 0
         while total_duration < duration:
-            index = self.pattern[(i + self.offset) % len(self.pattern)]
-            note = chord[index % len(chord)]
-            out.append(PlayedNote(
-                time=note.time + int(ticks_per_note * i),
-                duration=ticks_per_note,
-                note=note.note,
-                velocity=self.settings.velocity
-            ))
+            indices = self.pattern[(i + self.offset) % len(self.pattern)]
+            if isinstance(indices, int):
+                indices = [indices]
+            for index in indices:
+                note = chord[index % len(chord)]
+                out.append(PlayedNote(
+                    time=note.time + int(ticks_per_note * i),
+                    duration=ticks_per_note,
+                    note=note.note,
+                    velocity=self.settings.velocity
+                ))
             i += 1
             total_duration += ticks_per_note
         self.offset += i * self.sticky
