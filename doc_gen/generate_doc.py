@@ -138,11 +138,11 @@ def assemble_class_docs(class_):
         "##" + assemble_function_docs(method) for method in class_["methods"]
     )
 
-    return """#### `{name}`
+    return """# `{name}`
 
 {doc}
 
-##### Methods
+## Methods
 
 {method_docs}
 
@@ -154,7 +154,7 @@ def assemble_class_docs(class_):
 
 
 def assemble_function_docs(function):
-    return """#### `{signature}`
+    return """# {signature}
 
 {doc}
 """.format(
@@ -163,7 +163,7 @@ def assemble_function_docs(function):
 
 
 def assemble_exception_docs(exception):
-    return """#### `{name}`
+    return """# {name}
 
 {doc}
 """.format(
@@ -181,33 +181,33 @@ def assemble_module_docs(module):
     exception_docs = "\n\n".join(
         assemble_exception_docs(exception) for exception in module["exceptions"]
     )
-    doc = """## `{name}`
+    doc = """# {name}
 
-{module_doc}
+#{module_doc}
 """.format(
         name=module["name"], module_doc=module["doc"]
     )
 
     if class_docs:
-        doc += """### Classes
+        doc += """# Classes
 
-{class_docs}
+#{class_docs}
 """.format(
             class_docs=class_docs
         )
 
     if function_docs:
-        doc += """### Functions
+        doc += """# Functions
 
-{function_docs}
+#{function_docs}
 """.format(
             function_docs=function_docs
         )
 
     if exception_docs:
-        doc += """### Exceptions
+        doc += """# Exceptions
 
-{exception_docs}
+#{exception_docs}
 """.format(
             exception_docs=exception_docs
         )

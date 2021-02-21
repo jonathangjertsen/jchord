@@ -2,7 +2,7 @@ import os
 
 from jchord.core import Note
 from jchord.chords import Chord, ChordWithRoot, InvalidChord
-from jchord.progressions import ChordProgression
+from jchord.progressions import ChordProgression, MidiConversionSettings
 
 
 def make_midi_file(chord_names, beats_per_chord, out_file):
@@ -15,7 +15,11 @@ def make_midi_file(chord_names, beats_per_chord, out_file):
         chords.append(chord)
 
     progression = ChordProgression(chords)
-    progression.to_midi(out_file, instrument=11, beats_per_chord=beats_per_chord)
+    progression.to_midi(
+        MidiConversionSettings(
+            filename=out_file, instrument=11, beats_per_chord=beats_per_chord
+        )
+    )
 
 
 def test_github_issue_56():

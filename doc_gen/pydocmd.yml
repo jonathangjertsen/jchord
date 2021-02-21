@@ -60,6 +60,8 @@ generate:
       - jchord.progressions.ChordProgression.to_txt
       - jchord.progressions.ChordProgression.to_xlsx
       - jchord.progressions.ChordProgression.to_midi
+    - jchord.progressoins.MidiConversionSettings:
+      - jchord.progressions.ChordProgression.set
     - jchord.progressions.SongSection:
         - jchord.progressions.SongSection.name
         - jchord.progressions.SongSection.progression
@@ -67,4 +69,18 @@ generate:
         - jchord.progressions.Song.__init__
         - jchord.progressions.Song.to_string
     - jchord.progressions.InvalidProgression
-
+  - jchord.midi_effects:
+    - jchord.midi_effects.MidiEffect:
+      - jchord.midi_effects.MidiEffect.__init__
+    - jchord.midi_effects.Chain:
+      - jchord.midi_effects.Chain.__init__
+    - jchord.midi_effects.Inverter:
+      - jchord.midi_effects.Inverter.__init__
+    - jchord.midi_effects.AlternatingInverter:
+      - jchord.midi_effects.AlternatingInverter.__init__
+    - jchord.midi_effects.Transposer:
+      - jchord.midi_effects.Transposer.__init__
+    - jchord.midi_effects.Doubler:
+      - jchord.midi_effects.Doubler.__init__
+    - jchord.midi_effects.Spreader:
+      - jchord.midi_effects.Spreader.__init__

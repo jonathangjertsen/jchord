@@ -5,7 +5,13 @@ import pytest
 from jchord.core import Note
 from jchord.midi import note_to_midi
 from jchord.chords import Chord, ChordWithRoot
-from jchord.progressions import ChordProgression, InvalidProgression, Song, SongSection
+from jchord.progressions import (
+    ChordProgression,
+    InvalidProgression,
+    Song,
+    SongSection,
+    MidiConversionSettings,
+)
 
 
 def test_empty_progression():
@@ -161,7 +167,7 @@ def test_progression_to_midi():
 
     try:
         ChordProgression.from_string("""C Fm C G7 C E7 Am G G G G G""").to_midi(
-            midi_filename
+            MidiConversionSettings(filename=midi_filename)
         )
     finally:
         os.remove(midi_filename)
@@ -174,7 +180,7 @@ def test_progression_from_midi():
 
     original = ChordProgression.from_string("""C Fm C G7 C E7 Am G G G G G""")
     try:
-        original.to_midi(midi_filename)
+        original.to_midi(MidiConversionSettings(filename=midi_filename))
         assert ChordProgression.from_midi_file(midi_filename) == original
     finally:
         os.remove(midi_filename)

@@ -8,7 +8,12 @@ from typing import Hashable, List, Set, Union
 from jchord.knowledge import REPETITION_SYMBOL
 from jchord.core import CompositeObject, Note
 from jchord.chords import ChordWithRoot
-from jchord.midi import group_notes_to_chords, read_midi_file, notes_to_messages, PlayedNote
+from jchord.midi import (
+    group_notes_to_chords,
+    read_midi_file,
+    notes_to_messages,
+    PlayedNote,
+)
 
 
 class InvalidProgression(Exception):
@@ -36,6 +41,31 @@ def _string_to_progression(string: str) -> List[ChordWithRoot]:
         else:
             progression.append(ChordWithRoot.from_name(name))
     return progression
+
+
+class MidiConversionSettings(object):
+    def __init__(
+        self,
+        filename: str,
+        instrument: int = 1,
+        tempo: int = 120,
+        beats_per_chord: Union[int, list] = 2,
+        velocity: int = 100,
+        repeat: str = "replay",
+        effect: "MidiEffect" = None,
+    ):
+        self.filename = filename
+        self.instrument = instrument
+        self.tempo = tempo
+        self.beats_per_chord = beats_per_chord
+        self.velocity = velocity
+        self.repeat = repeat
+        self.effect = effect
+        self.progression = None
+
+    def set(self, **kwargs):
+        for key, value in kwargs.items():
+            setattr(self, key, value)
 
 
 class ChordProgression(CompositeObject):
@@ -175,58 +205,88 @@ class ChordProgression(CompositeObject):
 
         workbook.save(filename)
 
-    def to_midi(
-        self,
-        filename: str,
-        instrument: int = 1,
-        tempo: int = 120,
-        beats_per_chord: Union[int, list] = 2,
-        velocity: int = 100,
-        repeat: str="replay",
-        effect: callable=None
-    ):
+    def to_midi(self, settings: MidiConversionSettings, **kwargs):
         """Saves the chord progression to a MIDI file."""
-        repeat_options = { "replay", "hold" }
-        assert repeat in repeat_options, "repeat argument must be one of: {}".format(repeat_options)
+        if not isinstance(settings, MidiConversionSettings) or kwargs:
+            raise ValueError(
+                "to_midi now takes a MidiConversionSettings object, not individual arguments; see README.md"
+            )
+
+        repeat_options = {"replay", "hold"}
+        assert (
+            settings.repeat in repeat_options
+        ), "repeat argument must be one of: {}".format(repeat_options)
 
         import mido
+
         mid = mido.MidiFile()
         track = mido.MidiTrack()
         mid.tracks.append(track)
 
         # Ensure beats_per_chord is a list
-        if isinstance(beats_per_chord, int):
-            beats_per_chord = [beats_per_chord for _ in range(len(self.progression))]
-        assert len(beats_per_chord) == len(
+        if isinstance(settings.beats_per_chord, int):
+            settings.beats_per_chord = [
+                settings.beats_per_chord for _ in range(len(self.progression))
+            ]
+        assert len(settings.beats_per_chord) == len(
             self.progression
-        ), "len(beats_per_chord) is {}, which is not equal to the number of chords in the progression ({})".format(
-            len(beats_per_chord), len(self.progression)
+        ), "len(settings.beats_per_chord) is {}, which is not equal to the number of chords in the progression ({})".format(
+            len(settings.beats_per_chord), len(self.progression)
         )
 
-        seconds_per_chord = [(60 / tempo) * bpc for bpc in beats_per_chord]
+        seconds_per_chord = [
+            (60 / settings.tempo) * bpc for bpc in settings.beats_per_chord
+        ]
         ticks_per_chord = [
-            int(mido.second2tick(spc, mid.ticks_per_beat, mido.bpm2tempo(tempo)))
+            int(
+                mido.second2tick(
+                    spc, mid.ticks_per_beat, mido.bpm2tempo(settings.tempo)
+                )
+            )
             for spc in seconds_per_chord
         ]
-        track.append(mido.MetaMessage("set_tempo", tempo=mido.bpm2tempo(tempo)))
-        track.append(mido.Message("program_change", program=instrument))
+        track.append(
+            mido.MetaMessage("set_tempo", tempo=mido.bpm2tempo(settings.tempo))
+        )
+        track.append(mido.Message("program_change", program=settings.instrument))
 
         played_chords = []
         prev_chord = None
         time = 0
+
         for chord, tpc in zip(self.midi(), ticks_per_chord):
-            if chord == prev_chord and repeat == "hold":
-                played_chords[-1] = [pnote._replace(duration=pnote.duration + tpc) for pnote in played_chords[-1]]
+            if chord == prev_chord and settings.repeat == "hold":
+                played_chords[-1] = [
+                    pnote._replace(duration=pnote.duration + tpc)
+                    for pnote in played_chords[-1]
+                ]
             else:
-                played_chords.append([PlayedNote(note=note, velocity=velocity, time=time, duration=tpc) for note in chord])
+                played_chords.append(
+                    [
+                        PlayedNote(
+                            note=note,
+                            velocity=settings.velocity,
+                            time=time,
+                            duration=tpc,
+                        )
+                        for note in chord
+                    ]
+                )
             prev_chord = chord
             time += tpc
-        if effect:
-            played_chords = [effect.apply(chord) for chord in played_chords]
+
+        settings.set(progression=self)
+        settings.set(played_chords=played_chords)
+        settings.set(midi_track=track)
+
+        if settings.effect:
+            settings.effect.set_settings(settings)
+            played_chords = [settings.effect.apply(chord) for chord in played_chords]
+
         played_notes = [note for chord in played_chords for note in chord]
-        for message in notes_to_messages(played_notes, velocity=velocity):
+        for message in notes_to_messages(played_notes, velocity=settings.velocity):
             track.append(message)
-        mid.save(filename)
+        mid.save(settings.filename)
 
 
 SongSection = namedtuple("SongSection", "name, progression")

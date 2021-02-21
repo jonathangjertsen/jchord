@@ -126,7 +126,9 @@ To decide which parts should be present in the documentation, go and edit `doc_g
         * Method `ChordProgression.to_string(self, chords_per_row: int = 4, column_spacing: int = 2, newline: str = '\n') -> str`
         * Method `ChordProgression.to_txt(self, filename: str, chords_per_row: int = 4, column_spacing: int = 2, newline: str = '\n')`
         * Method `ChordProgression.to_xlsx(self, filename: str, chords_per_row: int = 4)`
-        * Method `ChordProgression.to_midi(self, filename: str, instrument: int = 1, tempo: int = 120, beats_per_chord: Union[int, list] = 2, velocity: int = 100, repeat: str = 'replay', effect: <built-in function callable> = None)`
+        * Method `ChordProgression.to_midi(self, settings: jchord.progressions.MidiConversionSettings, **kwargs)`
+    * Class <a href='#MidiConversionSettings'>`MidiConversionSettings`</a>
+        * Method `MidiConversionSettings.set(self, **kwargs)`
     * Class <a href='#SongSection'>`SongSection`</a>
         * Method `SongSection.name(self)`
         * Method `SongSection.progression(self)`
@@ -134,15 +136,30 @@ To decide which parts should be present in the documentation, go and edit `doc_g
         * Method `Song.__init__(self, sections: List[jchord.progressions.SongSection])`
         * Method `Song.to_string(self, chords_per_row: int = 4, column_spacing: int = 2, newline: str = '\n')`
     * Exception `InvalidProgression`
+* <a href='#jchordmidi_effects'>`jchord.midi_effects`</a>
+    * Class <a href='#MidiEffect'>`MidiEffect`</a>
+        * Method `MidiEffect.__init__(self, *args, **kwargs)`
+    * Class <a href='#Chain'>`Chain`</a>
+        * Method `Chain.__init__(self, *effects)`
+    * Class <a href='#Inverter'>`Inverter`</a>
+        * Method `Inverter.__init__(self, *args, **kwargs)`
+    * Class <a href='#AlternatingInverter'>`AlternatingInverter`</a>
+        * Method `AlternatingInverter.__init__(self, init_state=1)`
+    * Class <a href='#Transposer'>`Transposer`</a>
+        * Method `Transposer.__init__(self, interval)`
+    * Class <a href='#Doubler'>`Doubler`</a>
+        * Method `Doubler.__init__(self, interval)`
+    * Class <a href='#Spreader'>`Spreader`</a>
+        * Method `Spreader.__init__(self, amount, jitter)`
 
-## `jchord.core`
+# jchord.core
 
-
+#
 Basic utilities for working with notes, base classes for objects etc.
 
-### Classes
+# Classes
 
-#### `Note`
+## `Note`
 
 Represents an absolute note with a name and an octave.
 
@@ -151,14 +168,14 @@ or if they have the same octave and their names are enharmonic
 (so `Note('A#', 4) == Note('Gb', 4)`)
 
 
-##### Methods
+## Methods
 
-###### `__init__(self, name: str, octave: int)`
-
-
+### __init__(self, name: str, octave: int)
 
 
-###### `pitch(self) -> float`
+
+
+### pitch(self) -> float
 
 Returns the absolute pitch of the note in Hz.
 
@@ -170,7 +187,7 @@ Examples (equalities are approximate):
 
 
 
-###### `transpose(self: 'Note', shift: int) -> 'Note'`
+### transpose(self: 'Note', shift: int) -> 'Note'
 
 Transposes the note by the given number of semitones.
 
@@ -181,7 +198,7 @@ Examples:
 
 
 
-###### `transpose_degree(self: 'Note', shift: str) -> 'Note'`
+### transpose_degree(self: 'Note', shift: str) -> 'Note'
 
 Transposes the given note by the given scale degree
 
@@ -196,7 +213,7 @@ Examples:
 
 
 
-#### `CompositeObject`
+# `CompositeObject`
 
 
 Base class for objects which can be represented by a few attributes.
@@ -211,9 +228,9 @@ Iterating over a CompositeObject is like iterating over the return value of its
 `_keys()` function.
 
 
-##### Methods
+## Methods
 
-###### `_keys(self) -> Hashable`
+### _keys(self) -> Hashable
 
 Returns a hashable representation of the attributes that the object wraps.
 
@@ -221,9 +238,9 @@ Returns a hashable representation of the attributes that the object wraps.
 ---
 
 
-### Functions
+# Functions
 
-#### `split_to_base_and_shift(name_or_degree: str, name_before_accidental: bool) -> (<class 'str'>, <class 'int'>)`
+## split_to_base_and_shift(name_or_degree: str, name_before_accidental: bool) -> (<class 'str'>, <class 'int'>)
 
 Takes a string representation of a note name or a degree. Returns a
 tuple where the first element is the string representation of the degree
@@ -241,7 +258,7 @@ Examples:
 
 
 
-#### `degree_to_semitone(degree: str) -> int`
+# degree_to_semitone(degree: str) -> int
 
 Converts a string representation of a scale degree to the number of semitones between the root and that scale degree.
 
@@ -252,7 +269,7 @@ Examples:
 
 
 
-#### `semitone_to_degree_options(semitone: int, max_accidentals: int = 1) -> List[str]`
+# semitone_to_degree_options(semitone: int, max_accidentals: int = 1) -> List[str]
 
 Converts the number of semitones between the root and the wanted scale degree to
 a list of possible names for that scale degree.
@@ -270,7 +287,7 @@ Examples:
 
 
 
-#### `note_diff(name_low: str, name_high: str) -> int`
+# note_diff(name_low: str, name_high: str) -> int
 
 Returns the number of semitones between the first note and the second note.
 The first note is assumed to be the lower of the two notes.
@@ -283,9 +300,9 @@ Examples:
 * `note_diff("A", "A") == 0`
 
 
-### Exceptions
+# Exceptions
 
-#### `InvalidDegree`
+## InvalidDegree
 
 Raised if the string one attempts to interpret is not a valid scale degree
 
@@ -295,30 +312,30 @@ Raised if the string one attempts to interpret is not a valid scale degree
 
 
 
-## `jchord.midi`
+# jchord.midi
 
-
+#
 Tools for working with MIDI.
 
-### Classes
+# Classes
 
-#### `PlayedNote`
+## `PlayedNote`
 
 namedtuple which represents a (MIDI) note played at a given time for a given duration.
 
-##### Methods
+## Methods
 
-###### `time(self)`
+### time(self)
 
 Alias for field number 0
 
 
-###### `note(self)`
+### note(self)
 
 Alias for field number 1
 
 
-###### `duration(self)`
+### duration(self)
 
 Alias for field number 2
 
@@ -326,29 +343,29 @@ Alias for field number 2
 ---
 
 
-### Functions
+# Functions
 
-#### `note_to_midi(note: jchord.core.Note) -> int`
+## note_to_midi(note: jchord.core.Note) -> int
 
 Returns the midi value corresponding to the given `Note`.
 
 
-#### `midi_to_note(midi: int) -> jchord.core.Note`
+# midi_to_note(midi: int) -> jchord.core.Note
 
 Returns the `Note` corresponding to the given MIDI note value.
 
 
-#### `midi_to_pitch(midi: int) -> float`
+# midi_to_pitch(midi: int) -> float
 
 Returns the absolute pitch in Hz for the given MIDI note value.
 
 
-#### `read_midi_file(filename: str) -> List[jchord.midi.PlayedNote]`
+# read_midi_file(filename: str) -> List[jchord.midi.PlayedNote]
 
 Reads the MIDI file for the given filename and returns the corresponding list of `PlayedNote`s.
 
 
-#### `group_notes_to_chords(notes: List[jchord.midi.PlayedNote]) -> Dict[float, jchord.midi.PlayedNote]`
+# group_notes_to_chords(notes: List[jchord.midi.PlayedNote]) -> Dict[float, jchord.midi.PlayedNote]
 
 Groups the list of `PlayedNote`s by time.
 
@@ -358,9 +375,9 @@ There is no attempt at quantization at this time, so the notes must be played
 at the exact same time to be grouped together.
 
 
-### Exceptions
+# Exceptions
 
-#### `InvalidNote`
+## InvalidNote
 
 Raised when trying to get the MIDI value of a note that doesn't seem valid.
 
@@ -370,9 +387,9 @@ Raised when trying to get the MIDI value of a note that doesn't seem valid.
 
 
 
-## `jchord.knowledge`
+# jchord.knowledge
 
-
+#
 Contains various literals that are used for computations throughout the library.
 
 * `REPETITION_SYMBOL` (`str`): The symbol that's used to indicate repetition in textual representations of chord progressions.
@@ -392,25 +409,25 @@ Contains various literals that are used for computations throughout the library.
 
 
 
-## `jchord.chords`
+# jchord.chords
 
-
+#
 Tools for working with chords.
 
-### Classes
+# Classes
 
-#### `Chord`
+## `Chord`
 
 Represents a chord quality (no root).
 
-##### Methods
+## Methods
 
-###### `__init__(self, name: str, semitones: List[int])`
-
-
+### __init__(self, name: str, semitones: List[int])
 
 
-###### `from_semitones(name: Union[str, NoneType], semitones: List[int]) -> 'Chord'`
+
+
+### from_semitones(name: Union[str, NoneType], semitones: List[int]) -> 'Chord'
 
 Creates a Chord from a list of semitones from the root.
 
@@ -418,7 +435,7 @@ If `name` is `None`, `semitones_to_chord_name_options` is used to guess a good n
 
 
 
-###### `from_degrees(name: str, degrees: List[str]) -> 'Chord'`
+### from_degrees(name: str, degrees: List[str]) -> 'Chord'
 
 Creates a Chord from a list of scale degrees.
 
@@ -426,7 +443,7 @@ If `name` is `None`, `semitones_to_chord_name_options` is used to guess a good n
 
 
 
-###### `from_name(name: str) -> 'Chord'`
+### from_name(name: str) -> 'Chord'
 
 Creates a Chord from a name.
 The `CHORD_NAMES` and `CHORD_ALIASES` dictionaries in `jchord.knowledge` are used to find the semitones in the chord.
@@ -435,7 +452,7 @@ Raises `InvalidChord` if no chord is found.
 
 
 
-###### `intervals(self) -> List[int]`
+### intervals(self) -> List[int]
 
 Returns the list of internal intervals in the chord.
 
@@ -446,12 +463,12 @@ Examples:
 
 
 
-###### `with_root(self, root: jchord.core.Note) -> 'ChordWithRoot'`
+### with_root(self, root: jchord.core.Note) -> 'ChordWithRoot'
 
 Returns a `ChordWithRoot` based on the chord and the provided root.
 
 
-###### `add_semitone(self, semitone: int)`
+### add_semitone(self, semitone: int)
 
 Adds the given semitone (as a difference from the root degree) to the chord.
 
@@ -463,20 +480,20 @@ The name of the chord does not get re-calculated, so use with care.
 
 
 
-#### `ChordWithRoot`
+# `ChordWithRoot`
 
 
 Represents a chord with a chord quality and a root note.
 
 
-##### Methods
+## Methods
 
-###### `__init__(self, name: str, root: jchord.core.Note, chord: jchord.chords.Chord)`
-
-
+### __init__(self, name: str, root: jchord.core.Note, chord: jchord.chords.Chord)
 
 
-###### `from_root_and_semitones(root: jchord.core.Note, semitones: List[int]) -> 'ChordWithRoot'`
+
+
+### from_root_and_semitones(root: jchord.core.Note, semitones: List[int]) -> 'ChordWithRoot'
 
 Creates a ChordWithRoot from a root `Note` and a list of semitones from the root.
 
@@ -484,7 +501,7 @@ Creates a ChordWithRoot from a root `Note` and a list of semitones from the root
 
 
 
-###### `from_midi(midi: Set[int]) -> 'ChordWithRoot'`
+### from_midi(midi: Set[int]) -> 'ChordWithRoot'
 
 Creates a ChordWithRoot from a set of MIDI note values.
 
@@ -492,7 +509,7 @@ Creates a ChordWithRoot from a set of MIDI note values.
 
 
 
-###### `from_name(name: str) -> 'ChordWithRoot'`
+### from_name(name: str) -> 'ChordWithRoot'
 
 Creates a ChordWithRoot from a name.
 
@@ -500,22 +517,22 @@ Creates a ChordWithRoot from a name.
 
 
 
-###### `semitones(self)`
+### semitones(self)
 
 Returns the semitones in the chord.
 
 
-###### `intervals(self) -> List[int]`
+### intervals(self) -> List[int]
 
 Returns the semitones in the chord.
 
 
-###### `midi(self) -> List[int]`
+### midi(self) -> List[int]
 
 Returns the list of MIDI note values in the chord.
 
 
-###### `transpose(self, shift: int) -> 'ChordWithRoot'`
+### transpose(self, shift: int) -> 'ChordWithRoot'
 
 Transposes the chord by the given shift (in semitones).
 
@@ -523,9 +540,9 @@ Transposes the chord by the given shift (in semitones).
 ---
 
 
-### Functions
+# Functions
 
-#### `semitones_to_chord_name_options(semitones: Set[int], _rec=5) -> List[str]`
+## semitones_to_chord_name_options(semitones: Set[int], _rec=5) -> List[str]
 
 Returns a set of chord names corresponding to the given set of semitones.
 
@@ -534,9 +551,9 @@ The function tries to put the most reasonable chord names first and the more dub
 The `_rec` argument is for internal use only; in some cases, it prevents infinite recursion while computing the chord name.
 
 
-### Exceptions
+# Exceptions
 
-#### `InvalidChord`
+## InvalidChord
 
 Raised if trying to construct a chord from an invalid chord name.
 
@@ -546,40 +563,40 @@ Raised if trying to construct a chord from an invalid chord name.
 
 
 
-## `jchord.progressions`
+# jchord.progressions
 
-
+#
 Tools for working with chord progressions.
 
-### Classes
+# Classes
 
-#### `ChordProgression`
+## `ChordProgression`
 
 Represents a chord progression.
 
-##### Methods
+## Methods
 
-###### `__init__(self, progression: List[jchord.chords.ChordWithRoot])`
-
-
+### __init__(self, progression: List[jchord.chords.ChordWithRoot])
 
 
-###### `from_string(string: str) -> 'ChordProgression'`
+
+
+### from_string(string: str) -> 'ChordProgression'
 
 Creates a `ChordProgression` from its string representation.
 
 
-###### `from_txt(filename: str) -> 'ChordProgression'`
+### from_txt(filename: str) -> 'ChordProgression'
 
 Creates a `ChordProgression` from a text file with its string representation.
 
 
-###### `from_xlsx(filename: str) -> 'ChordProgression'`
+### from_xlsx(filename: str) -> 'ChordProgression'
 
 Creates a `ChordProgression` from an Excel file.
 
 
-###### `from_midi_file(filename: str) -> 'ChordProgression'`
+### from_midi_file(filename: str) -> 'ChordProgression'
 
 Creates a `ChordProgression` from an MIDI file.
 
@@ -588,32 +605,32 @@ at the exact same time to be grouped together as chords.
 
 
 
-###### `chords(self) -> Set[jchord.chords.ChordWithRoot]`
+### chords(self) -> Set[jchord.chords.ChordWithRoot]
 
 Returns the set of chords in the progression.
 
 
-###### `midi(self) -> List[List[int]]`
+### midi(self) -> List[List[int]]
 
 Returns the MIDI values for each chord in the progression.
 
 
-###### `to_string(self, chords_per_row: int = 4, column_spacing: int = 2, newline: str = '\n') -> str`
+### to_string(self, chords_per_row: int = 4, column_spacing: int = 2, newline: str = '\n') -> str
 
 Returns the string representation of the chord progression.
 
 
-###### `to_txt(self, filename: str, chords_per_row: int = 4, column_spacing: int = 2, newline: str = '\n')`
+### to_txt(self, filename: str, chords_per_row: int = 4, column_spacing: int = 2, newline: str = '\n')
 
 Saves the string representation of the chord progression to a text file.
 
 
-###### `to_xlsx(self, filename: str, chords_per_row: int = 4)`
+### to_xlsx(self, filename: str, chords_per_row: int = 4)
 
 Saves the chord progression to an Excel file.
 
 
-###### `to_midi(self, filename: str, instrument: int = 1, tempo: int = 120, beats_per_chord: Union[int, list] = 2, velocity: int = 100, repeat: str = 'replay', effect: <built-in function callable> = None)`
+### to_midi(self, settings: jchord.progressions.MidiConversionSettings, **kwargs)
 
 Saves the chord progression to a MIDI file.
 
@@ -622,18 +639,33 @@ Saves the chord progression to a MIDI file.
 
 
 
-#### `SongSection`
+# `MidiConversionSettings`
+
+
+
+## Methods
+
+### set(self, **kwargs)
+
+
+
+
+---
+
+
+
+# `SongSection`
 
 Represents a section in a Song.
 
-##### Methods
+## Methods
 
-###### `name(self)`
+### name(self)
 
 Alias for field number 0
 
 
-###### `progression(self)`
+### progression(self)
 
 Alias for field number 1
 
@@ -642,18 +674,18 @@ Alias for field number 1
 
 
 
-#### `Song`
+# `Song`
 
 Represents a song (a series of sections).
 
-##### Methods
+## Methods
 
-###### `__init__(self, sections: List[jchord.progressions.SongSection])`
-
-
+### __init__(self, sections: List[jchord.progressions.SongSection])
 
 
-###### `to_string(self, chords_per_row: int = 4, column_spacing: int = 2, newline: str = '\n')`
+
+
+### to_string(self, chords_per_row: int = 4, column_spacing: int = 2, newline: str = '\n')
 
 Returns the string representation of the song.
 
@@ -661,11 +693,153 @@ Returns the string representation of the song.
 ---
 
 
-### Exceptions
+# Exceptions
 
-#### `InvalidProgression`
+## InvalidProgression
 
 Raised when encountering what seems like an invalid chord progression.
+
+
+
+---
+
+
+
+# jchord.midi_effects
+
+#
+# Classes
+
+## `MidiEffect`
+
+Base class for MIDI effects
+
+## Methods
+
+### __init__(self, *args, **kwargs)
+
+
+Nothing to configure
+
+
+
+---
+
+
+
+# `Chain`
+
+
+Used to combine several effects in a row
+
+
+## Methods
+
+### __init__(self, *effects)
+
+
+
+
+---
+
+
+
+# `Inverter`
+
+
+Returns the list of notes in the opposite order
+
+This only matters if the notes have different times
+
+
+## Methods
+
+### __init__(self, *args, **kwargs)
+
+
+Nothing to configure
+
+
+
+---
+
+
+
+# `AlternatingInverter`
+
+
+Alternates between returning the list of notes in the opposite order and the original order
+
+Could be used to implement some kind of strumming effect
+
+
+## Methods
+
+### __init__(self, init_state=1)
+
+
+
+
+---
+
+
+
+# `Transposer`
+
+
+Transposes all the notes by the specified interval
+
+
+## Methods
+
+### __init__(self, interval)
+
+
+
+
+---
+
+
+
+# `Doubler`
+
+
+Adds a transposed copy shifted by the specified interval
+
+Duplicated notes will not be present
+
+
+## Methods
+
+### __init__(self, interval)
+
+
+
+
+---
+
+
+
+# `Spreader`
+
+
+Spreads the notes in time by the specified amount
+Jitter can be used to randomize the spread by some amount
+
+
+## Methods
+
+### __init__(self, amount, jitter)
+
+
+Parameters:
+* amount: number of MIDI ticks to delay each subsequent note (each bar is 1920 ticks)
+* jitter: maximum number of MIDI ticks by which to randomize each note's arrival time
+
+
+
+---
+
 
 
 

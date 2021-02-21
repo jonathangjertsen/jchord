@@ -10,6 +10,7 @@ from jchord.chords import (
 
 import pytest
 
+
 @pytest.mark.parametrize(
     "semi_in, semi_out",
     [
@@ -173,6 +174,7 @@ def test_chord_from_name_semitones(name_in, semi_out):
 def test_chord_from_name_modifications(name_in, modifications):
     assert Chord.from_name(name_in).modifications == modifications
 
+
 # These could be improved
 @pytest.mark.parametrize(
     "name_in, name_out",
@@ -213,7 +215,9 @@ def test_chord_from_name_modifications(name_in, modifications):
     ],
 )
 def test_chord_name_roundtrip(name_in, name_out):
-    assert Chord.from_semitones(None, Chord.from_name(name_in).semitones).name == name_out
+    assert (
+        Chord.from_semitones(None, Chord.from_name(name_in).semitones).name == name_out
+    )
 
 
 @pytest.mark.parametrize(
