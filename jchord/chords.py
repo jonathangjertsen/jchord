@@ -297,6 +297,8 @@ _MODIFICATIONS = [
     _ChordModification(token="no7", apply=_semitone_subtractor(10, 11)),
     _ChordModification(token="no8", apply=_semitone_subtractor(12)),
     _ChordModification(token="no9", apply=_semitone_subtractor(14)),
+    _ChordModification(token="addb6", apply=_semitone_adder(8)),
+    _ChordModification(token="add6", apply=_semitone_adder(9)),
     _ChordModification(token="addb9", apply=_semitone_adder(13)),
     _ChordModification(token="add9", apply=_semitone_adder(14)),
     _ChordModification(token="add#9", apply=_semitone_adder(15)),
