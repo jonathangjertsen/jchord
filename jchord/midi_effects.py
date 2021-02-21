@@ -1,7 +1,8 @@
 import random
 from typing import List
 
-from jchord.midi import PlayedNote
+from jchord.core import Note
+from jchord.midi import PlayedNote, midi_to_note
 from jchord.progressions import MidiConversionSettings
 
 class MidiEffect(object):
@@ -181,4 +182,36 @@ class VelocityControl(MidiEffect):
                     break
             v = v0 + (t - t0) * (v1 - v0) / (t1 - t0)
             out.append(note._replace(velocity=v))
+        return out
+
+
+class Harmonizer(MidiEffect):
+    """
+    Adds a transposed copy shifted by the specified interval
+    """
+    def __init__(self, scale, degrees, root):
+        self.scale = scale
+        self.degrees = degrees
+        self.root = Note(root, octave=4)
+        assert scale[0] == 0
+        assert all(degree >= 1 for degree in degrees)
+
+    def apply(self, chord):
+        out = []
+        for note in chord:
+            out.append(note)
+            offset = (midi_to_note(note.note) - self.root) % 12
+            if offset not in self.scale:
+                raise ValueError(
+                    "Note with MIDI number {} is not in the scale (offset from root is {}, should be one of: {})".format(
+                        note.note,
+                        offset,
+                        self.scale
+                    )
+                )
+            degree_in = self.scale.index(offset)
+            for degree in self.degrees:
+                scale_out = self.scale[(degree_in + degree - 1) % len(self.scale)]
+                semitones_diff = (scale_out - offset) % 12
+                out.append(note._replace(note=note.note+semitones_diff))
         return out

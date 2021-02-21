@@ -51,6 +51,9 @@ CHORD_NAMES = {
     # Suspended
     "7sus2": ["2", "5", "b7"],
     "7sus4": ["4", "5", "b7"],
+
+    # Note
+    "n": []
 }
 CHORD_ALIASES = {
     # Major
@@ -67,6 +70,8 @@ CHORD_ALIASES = {
     "ø": "m7b5",
     # Augmented
     "+": "aug",
+    # Note
+    "note": "n",
 }
 DYADS = {3: "min(no5)", 4: "(no5)", 7: "5"}
 TRIADS_WITH_FIFTH = {
