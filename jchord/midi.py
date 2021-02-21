@@ -7,7 +7,7 @@ from typing import Dict, List
 from jchord.knowledge import CHROMATIC, MAJOR_FROM_C, MAJOR_SCALE_OFFSETS
 from jchord.core import Note, split_to_base_and_shift
 
-PlayedNote = namedtuple("PlayedNote", "time, note, duration")
+PlayedNote = namedtuple("PlayedNote", "time, note, duration, velocity")
 PlayedNote.__doc__ = "namedtuple which represents a (MIDI) note played at a given time for a given duration."
 
 
@@ -72,7 +72,10 @@ def _events_to_notes(events: list) -> List[PlayedNote]:
                     if event_end.type != "note_off" or event.note != event_end.note:
                         continue
                     played_note = PlayedNote(
-                        time=time, note=event.note, duration=time_end - time
+                        time=time,
+                        note=event.note,
+                        duration=time_end - time,
+                        velocity=event.velocity,
                     )
                     notes.append(played_note)
                     found = True
@@ -80,6 +83,45 @@ def _events_to_notes(events: list) -> List[PlayedNote]:
                 if found:
                     break
     return notes
+
+def remove_overlap(events, margin=1):
+    hold_counts = defaultdict(int)
+    events_out = []
+    for event in events:
+        if event["type"] == "note_on":
+            if hold_counts[event["note"]] > 0:
+                events_out.append({**event, "type": "note_off", "abs_time": max(0, event["abs_time"] - margin) })
+            events_out.append(event)
+            hold_counts[event["note"]] += 1
+        elif event["type"] == "note_off":
+            if hold_counts[event["note"]] <= 1:
+                events_out.append(event)
+            hold_counts[event["note"]] -= 1
+    return events_out
+
+
+
+def notes_to_messages(notes: List[PlayedNote], velocity=100):
+    from mido import Message
+
+    if not notes:
+        return []
+
+    events = []
+    for note in notes:
+        events.append({ "type": "note_on", "note": note.note, "velocity": velocity, "abs_time": note.time })
+        events.append({ "type": "note_off", "note": note.note, "velocity": velocity, "abs_time": note.time + note.duration })
+    events = sorted(events, key=lambda event: event["abs_time"])
+    events = remove_overlap(events)
+
+    messages = []
+    last_event_time = events[0]["abs_time"]
+    for event in events:
+        event_time = event.pop("abs_time")
+        messages.append(Message(**event, time=int(max(0, event_time - last_event_time))))
+        last_event_time = event_time
+
+    return messages
 
 
 def read_midi_file(filename: str) -> List[PlayedNote]:
@@ -91,7 +133,7 @@ def read_midi_file(filename: str) -> List[PlayedNote]:
 
 def group_notes_to_chords(notes: List[PlayedNote]) -> Dict[float, PlayedNote]:
     """Groups the list of `PlayedNote`s by time.
-    
+
     The return value maps time to a list of `PlayedNote`s for that time.
 
     There is no attempt at quantization at this time, so the notes must be played

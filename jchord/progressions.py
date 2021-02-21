@@ -8,7 +8,7 @@ from typing import Hashable, List, Set, Union
 from jchord.knowledge import REPETITION_SYMBOL
 from jchord.core import CompositeObject, Note
 from jchord.chords import ChordWithRoot
-from jchord.midi import group_notes_to_chords, read_midi_file
+from jchord.midi import group_notes_to_chords, read_midi_file, notes_to_messages, PlayedNote
 
 
 class InvalidProgression(Exception):
@@ -182,10 +182,14 @@ class ChordProgression(CompositeObject):
         tempo: int = 120,
         beats_per_chord: Union[int, list] = 2,
         velocity: int = 100,
+        repeat: str="replay",
+        effect: callable=None
     ):
         """Saves the chord progression to a MIDI file."""
-        import mido
+        repeat_options = { "replay", "hold" }
+        assert repeat in repeat_options, "repeat argument must be one of: {}".format(repeat_options)
 
+        import mido
         mid = mido.MidiFile()
         track = mido.MidiTrack()
         mid.tracks.append(track)
@@ -204,24 +208,24 @@ class ChordProgression(CompositeObject):
             int(mido.second2tick(spc, mid.ticks_per_beat, mido.bpm2tempo(tempo)))
             for spc in seconds_per_chord
         ]
-
+        track.append(mido.MetaMessage("set_tempo", tempo=mido.bpm2tempo(tempo)))
         track.append(mido.Message("program_change", program=instrument))
-        for i, notes, tpc in zip(
-            range(len(self.progression)), self.midi(), ticks_per_chord
-        ):
-            for note in notes:
-                track.append(
-                    mido.Message("note_on", note=note, velocity=velocity, time=0)
-                )
 
-            # Hack due to mido requiring "delta times"
-            track.append(mido.Message("note_off", note=0, velocity=0, time=tpc))
-
-            for i, note in enumerate(notes):
-                track.append(
-                    mido.Message("note_off", note=note, velocity=velocity, time=0)
-                )
-
+        played_chords = []
+        prev_chord = None
+        time = 0
+        for chord, tpc in zip(self.midi(), ticks_per_chord):
+            if chord == prev_chord and repeat == "hold":
+                played_chords[-1] = [pnote._replace(duration=pnote.duration + tpc) for pnote in played_chords[-1]]
+            else:
+                played_chords.append([PlayedNote(note=note, velocity=velocity, time=time, duration=tpc) for note in chord])
+            prev_chord = chord
+            time += tpc
+        if effect:
+            played_chords = [effect.apply(chord) for chord in played_chords]
+        played_notes = [note for chord in played_chords for note in chord]
+        for message in notes_to_messages(played_notes, velocity=velocity):
+            track.append(message)
         mid.save(filename)
 
 

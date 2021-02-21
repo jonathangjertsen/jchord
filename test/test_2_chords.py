@@ -10,7 +10,6 @@ from jchord.chords import (
 
 import pytest
 
-
 @pytest.mark.parametrize(
     "semi_in, semi_out",
     [
@@ -262,7 +261,6 @@ def test_chord_repr(name_in, repr_out):
 def test_chord_add_root(name_in, octave):
     name_then_root = Chord.from_name(name_in).with_root(Note("A#", octave))
     name_and_root = ChordWithRoot.from_name("{}A#{}".format(octave, name_in))
-    print(name_and_root._keys())
     assert name_then_root == name_and_root
 
 
