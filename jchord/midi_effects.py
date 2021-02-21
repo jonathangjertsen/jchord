@@ -162,6 +162,29 @@ class Arpeggiator(MidiEffect):
         self.offset += i * self.sticky
         return out
 
+
+class Shuffle(MidiEffect):
+    def __init__(self, percent=100*2/3, base_rate=1/16, tolerance_ticks=100):
+        """
+        """
+        self.base_rate = base_rate
+        self.percent = percent
+        self.tolerance_ticks = tolerance_ticks
+
+    def apply(self, chord):
+        dt = 1920 * self.base_rate
+        two_dt = 2 * dt
+        out = []
+        for note in chord:
+            rel_time = note.time % two_dt
+            if dt - self.tolerance_ticks <= rel_time <= dt + self.tolerance_ticks:
+                shift = (self.percent - 50) * dt / 100
+                out.append(note._replace(time=note.time+shift))
+            else:
+                out.append(note)
+        return out
+
+
 class VelocityControl(MidiEffect):
     def __init__(self, keyframes):
         self.keyframes_ticks = sorted([(bar * 1920, velocity) for bar, velocity in keyframes])
