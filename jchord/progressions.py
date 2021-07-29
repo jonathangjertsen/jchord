@@ -9,10 +9,12 @@ from jchord.knowledge import REPETITION_SYMBOL
 from jchord.core import CompositeObject, Note
 from jchord.chords import ChordWithRoot
 from jchord.midi import (
-    group_notes_to_chords,
     read_midi_file,
     notes_to_messages,
     PlayedNote,
+)
+from jchord.group_notes_to_chords import (
+    group_notes_to_chords
 )
 
 
@@ -120,9 +122,8 @@ class ChordProgression(CompositeObject):
         at the exact same time to be grouped together as chords.
         """
         notes = read_midi_file(filename)
-        chords = group_notes_to_chords(notes)
         progression = []
-        for time, chord in chords.items():
+        for chord in group_notes_to_chords(notes):
             progression.append(ChordWithRoot.from_midi([note.note for note in chord]))
         return cls(progression)
 

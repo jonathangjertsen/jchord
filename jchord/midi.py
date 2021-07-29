@@ -154,20 +154,6 @@ def read_midi_file(filename: str) -> List[PlayedNote]:
     return notes
 
 
-def group_notes_to_chords(notes: List[PlayedNote]) -> Dict[float, PlayedNote]:
-    """Groups the list of `PlayedNote`s by time.
-
-    The return value maps time to a list of `PlayedNote`s for that time.
-
-    There is no attempt at quantization at this time, so the notes must be played
-    at the exact same time to be grouped together.
-    """
-    result = defaultdict(list)
-    for note in notes:
-        result[note.time].append(note)
-    return result
-
-
 class Instrument(IntEnum):
     AcousticGrandPiano = 1
     BrightAcousticPiano = 2

@@ -91,8 +91,9 @@ To decide which parts should be present in the documentation, go and edit `doc_g
     * Function `midi_to_note(midi: int) -> jchord.core.Note`
     * Function `midi_to_pitch(midi: int) -> float`
     * Function `read_midi_file(filename: str) -> List[jchord.midi.PlayedNote]`
-    * Function `group_notes_to_chords(notes: List[jchord.midi.PlayedNote]) -> Dict[float, jchord.midi.PlayedNote]`
     * Exception `InvalidNote`
+* <a href='#jchordgroup_notes_to_chords'>`jchord.group_notes_to_chords`</a>
+    * Function `group_notes_to_chords(notes: List[jchord.midi.PlayedNote], kernel=None) -> List[List[jchord.midi.PlayedNote]]`
 * <a href='#jchordknowledge'>`jchord.knowledge`</a>
 * <a href='#jchordchords'>`jchord.chords`</a>
     * Class <a href='#Chord'>`Chord`</a>
@@ -364,22 +365,30 @@ Returns the absolute pitch in Hz for the given MIDI note value.
 
 Reads the MIDI file for the given filename and returns the corresponding list of `PlayedNote`s.
 
-
-# group_notes_to_chords(notes: List[jchord.midi.PlayedNote]) -> Dict[float, jchord.midi.PlayedNote]
-
-Groups the list of `PlayedNote`s by time.
-
-The return value maps time to a list of `PlayedNote`s for that time.
-
-There is no attempt at quantization at this time, so the notes must be played
-at the exact same time to be grouped together.
-
-
 # Exceptions
 
 ## InvalidNote
 
 Raised when trying to get the MIDI value of a note that doesn't seem valid.
+
+
+
+---
+
+
+
+# jchord.group_notes_to_chords
+
+#
+# Functions
+
+## group_notes_to_chords(notes: List[jchord.midi.PlayedNote], kernel=None) -> List[List[jchord.midi.PlayedNote]]
+
+
+Groups the list of `PlayedNote`s by time.
+
+The return value maps time to a list of `PlayedNote`s for that time.
+
 
 
 

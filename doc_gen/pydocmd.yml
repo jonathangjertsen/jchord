@@ -24,8 +24,9 @@ generate:
     - jchord.midi.midi_to_note
     - jchord.midi.midi_to_pitch
     - jchord.midi.read_midi_file
-    - jchord.midi.group_notes_to_chords
     - jchord.midi.InvalidNote
+  - jchord.group_notes_to_chords:
+    - jchord.group_notes_to_chords.group_notes_to_chords
   - jchord.knowledge
   - jchord.chords:
     - jchord.chords.Chord:
