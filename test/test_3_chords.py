@@ -22,7 +22,7 @@ import pytest
     ],
 )
 def test_chord_from_semitones(semi_in, semi_out):
-    assert Chord.from_semitones("unnamed", semi_in).semitones == semi_out
+    assert Chord.from_semitones(semi_in).semitones == semi_out
 
 
 @pytest.mark.parametrize(
@@ -68,7 +68,7 @@ def test_chord_from_semitones(semi_in, semi_out):
 def test_semitones_to_chord_options(semitones, options, selected):
     computed_options = semitones_to_chord_name_options(semitones)
     assert set(computed_options) >= set(options)
-    Chord.from_semitones(None, semitones).name == selected
+    Chord.from_semitones(semitones).name == selected
 
 
 @pytest.mark.parametrize(
@@ -80,7 +80,7 @@ def test_semitones_to_chord_options(semitones, options, selected):
     ],
 )
 def test_chord_from_degrees(deg_in, semi_out):
-    assert Chord.from_degrees("unnamed", deg_in).semitones == semi_out
+    assert Chord.from_degrees(deg_in).semitones == semi_out
 
 
 @pytest.mark.parametrize(
@@ -90,11 +90,11 @@ def test_chord_from_degrees(deg_in, semi_out):
         ("major", [0, 4, 7]),
         ("inv1", [4, 7, 12]),
         ("inv2", [7, 12, 16]),
-        ("inv3", [12, 16, 19]),
-        ("inv4", [16, 19, 24]),
-        ("inv5", [19, 24, 28]),
-        ("inv6", [24, 28, 31]),
-        ("inv7", [28, 31, 36]),
+        ("inv3", [0, 4, 7]),
+        ("inv4", [4, 7, 12]),
+        ("inv5", [7, 12, 16]),
+        ("inv6", [0, 4, 7]),
+        ("inv7", [4, 7, 12]),
         ("minor", [0, 3, 7]),
         ("sus2", [0, 2, 7]),
         ("sus4", [0, 5, 7]),
@@ -111,7 +111,7 @@ def test_chord_from_degrees(deg_in, semi_out):
         ("13", [0, 4, 7, 10, 14, 17, 21]),
         ("13no5no7b11#9", [0, 4, 10, 15, 16, 21]),
         ("13b11#9no5no7", [0, 4, 15, 16, 21]),
-        ("13b11#9no5no7inv2", [12, 15, 16, 21]),
+        ("13b11#9no5no7inv2", [0, 3, 4, 9]),
         ("7#9", [0, 4, 7, 10, 15]),
         ("7b9", [0, 4, 7, 10, 13]),
         ("7b11", [0, 4, 7, 10, 14, 16]),
@@ -216,7 +216,7 @@ def test_chord_from_name_modifications(name_in, modifications):
 )
 def test_chord_name_roundtrip(name_in, name_out):
     assert (
-        Chord.from_semitones(None, Chord.from_name(name_in).semitones).name == name_out
+        Chord.from_semitones(Chord.from_name(name_in).semitones).name == name_out
     )
 
 

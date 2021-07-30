@@ -71,8 +71,50 @@ class MidiConversionSettings(object):
 
 
 class ChordProgression(CompositeObject):
-    """Represents a chord progression."""
+    """
+    Represents a chord progression.
 
+    There are many ways to create a ``ChordProgression`` object.
+
+    **From a string**
+
+    Use the ``from_string`` method to generate a chord progression from a string.
+
+    >>> ChordProgression.from_string("Dm7 -- Gm7 Am7")
+    ChordProgression([ChordWithRoot(name='Dm7', root=Note('D', 4), chord=Chord(name='m7', semitones=[0, 3, 7, 10])), ChordWithRoot(name='Dm7', root=Note('D', 4), chord=Chord(name='m7', semitones=[0, 3, 7, 10])), ChordWithRoot(name='Gm7', root=Note('G', 4), chord=Chord(name='m7', semitones=[0, 3, 7, 10])), ChordWithRoot(name='Am7', root=Note('A', 4), chord=Chord(name='m7', semitones=[0, 3, 7, 10]))])
+
+    **From a text file**
+
+    Use the ``from_txt`` method to generate a chord progression from a text file.
+    If example.txt contains the text "Am7 D7", then ``ChordProgression.from_txt("example.txt")``
+    will produce the same result as ``ChordProgression.from_string("Am7 D7")``.
+
+    **From an Excel file**
+
+    Use the ``from_xlsx`` method to generate a chord progression from an Excel spreadsheet.
+    If example.xlsx contains the following cells:
+
+        +-----+-----+
+        |  C  |   D |
+        +-----+-----+
+        | Em7 |  G7 |
+        +-----+-----+
+
+    Then the result is equivalent to calling ``ChordProgression.from_string("C D Em7 G7")``.
+
+    .. note::
+        This feature requires ``openpyxl``, which you can get with ``pip install openpyxl``.
+
+    **From a MIDI file**
+
+    Use the ``from_midi`` method to generate a chord progression from a MIDI file.
+    If ``example.mid`` contains some chords that you would like to convert to a ``ChordProgression``,
+    use ``ChordProgression.from_midi("example.mid")``.
+    For best results, the MIDI file should contain a single instrument with chords played as straight as possible.
+
+    .. note::
+        This feature requires ``mido``, which you can get with ``pip install mido``.
+    """
     class _DummyChord(object):
         """Mocks a ChordWithProgression object"""
 
@@ -89,18 +131,15 @@ class ChordProgression(CompositeObject):
 
     @classmethod
     def from_string(cls, string: str) -> "ChordProgression":
-        """Creates a `ChordProgression` from its string representation."""
         return cls(_string_to_progression(string))
 
     @classmethod
     def from_txt(cls, filename: str) -> "ChordProgression":
-        """Creates a `ChordProgression` from a text file with its string representation."""
         with open(filename) as file:
             return cls(_string_to_progression(file.read()))
 
     @classmethod
     def from_xlsx(cls, filename: str) -> "ChordProgression":
-        """Creates a `ChordProgression` from an Excel file."""
         from openpyxl import load_workbook
 
         workbook = load_workbook(filename)
@@ -116,11 +155,6 @@ class ChordProgression(CompositeObject):
 
     @classmethod
     def from_midi_file(cls, filename: str) -> "ChordProgression":
-        """Creates a `ChordProgression` from an MIDI file.
-
-        There is no attempt at quantization at this time, so the notes must be played
-        at the exact same time to be grouped together as chords.
-        """
         notes = read_midi_file(filename)
         progression = []
         for chord in group_notes_to_chords(notes):
@@ -128,17 +162,41 @@ class ChordProgression(CompositeObject):
         return cls(progression)
 
     def chords(self) -> Set[ChordWithRoot]:
-        """Returns the set of chords in the progression."""
+        """
+        Returns the set of chords in the progression.
+
+        >>> ChordProgression.from_string("Am7 D7").chords() # doctest: +SKIP
+        {ChordWithRoot(name='D7', root=Note('D', 4), chord=Chord(name='7', semitones=[0, 4, 7, 10])), ChordWithRoot(name='Am7', root=Note('A', 4), chord=Chord(name='m7', semitones=[0, 3, 7, 10]))}
+        """
         return set(self.progression)
 
     def midi(self) -> List[List[int]]:
-        """Returns the MIDI values for each chord in the progression."""
+        """
+        Returns the MIDI values for each chord in the progression.
+
+        >>> ChordProgression.from_string("Am7 D7").midi()
+        [[69, 72, 76, 79], [62, 66, 69, 72]]
+        """
         return [chord.midi() for chord in self.progression]
 
+    def transpose(self, shift: int):
+        """
+        Transposes all chords in the progression by the given shift.
+
+        >>> ChordProgression.from_string("Am7 D7").transpose(2).to_string().strip()
+        'Bm7  E7'
+        """
+        return ChordProgression([chord.transpose(shift) for chord in self.progression])
+
     def to_string(
-        self, chords_per_row: int = 4, column_spacing: int = 2, newline: str = "\n"
+        self,
+        chords_per_row: int = 4,
+        column_spacing: int = 2,
+        newline: str = "\n",
     ) -> str:
-        """Returns the string representation of the chord progression."""
+        """
+        Returns the string representation of the chord progression.
+        """
         max_len = max(len(chord.name) for chord in self.progression)
         column_width = max_len + column_spacing
 
@@ -170,7 +228,9 @@ class ChordProgression(CompositeObject):
         column_spacing: int = 2,
         newline: str = "\n",
     ):
-        """Saves the string representation of the chord progression to a text file."""
+        """
+        Saves the string representation of the chord progression to a text file.
+        """
         output_str = self.to_string(
             chords_per_row=chords_per_row,
             column_spacing=column_spacing,
@@ -180,7 +240,12 @@ class ChordProgression(CompositeObject):
             file.write(output_str)
 
     def to_xlsx(self, filename: str, chords_per_row: int = 4):
-        """Saves the chord progression to an Excel file."""
+        """
+        Saves the chord progression to an Excel file.
+
+        .. note::
+            This feature requires ``openpyxl``, which you can get with ``pip install openpyxl``.
+        """
         from openpyxl import Workbook
 
         workbook = Workbook()
@@ -207,7 +272,12 @@ class ChordProgression(CompositeObject):
         workbook.save(filename)
 
     def to_midi(self, settings: MidiConversionSettings, **kwargs):
-        """Saves the chord progression to a MIDI file."""
+        """
+        Saves the chord progression to a MIDI file.
+
+        .. note::
+            This feature requires ``mido``, which you can get with ``pip install mido``.
+        """
         if not isinstance(settings, MidiConversionSettings) or kwargs:
             raise ValueError(
                 "to_midi now takes a MidiConversionSettings object, not individual arguments; see README.md"
