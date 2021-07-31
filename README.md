@@ -52,18 +52,6 @@ The code is formatted with black. In the root of the repo, run:
 black .
 ```
 
-## Documenting
-
-To generate documentation, run the documentation generation script:
-
-```
-python doc_gen/generate_doc.py -o README.md
-```
-
-The script appends documentation from each source module to `doc_gen/index.md`. If the script ran successfully, README.md should contain a section called "Documentation" below.
-
-To decide which parts should be present in the documentation, go and edit `doc_gen/pydocmd.yml`. The reason for the format is that I originally wanted to use `pydocmd` (but found it too limiting).
-
 ---
 
 # Documentation
