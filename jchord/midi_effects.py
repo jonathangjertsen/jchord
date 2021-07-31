@@ -2,7 +2,7 @@ import random
 from typing import List
 
 from jchord.core import Note
-from jchord.midi import PlayedNote, midi_to_note
+from jchord.midi import MidiNote, midi_to_note
 from jchord.progressions import MidiConversionSettings
 
 
@@ -21,7 +21,7 @@ class MidiEffect(object):
         """
         self.settings = settings
 
-    def apply(self, chord: List[PlayedNote]):
+    def apply(self, chord: List[MidiNote]):
         """
         Returns a list where the effect has been applied to the given chord
         """
@@ -170,7 +170,7 @@ class Arpeggiator(MidiEffect):
             for index in indices:
                 note = chord[index % len(chord)]
                 out.append(
-                    PlayedNote(
+                    MidiNote(
                         time=note.time + int(ticks_per_note * i),
                         duration=ticks_per_note,
                         note=note.note,

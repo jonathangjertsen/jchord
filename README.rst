@@ -29,7 +29,7 @@ converts it back to a string and then creates a midi file from it.
    G       C#o     D69     --
    >>> prog.to_midi(MidiConversionSettings(filename="example.midi", tempo=100, beats_per_chord=2, instrument=4))
 
-For more examples, see the `documentation <https://jonathangjertsen.github.io/jchord/#examples>`_
+For more examples, see the `documentation <https://jonathangjertsen.github.io/jchord/#examples>`_.
 
 Documentation
 =============

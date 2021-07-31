@@ -61,7 +61,7 @@ converts it back to a string and then creates a midi file from it.</p>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">prog</span><span class="o">.</span><span class="n">to_midi</span><span class="p">(</span><span class="n">MidiConversionSettings</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="s2">&quot;example.midi&quot;</span><span class="p">,</span> <span class="n">tempo</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">beats_per_chord</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">instrument</span><span class="o">=</span><span class="mi">4</span><span class="p">))</span>
 </pre></div>
 </div>
-<p>For more examples, see the <a class="reference external" href="https://jonathangjertsen.github.io/jchord/#examples">documentation</a></p>
+<p>For more examples, see the <a class="reference external" href="https://jonathangjertsen.github.io/jchord/#examples">documentation</a>.</p>
 </section>
 <section id="id1">
 <h1>Documentation<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h1>
@@ -69,6 +69,9 @@ converts it back to a string and then creates a midi file from it.</p>
 </section>
 <section id="contributing">
 <h1>Contributing<a class="headerlink" href="#contributing" title="Permalink to this headline">¶</a></h1>
+</section>
+<section id="examples">
+<h1>Examples<a class="headerlink" href="#examples" title="Permalink to this headline">¶</a></h1>
 </section>
 <section id="api-reference">
 <h1>API reference<a class="headerlink" href="#api-reference" title="Permalink to this headline">¶</a></h1>
@@ -472,6 +475,28 @@ For best results, the MIDI file should contain a single instrument with chords p
 <dd></dd></dl>
 
 </section>
+<section id="midi-export-features">
+<h2>MIDI export features<a class="headerlink" href="#midi-export-features" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="jchord.midi_effects.MidiEffect">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">jchord.midi_effects.</span></span><span class="sig-name descname"><span class="pre">MidiEffect</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#jchord.midi_effects.MidiEffect" title="Permalink to this definition">¶</a></dt>
+<dd><p>Base class for MIDI effects</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="jchord.midi_effects.MidiEffect.apply">
+<span class="sig-name descname"><span class="pre">apply</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">chord</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">jchord.midi.MidiNote</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#jchord.midi_effects.MidiEffect.apply" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a list where the effect has been applied to the given chord</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="jchord.midi_effects.MidiEffect.set_settings">
+<span class="sig-name descname"><span class="pre">set_settings</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">settings</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="#jchord.MidiConversionSettings" title="jchord.progressions.MidiConversionSettings"><span class="pre">jchord.progressions.MidiConversionSettings</span></a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#jchord.midi_effects.MidiEffect.set_settings" title="Permalink to this definition">¶</a></dt>
+<dd><p>Makes the MIDI conversion settings available.
+This is always applied before apply() during the MIDI conversion</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
 </section>
 
 
@@ -486,11 +511,13 @@ For best results, the MIDI file should contain a single instrument with chords p
 <li><a class="reference internal" href="#">jchord - toolkit for working with chord progressions</a></li>
 <li><a class="reference internal" href="#id1">Documentation</a></li>
 <li><a class="reference internal" href="#contributing">Contributing</a></li>
+<li><a class="reference internal" href="#examples">Examples</a></li>
 <li><a class="reference internal" href="#api-reference">API reference</a><ul>
 <li><a class="reference internal" href="#objects-at-a-glance">Objects at a glance</a></li>
 <li><a class="reference internal" href="#working-with-individual-notes-note">Working with individual notes: <code class="docutils literal notranslate"><span class="pre">Note</span></code></a></li>
 <li><a class="reference internal" href="#working-with-individual-chords-chord-and-chordwithroot">Working with individual chords: <code class="docutils literal notranslate"><span class="pre">Chord</span></code> and <code class="docutils literal notranslate"><span class="pre">ChordWithRoot</span></code></a></li>
 <li><a class="reference internal" href="#working-with-chord-progressions-chordprogression">Working with chord progressions: <code class="docutils literal notranslate"><span class="pre">ChordProgression</span></code></a></li>
+<li><a class="reference internal" href="#midi-export-features">MIDI export features</a></li>
 </ul>
 </li>
 </ul>

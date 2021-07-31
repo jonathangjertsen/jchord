@@ -2,7 +2,7 @@ from collections import defaultdict
 from math import exp, ceil
 from typing import List, Dict
 
-from jchord.midi import PlayedNote
+from jchord.midi import MidiNote
 
 # Notes separated by less than this much belong to one chord
 MIN_SEP_INTERVAL = 0.1
@@ -18,13 +18,11 @@ def kernel_default(distance):
     return exp(-((distance / MIN_SEP_INTERVAL) ** 2))
 
 
-def group_notes_to_chords(
-    notes: List[PlayedNote], kernel=None
-) -> List[List[PlayedNote]]:
+def group_notes_to_chords(notes: List[MidiNote], kernel=None) -> List[List[MidiNote]]:
     """
-    Groups the list of `PlayedNote`s by time.
+    Groups the list of `MidiNote`s by time.
 
-    The return value maps time to a list of `PlayedNote`s for that time.
+    The return value maps time to a list of `MidiNote`s for that time.
     """
     if kernel is None:
         kernel = kernel_default

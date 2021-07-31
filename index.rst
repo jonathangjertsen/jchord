@@ -4,6 +4,11 @@
 
 .. include:: README.rst
 
+Examples
+========
+
+
+
 API reference
 =============
 
@@ -58,3 +63,9 @@ A chord progression is represented as a list of chords, one after another.
 .. autoclass:: jchord.ChordProgression
    :members: chords, midi, transpose, to_string, to_txt, to_xlsx, to_midi
 .. autoclass:: jchord.MidiConversionSettings
+
+MIDI export features
+--------------------
+
+.. autoclass:: jchord.midi_effects.MidiEffect
+   :members: set_settings, apply

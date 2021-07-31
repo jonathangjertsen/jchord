@@ -8,7 +8,7 @@ from typing import Hashable, List, Set, Union
 from jchord.knowledge import REPETITION_SYMBOL
 from jchord.core import CompositeObject, Note
 from jchord.chords import ChordWithRoot
-from jchord.midi import read_midi_file, notes_to_messages, PlayedNote
+from jchord.midi import read_midi_file, notes_to_messages, MidiNote
 from jchord.group_notes_to_chords import group_notes_to_chords
 
 
@@ -326,7 +326,7 @@ class ChordProgression(CompositeObject):
             else:
                 played_chords.append(
                     [
-                        PlayedNote(
+                        MidiNote(
                             note=note,
                             velocity=settings.velocity,
                             time=time,

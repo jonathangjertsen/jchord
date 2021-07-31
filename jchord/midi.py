@@ -8,8 +8,8 @@ from typing import Dict, List
 from jchord.knowledge import CHROMATIC, MAJOR_FROM_C, MAJOR_SCALE_OFFSETS
 from jchord.core import Note, split_to_base_and_shift
 
-PlayedNote = namedtuple("PlayedNote", "time, note, duration, velocity")
-PlayedNote.__doc__ = "namedtuple which represents a (MIDI) note played at a given time for a given duration."
+MidiNote = namedtuple("MidiNote", "time, note, duration, velocity")
+MidiNote.__doc__ = "namedtuple which represents a (MIDI) note played at a given time for a given duration."
 
 
 class InvalidNote(Exception):
@@ -55,7 +55,7 @@ def _read_midi_file_to_events(filename: str) -> list:
     return events
 
 
-def _events_to_notes(events: list) -> List[PlayedNote]:
+def _events_to_notes(events: list) -> List[MidiNote]:
     notes = []
     times = list(events.keys())
 
@@ -72,7 +72,7 @@ def _events_to_notes(events: list) -> List[PlayedNote]:
                 for event_end in events_for_end_time:
                     if event_end.type != "note_off" or event.note != event_end.note:
                         continue
-                    played_note = PlayedNote(
+                    played_note = MidiNote(
                         time=time,
                         note=event.note,
                         duration=time_end - time,
@@ -108,7 +108,7 @@ def remove_overlap(events, margin=1):
     return events_out
 
 
-def notes_to_messages(notes: List[PlayedNote], velocity=100):
+def notes_to_messages(notes: List[MidiNote], velocity=100):
     from mido import Message
 
     if not notes:
@@ -147,8 +147,8 @@ def notes_to_messages(notes: List[PlayedNote], velocity=100):
     return messages
 
 
-def read_midi_file(filename: str) -> List[PlayedNote]:
-    """Reads the MIDI file for the given filename and returns the corresponding list of `PlayedNote`s."""
+def read_midi_file(filename: str) -> List[MidiNote]:
+    """Reads the MIDI file for the given filename and returns the corresponding list of `MidiNote`s."""
     events = _read_midi_file_to_events(filename)
     notes = _events_to_notes(events)
     return notes
