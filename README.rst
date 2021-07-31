@@ -15,14 +15,6 @@ jchord - toolkit for working with chord progressions
 * knows about naming conventions for chords, and can convert back and forth between objects and names
 * can be used as a converter between strings, text files, XLSX files, and MIDI files.
 
-Documentation
-=============
-
-Documentation lives here: `jonathangjertsen.github.io/jchord/ <https://jonathangjertsen.github.io/jchord/>`_
-
-Example
-=======
-
 Here is an example that parses a chord progression written as a string, transposes it upwards by 2 semitones,
 converts it back to a string and then creates a midi file from it.
 
@@ -36,6 +28,13 @@ converts it back to a string and then creates a midi file from it.
    G       C#m7b5  F#7     Bm9
    G       C#o     D69     --
    >>> prog.to_midi(MidiConversionSettings(filename="example.midi", tempo=100, beats_per_chord=2, instrument=4))
+
+For more examples, see the `documentation <https://jonathangjertsen.github.io/jchord/#examples>`_
+
+Documentation
+=============
+
+Documentation lives here: `jonathangjertsen.github.io/jchord/ <https://jonathangjertsen.github.io/jchord/>`_
 
 Contributing
 ============

@@ -47,13 +47,6 @@
 <li><p>knows about naming conventions for chords, and can convert back and forth between objects and names</p></li>
 <li><p>can be used as a converter between strings, text files, XLSX files, and MIDI files.</p></li>
 </ul>
-</section>
-<section id="documentation">
-<h1>Documentation<a class="headerlink" href="#documentation" title="Permalink to this headline">¶</a></h1>
-<p>Documentation lives here: <a class="reference external" href="https://jonathangjertsen.github.io/jchord/">jonathangjertsen.github.io/jchord/</a></p>
-</section>
-<section id="example">
-<h1>Example<a class="headerlink" href="#example" title="Permalink to this headline">¶</a></h1>
 <p>Here is an example that parses a chord progression written as a string, transposes it upwards by 2 semitones,
 converts it back to a string and then creates a midi file from it.</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">jchord</span> <span class="kn">import</span> <span class="n">ChordProgression</span><span class="p">,</span> <span class="n">MidiConversionSettings</span>
@@ -68,6 +61,11 @@ converts it back to a string and then creates a midi file from it.</p>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">prog</span><span class="o">.</span><span class="n">to_midi</span><span class="p">(</span><span class="n">MidiConversionSettings</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="s2">&quot;example.midi&quot;</span><span class="p">,</span> <span class="n">tempo</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">beats_per_chord</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">instrument</span><span class="o">=</span><span class="mi">4</span><span class="p">))</span>
 </pre></div>
 </div>
+<p>For more examples, see the <a class="reference external" href="https://jonathangjertsen.github.io/jchord/#examples">documentation</a></p>
+</section>
+<section id="id1">
+<h1>Documentation<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h1>
+<p>Documentation lives here: <a class="reference external" href="https://jonathangjertsen.github.io/jchord/">jonathangjertsen.github.io/jchord/</a></p>
 </section>
 <section id="contributing">
 <h1>Contributing<a class="headerlink" href="#contributing" title="Permalink to this headline">¶</a></h1>
@@ -486,8 +484,7 @@ For best results, the MIDI file should contain a single instrument with chords p
   <h3><a href="#">Table of Contents</a></h3>
   <ul>
 <li><a class="reference internal" href="#">jchord - toolkit for working with chord progressions</a></li>
-<li><a class="reference internal" href="#documentation">Documentation</a></li>
-<li><a class="reference internal" href="#example">Example</a></li>
+<li><a class="reference internal" href="#id1">Documentation</a></li>
 <li><a class="reference internal" href="#contributing">Contributing</a></li>
 <li><a class="reference internal" href="#api-reference">API reference</a><ul>
 <li><a class="reference internal" href="#objects-at-a-glance">Objects at a glance</a></li>
