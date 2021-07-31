@@ -1,3 +1,2 @@
-# to be installed FROM THE ROOT directory
 Sphinx==4.1.2
--r requirements.txt
+.
