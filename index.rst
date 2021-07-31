@@ -23,8 +23,8 @@ A ``Song`` has a ``sections`` property, which is a list of ``ChordProgression`` 
 A ``ChordProgression`` has a ``progression`` property, which is a list of ``ChordWithRoot`` objects.
 A ``ChordWithRoot`` object has a ``chord`` property, which is a ``Chord`` object; and a ``root`` property, which is a ``Note`` object.
 
-Working with individual notes
------------------------------
+Working with individual notes: ``Note``
+---------------------------------------
 
 A ``Note`` represents one of the musical notes in the Western 12-tone system.
 It is identified by its pitch class and octave according to `Scientific pitch notation
@@ -33,8 +33,8 @@ It is identified by its pitch class and octave according to `Scientific pitch no
 .. autoclass:: jchord.Note
    :members:
 
-Working with individual chords
-------------------------------
+Working with individual chords: ``Chord`` and ``ChordWithRoot``
+---------------------------------------------------------------
 
 The meaning of a chord is slightly ambiguous, and jchord has two classes to disambiguate
 between the case where we refer to a chord *with* a root (say, "Am7" or "C#maj7#11"), and
@@ -50,8 +50,8 @@ the case where we refer to the interval structure without reference to any parti
    :members: semitones, bass, intervals, midi, transpose
 .. autoclass:: jchord.InvalidChord
 
-Working with chord progressions
--------------------------------
+Working with chord progressions: ``ChordProgression``
+-----------------------------------------------------
 
 A chord progression is represented as a list of chords, one after another.
 

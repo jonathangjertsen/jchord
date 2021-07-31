@@ -89,8 +89,8 @@ A <code class="docutils literal notranslate"><span class="pre">Song</span></code
 A <code class="docutils literal notranslate"><span class="pre">ChordProgression</span></code> has a <code class="docutils literal notranslate"><span class="pre">progression</span></code> property, which is a list of <code class="docutils literal notranslate"><span class="pre">ChordWithRoot</span></code> objects.
 A <code class="docutils literal notranslate"><span class="pre">ChordWithRoot</span></code> object has a <code class="docutils literal notranslate"><span class="pre">chord</span></code> property, which is a <code class="docutils literal notranslate"><span class="pre">Chord</span></code> object; and a <code class="docutils literal notranslate"><span class="pre">root</span></code> property, which is a <code class="docutils literal notranslate"><span class="pre">Note</span></code> object.</p>
 </section>
-<section id="working-with-individual-notes">
-<h2>Working with individual notes<a class="headerlink" href="#working-with-individual-notes" title="Permalink to this headline">¶</a></h2>
+<section id="working-with-individual-notes-note">
+<h2>Working with individual notes: <code class="docutils literal notranslate"><span class="pre">Note</span></code><a class="headerlink" href="#working-with-individual-notes-note" title="Permalink to this headline">¶</a></h2>
 <p>A <code class="docutils literal notranslate"><span class="pre">Note</span></code> represents one of the musical notes in the Western 12-tone system.
 It is identified by its pitch class and octave according to <a class="reference external" href="https://en.wikipedia.org/wiki/Scientific_pitch_notation">Scientific pitch notation</a>; so <code class="docutils literal notranslate"><span class="pre">Note('C',</span> <span class="pre">4)</span></code> is Middle C.</p>
 <dl class="py class">
@@ -161,8 +161,8 @@ or if they have the same octave and their names are enharmonic:</p>
 </dd></dl>
 
 </section>
-<section id="working-with-individual-chords">
-<h2>Working with individual chords<a class="headerlink" href="#working-with-individual-chords" title="Permalink to this headline">¶</a></h2>
+<section id="working-with-individual-chords-chord-and-chordwithroot">
+<h2>Working with individual chords: <code class="docutils literal notranslate"><span class="pre">Chord</span></code> and <code class="docutils literal notranslate"><span class="pre">ChordWithRoot</span></code><a class="headerlink" href="#working-with-individual-chords-chord-and-chordwithroot" title="Permalink to this headline">¶</a></h2>
 <p>The meaning of a chord is slightly ambiguous, and jchord has two classes to disambiguate
 between the case where we refer to a chord <em>with</em> a root (say, “Am7” or “C#maj7#11”), and
 the case where we refer to the interval structure without reference to any particular root note
@@ -353,8 +353,8 @@ or a root note + interval structure of the chord, and the other will be inferred
 </dd></dl>
 
 </section>
-<section id="working-with-chord-progressions">
-<h2>Working with chord progressions<a class="headerlink" href="#working-with-chord-progressions" title="Permalink to this headline">¶</a></h2>
+<section id="working-with-chord-progressions-chordprogression">
+<h2>Working with chord progressions: <code class="docutils literal notranslate"><span class="pre">ChordProgression</span></code><a class="headerlink" href="#working-with-chord-progressions-chordprogression" title="Permalink to this headline">¶</a></h2>
 <p>A chord progression is represented as a list of chords, one after another.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="jchord.ChordProgression">
@@ -491,9 +491,9 @@ For best results, the MIDI file should contain a single instrument with chords p
 <li><a class="reference internal" href="#contributing">Contributing</a></li>
 <li><a class="reference internal" href="#api-reference">API reference</a><ul>
 <li><a class="reference internal" href="#objects-at-a-glance">Objects at a glance</a></li>
-<li><a class="reference internal" href="#working-with-individual-notes">Working with individual notes</a></li>
-<li><a class="reference internal" href="#working-with-individual-chords">Working with individual chords</a></li>
-<li><a class="reference internal" href="#working-with-chord-progressions">Working with chord progressions</a></li>
+<li><a class="reference internal" href="#working-with-individual-notes-note">Working with individual notes: <code class="docutils literal notranslate"><span class="pre">Note</span></code></a></li>
+<li><a class="reference internal" href="#working-with-individual-chords-chord-and-chordwithroot">Working with individual chords: <code class="docutils literal notranslate"><span class="pre">Chord</span></code> and <code class="docutils literal notranslate"><span class="pre">ChordWithRoot</span></code></a></li>
+<li><a class="reference internal" href="#working-with-chord-progressions-chordprogression">Working with chord progressions: <code class="docutils literal notranslate"><span class="pre">ChordProgression</span></code></a></li>
 </ul>
 </li>
 </ul>
