@@ -4,7 +4,7 @@ if __name__ == "__main__":
     with open("VERSION.txt") as version_file:
         version = version_file.read().strip()
 
-    with open("README.md", "r") as readme_file:
+    with open("README.rst", "r") as readme_file:
         long_description = readme_file.read()
 
     setup(
@@ -15,7 +15,7 @@ if __name__ == "__main__":
         author="Jonathan Reichelt Gjertsen",
         author_email="jonath.re@gmail.com",
         long_description=long_description,
-        long_description_content_type="text/markdown",
+        long_description_content_type="text/x-rst",
         packages=find_packages(),
         classifiers=[
             "Development Status :: 4 - Beta",

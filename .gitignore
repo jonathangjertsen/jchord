@@ -8,3 +8,4 @@ coverage.xml
 *.midi
 docs/.doctrees/*
 docs/.buildinfo
+docs/_sources
