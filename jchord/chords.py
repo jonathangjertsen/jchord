@@ -249,25 +249,26 @@ class _ChordModification(object):
 
     def resolve(self, cls, name):
         base_chord = cls.from_name(self.strip_modifier(name))
-        self.apply(base_chord)
-        base_chord.name += self.token
-        base_chord.modifications.append(self.token)
-        return base_chord
+        chord = self.apply(base_chord)
+        chord.name += self.token
+        chord.modifications = base_chord.modifications + [self.token]
+        return chord
 
 
 def _semitone_subtractor(*semitones):
     def _remover(chord):
         for semitone in semitones:
             for octave in range(9):
-                chord.remove_semitone(semitone + octave * 12, recalculate_name=False)
-
+                chord = chord.remove_semitone(semitone + octave * 12, recalculate_name=False)
+        return chord
     return _remover
 
 
 def _semitone_adder(*semitones):
     def _adder(chord):
         for semitone in semitones:
-            chord.add_semitone(semitone, recalculate_name=False)
+            chord = chord.add_semitone(semitone, recalculate_name=False)
+        return chord
 
     return _adder
 
@@ -275,9 +276,10 @@ def _semitone_adder(*semitones):
 def _semitone_replacer(remove, *adds):
     def _replacer(chord):
         for octave in range(9):
-            chord.remove_semitone(remove + octave * 12, recalculate_name=False)
+            chord = chord.remove_semitone(remove + octave * 12, recalculate_name=False)
         for add in adds:
-            chord.add_semitone(add, recalculate_name=False)
+            chord = chord.add_semitone(add, recalculate_name=False)
+        return chord
 
     return _replacer
 
@@ -364,14 +366,22 @@ class Chord(CompositeObject):
     """
     UNNAMED = "<unknown>"
 
-    def __init__(self, semitones: List[int], name: str):
-        self.semitones = sorted(list(set(semitones) | {0}))
+    def __init__(self, semitones: List[int], name: str, implicit_zero=True, source_chord=None):
+        if implicit_zero:
+            semitones_set = set(semitones) | {0}
+        else:
+            semitones_set = set(semitones)
+        self.semitones = sorted(list(semitones_set))
         self.name = name
         self.modifications = []
         self._inversions = 0
 
     def __repr__(self) -> str:
-        return "Chord(name='{}', semitones={})".format(self.name, self.semitones)
+        if 0 not in self.semitones:
+            implicit_zero_arg = ", implicit_zero=False"
+        else:
+            implicit_zero_arg = ""
+        return "Chord(name='{}', semitones={}{})".format(self.name, self.semitones, implicit_zero_arg)
 
     def _keys(self) -> Hashable:
         return tuple(self.semitones)
@@ -421,9 +431,6 @@ class Chord(CompositeObject):
         # Nope
         raise InvalidChord(name)
 
-    def recalculate_name(self):
-        self.name = self.__class__.get_name_from_semitones(self.semitones)
-
     def intervals(self) -> List[int]:
         """
         Returns the list of internal intervals in the chord.
@@ -447,61 +454,66 @@ class Chord(CompositeObject):
         """
         return ChordWithRoot(root.name + self.name, root, self)
 
-    def add_semitone(self, semitone: int, recalculate_name: bool=True):
+    def add_semitone(self, semitone: int, recalculate_name: bool=True) -> "Chord":
         """
-        Adds the given semitone (as a difference from the root degree) to the chord.
-        The name will be recalculated unless the optional parameter ``recalculate_name``
-        is set to ``False``.
-
-        >>> chord = Chord.from_name("m")
-        >>> chord.add_semitone(10)
-        >>> chord
-        Chord(name='min7', semitones=[0, 3, 7, 10])
-        """
-        self.semitones = sorted(list(set(self.semitones) | {semitone}))
-        if recalculate_name:
-            self.recalculate_name()
-
-    def remove_semitone(self, semitone: int, recalculate_name: bool=True):
-        """
-        Removes the given semitone (as a difference from the root degree) from the chord
-        if it is present. The name will be recalculated unless the optional parameter
+        Returns a new ``Chord`` where the given semitone (as a difference from the root
+        degree) has been added. The name will be recalculated unless the optional parameter
         ``recalculate_name`` is set to ``False``.
 
-        >>> chord = Chord.from_name("maj7")
-        >>> chord.remove_semitone(11)
-        >>> chord
+        >>> Chord.from_name("m").add_semitone(10)
+        Chord(name='min7', semitones=[0, 3, 7, 10])
+        """
+        semitones = sorted(list(set(self.semitones) | {semitone}))
+        if recalculate_name:
+            name = self.__class__.get_name_from_semitones(semitones)
+        else:
+            name = self.name
+        return Chord(semitones, name)
+
+    def remove_semitone(self, semitone: int, recalculate_name: bool=True) -> "Chord":
+        """
+        Returns a new ``Chord`` where the given semitone (as a difference from the root
+        degree) has been removed (if it was present). The name will be recalculated unless
+        the optional parameter ``recalculate_name`` is set to ``False``.
+
+        >>> Chord.from_name("maj7").remove_semitone(11)
         Chord(name='', semitones=[0, 4, 7])
         """
-        self.semitones = sorted(list(set(self.semitones) - {semitone}))
+        semitones = sorted(list(set(self.semitones) - {semitone}))
         if recalculate_name:
-            self.recalculate_name()
+            name = self.__class__.get_name_from_semitones(semitones)
+        else:
+            name = self.name
+        return Chord(semitones, name)
 
-    def rotate_semitones(self, n: int, recalculate_name: bool=True):
+    def rotate_semitones(self, n: int, recalculate_name: bool=True) -> "Chord":
         """
-        Rotates the semitones within the chord, ``n`` times.
+        Returns a new ``Chord`` where the semitones have been rotated, ``n`` times.
         In other words, ``chord.rotate_semitones(1)`` is the 1st inversion of
         ``chord``, ``chord.rotate_semitones(2)`` is the 2nd inversion, etc.
         The name will be recalculated unless the optional parameter ``recalculate_name`` is
         set to False.
 
-
-        >>> chord = Chord.from_name("maj7")
-        >>> chord.rotate_semitones(2)
-        >>> chord
-        Chord(name='maj7inv2', semitones=[7, 11, 12, 16])
+        >>> Chord.from_name("maj7").rotate_semitones(2)
+        Chord(name='maj7inv2', semitones=[7, 11, 12, 16], implicit_zero=False)
         """
+        semitones = self.semitones.copy()
         for i in range(n):
-            self.semitones[i % len(self.semitones)] += 12
-        while all(semitone >= 12 for semitone in self.semitones):
-            self.semitones = { semitone - 12 for semitone in self.semitones }
-        self.semitones = sorted(list(set(self.semitones)))
+            semitones[i % len(semitones)] += 12
+        while all(semitone >= 12 for semitone in semitones):
+            semitones = { semitone - 12 for semitone in semitones }
+        semitones = sorted(list(set(semitones)))
         prev_inv = self._inversions
-        self._inversions = (self._inversions + n) % len(self.semitones)
+        new_inv = (prev_inv + n) % len(semitones)
         if recalculate_name:
             prev_inv_identifier = "inv{}".format(prev_inv)
-            new_inv_identifier = "inv{}".format(self._inversions)
-            self.name = self.name.replace(prev_inv_identifier, "") + new_inv_identifier
+            new_inv_identifier = "inv{}".format(new_inv)
+            name = self.name.replace(prev_inv_identifier, "") + new_inv_identifier
+        else:
+            name = self.name
+        chord = Chord(semitones, name, implicit_zero=False)
+        chord._inversions = new_inv
+        return chord
 
 
 class ChordWithRoot(CompositeObject):
@@ -626,7 +638,7 @@ class ChordWithRoot(CompositeObject):
         if has_slash:
             name_without_root, bass = name_without_root.split("/")
             chord = cls(name, root, Chord.from_name(name_without_root))
-            chord.chord.add_semitone(-note_diff(bass, root.name))
+            chord.chord = chord.chord.add_semitone(-note_diff(bass, root.name))
             return chord
         else:
             return cls(name, root, Chord.from_name(name_without_root))
