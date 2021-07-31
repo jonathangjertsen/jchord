@@ -107,28 +107,28 @@ def test_github_issue_61_slash_chord_with_octave():
 
 
 def test_github_issue_8_sloppy_midi():
-    prog = ChordProgression.from_midi_file(os.path.join(
-        os.path.dirname(__file__), "test_data", "issue_8.mid"
-    ))
-    assert prog == ChordProgression([
-        ChordWithRoot(
-            name='A#min',
-            root=Note('A#', 3),
-            chord=Chord(name='min', semitones=[0, 3, 7])
-        ),
-        ChordWithRoot(
-            name='D#',
-            root=Note('D#', 4),
-            chord=Chord(name='', semitones=[0, 4, 7])
-        ),
-        ChordWithRoot(
-            name='D#min',
-            root=Note('D#', 4),
-            chord=Chord(name='min', semitones=[0, 3, 7])
-        ),
-        ChordWithRoot(
-            name='A#min/G#',
-            root=Note('G#', 3),
-            chord=Chord(name='min/b7', semitones=[0, 5, 9, 14])
-        ),
-    ])
+    prog = ChordProgression.from_midi_file(
+        os.path.join(os.path.dirname(__file__), "test_data", "issue_8.mid")
+    )
+    assert prog == ChordProgression(
+        [
+            ChordWithRoot(
+                name="A#min",
+                root=Note("A#", 3),
+                chord=Chord(name="min", semitones=[0, 3, 7]),
+            ),
+            ChordWithRoot(
+                name="D#", root=Note("D#", 4), chord=Chord(name="", semitones=[0, 4, 7])
+            ),
+            ChordWithRoot(
+                name="D#min",
+                root=Note("D#", 4),
+                chord=Chord(name="min", semitones=[0, 3, 7]),
+            ),
+            ChordWithRoot(
+                name="A#min/G#",
+                root=Note("G#", 3),
+                chord=Chord(name="min/b7", semitones=[0, 5, 9, 14]),
+            ),
+        ]
+    )

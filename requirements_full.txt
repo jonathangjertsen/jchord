@@ -1,3 +1,0 @@
--r requirements_minimal.txt
-mido==1.2.9
-openpyxl==2.6.4

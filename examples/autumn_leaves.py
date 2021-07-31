@@ -1,3 +1,4 @@
+# fmt: off
 from jchord.progressions import ChordProgression, MidiConversionSettings
 from jchord.midi import Instrument
 from jchord.midi_effects import (
@@ -7,7 +8,7 @@ from jchord.midi_effects import (
     VelocityControl,
     Spreader,
     Transposer,
-    Shuffle
+    Shuffle,
 )
 
 progression = ChordProgression.from_string(

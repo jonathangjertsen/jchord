@@ -207,7 +207,10 @@ def test_transpose(note_in, octave_in, shift, note_out, octave_out):
     ],
 )
 def test_transpose_degree(note_in, octave_in, shift, down, note_out, octave_out):
-    assert Note(note_in, octave_in).transpose_degree(shift, down) == (note_out, octave_out)
+    assert Note(note_in, octave_in).transpose_degree(shift, down) == (
+        note_out,
+        octave_out,
+    )
 
 
 @pytest.mark.parametrize(

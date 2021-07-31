@@ -51,9 +51,8 @@ CHORD_NAMES = {
     # Suspended
     "7sus2": ["2", "5", "b7"],
     "7sus4": ["4", "5", "b7"],
-
     # Note
-    "n": []
+    "n": [],
 }
 CHORD_ALIASES = {
     # Major

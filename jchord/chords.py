@@ -259,8 +259,11 @@ def _semitone_subtractor(*semitones):
     def _remover(chord):
         for semitone in semitones:
             for octave in range(9):
-                chord = chord.remove_semitone(semitone + octave * 12, recalculate_name=False)
+                chord = chord.remove_semitone(
+                    semitone + octave * 12, recalculate_name=False
+                )
         return chord
+
     return _remover
 
 
@@ -364,9 +367,12 @@ class Chord(CompositeObject):
     >>> Chord.from_semitones([1, 2, 3, 4]) # no common name
     Chord(name='<unknown>', semitones=[0, 1, 2, 3, 4])
     """
+
     UNNAMED = "<unknown>"
 
-    def __init__(self, semitones: List[int], name: str, implicit_zero=True, source_chord=None):
+    def __init__(
+        self, semitones: List[int], name: str, implicit_zero=True, source_chord=None
+    ):
         if implicit_zero:
             semitones_set = set(semitones) | {0}
         else:
@@ -381,7 +387,9 @@ class Chord(CompositeObject):
             implicit_zero_arg = ", implicit_zero=False"
         else:
             implicit_zero_arg = ""
-        return "Chord(name='{}', semitones={}{})".format(self.name, self.semitones, implicit_zero_arg)
+        return "Chord(name='{}', semitones={}{})".format(
+            self.name, self.semitones, implicit_zero_arg
+        )
 
     def _keys(self) -> Hashable:
         return tuple(self.semitones)
@@ -395,13 +403,15 @@ class Chord(CompositeObject):
             return cls.UNNAMED
 
     @classmethod
-    def from_semitones(cls, semitones: List[int], name: Optional[str]=None) -> "Chord":
+    def from_semitones(
+        cls, semitones: List[int], name: Optional[str] = None
+    ) -> "Chord":
         if name is None:
             name = cls.get_name_from_semitones(semitones)
         return cls(semitones, name)
 
     @classmethod
-    def from_degrees(cls, degrees: List[str], name: Optional[str]=None) -> "Chord":
+    def from_degrees(cls, degrees: List[str], name: Optional[str] = None) -> "Chord":
         return cls([degree_to_semitone(degree) for degree in degrees], name)
 
     @classmethod
@@ -454,7 +464,7 @@ class Chord(CompositeObject):
         """
         return ChordWithRoot(root.name + self.name, root, self)
 
-    def add_semitone(self, semitone: int, recalculate_name: bool=True) -> "Chord":
+    def add_semitone(self, semitone: int, recalculate_name: bool = True) -> "Chord":
         """
         Returns a new ``Chord`` where the given semitone (as a difference from the root
         degree) has been added. The name will be recalculated unless the optional parameter
@@ -470,7 +480,7 @@ class Chord(CompositeObject):
             name = self.name
         return Chord(semitones, name)
 
-    def remove_semitone(self, semitone: int, recalculate_name: bool=True) -> "Chord":
+    def remove_semitone(self, semitone: int, recalculate_name: bool = True) -> "Chord":
         """
         Returns a new ``Chord`` where the given semitone (as a difference from the root
         degree) has been removed (if it was present). The name will be recalculated unless
@@ -486,7 +496,7 @@ class Chord(CompositeObject):
             name = self.name
         return Chord(semitones, name)
 
-    def rotate_semitones(self, n: int, recalculate_name: bool=True) -> "Chord":
+    def rotate_semitones(self, n: int, recalculate_name: bool = True) -> "Chord":
         """
         Returns a new ``Chord`` where the semitones have been rotated, ``n`` times.
         In other words, ``chord.rotate_semitones(1)`` is the 1st inversion of
@@ -501,7 +511,7 @@ class Chord(CompositeObject):
         for i in range(n):
             semitones[i % len(semitones)] += 12
         while all(semitone >= 12 for semitone in semitones):
-            semitones = { semitone - 12 for semitone in semitones }
+            semitones = {semitone - 12 for semitone in semitones}
         semitones = sorted(list(set(semitones)))
         prev_inv = self._inversions
         new_inv = (prev_inv + n) % len(semitones)
@@ -547,6 +557,7 @@ class ChordWithRoot(CompositeObject):
     >>> ChordWithRoot.from_midi({ 77, 80, 84 })
     ChordWithRoot(name='Fmin', root=Note('F', 5), chord=Chord(name='min', semitones=[0, 3, 7]))
     """
+
     def __init__(self, name: str, root: Note, chord: Chord):
         self.name = name
         self.root = root

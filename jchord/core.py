@@ -84,6 +84,7 @@ class Note(CompositeObject):
 
     ``Note`` is hashable, so instances can be used as dictionary keys or members of sets.
     """
+
     def __init__(self, name: str, octave: int):
         self.name = name
         self.octave = octave
@@ -121,6 +122,7 @@ class Note(CompositeObject):
     def __sub__(self, other):
         """Returns the number of semitones between the two notes"""
         from jchord import midi
+
         return midi.note_to_midi(self) - midi.note_to_midi(other)
 
     def pitch(self) -> float:
@@ -172,7 +174,7 @@ class Note(CompositeObject):
                 note = note._shift_down()
         return note
 
-    def transpose_degree(self: "Note", shift: str, down: bool=False) -> "Note":
+    def transpose_degree(self: "Note", shift: str, down: bool = False) -> "Note":
         """
         Transposes the given note by the given scale degree.
 

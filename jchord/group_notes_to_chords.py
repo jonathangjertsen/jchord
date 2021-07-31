@@ -10,14 +10,17 @@ MIN_SEP_INTERVAL = 0.1
 # Bucket size for the KDE algorithm
 KDE_BUCKETS_PER_SECOND = 1 / MIN_SEP_INTERVAL
 
+
 def kernel_default(distance):
     """
     Default kernel
     """
-    return exp(-(distance / MIN_SEP_INTERVAL) ** 2)
+    return exp(-((distance / MIN_SEP_INTERVAL) ** 2))
 
 
-def group_notes_to_chords(notes: List[PlayedNote], kernel=None) -> List[List[PlayedNote]]:
+def group_notes_to_chords(
+    notes: List[PlayedNote], kernel=None
+) -> List[List[PlayedNote]]:
     """
     Groups the list of `PlayedNote`s by time.
 
@@ -45,7 +48,7 @@ def group_notes_to_chords(notes: List[PlayedNote], kernel=None) -> List[List[Pla
     duration = max_time - min_time
 
     # Do kernel density estimate
-    bucket_duration = 1. / KDE_BUCKETS_PER_SECOND
+    bucket_duration = 1.0 / KDE_BUCKETS_PER_SECOND
     kde = [
         sum(kernel(abs(note.time - i * bucket_duration)) for note in notes)
         for i in range(ceil(KDE_BUCKETS_PER_SECOND * duration))
@@ -56,7 +59,7 @@ def group_notes_to_chords(notes: List[PlayedNote], kernel=None) -> List[List[Pla
     buckets = defaultdict(list)
     kde_threshold = float("inf")
     for note in notes:
-        bucket = min(int(note.time / bucket_duration), len(kde)-1)
+        bucket = min(int(note.time / bucket_duration), len(kde) - 1)
         buckets[bucket].append(note)
         kde_threshold = min(kde_threshold, kde[bucket])
 

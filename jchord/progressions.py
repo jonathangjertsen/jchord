@@ -8,14 +8,8 @@ from typing import Hashable, List, Set, Union
 from jchord.knowledge import REPETITION_SYMBOL
 from jchord.core import CompositeObject, Note
 from jchord.chords import ChordWithRoot
-from jchord.midi import (
-    read_midi_file,
-    notes_to_messages,
-    PlayedNote,
-)
-from jchord.group_notes_to_chords import (
-    group_notes_to_chords
-)
+from jchord.midi import read_midi_file, notes_to_messages, PlayedNote
+from jchord.group_notes_to_chords import group_notes_to_chords
 
 
 class InvalidProgression(Exception):
@@ -115,6 +109,7 @@ class ChordProgression(CompositeObject):
     .. note::
         This feature requires ``mido``, which you can get with ``pip install mido``.
     """
+
     class _DummyChord(object):
         """Mocks a ChordWithProgression object"""
 
@@ -189,10 +184,7 @@ class ChordProgression(CompositeObject):
         return ChordProgression([chord.transpose(shift) for chord in self.progression])
 
     def to_string(
-        self,
-        chords_per_row: int = 4,
-        column_spacing: int = 2,
-        newline: str = "\n",
+        self, chords_per_row: int = 4, column_spacing: int = 2, newline: str = "\n"
     ) -> str:
         """
         Returns the string representation of the chord progression.

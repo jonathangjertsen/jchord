@@ -16,7 +16,7 @@ if __name__ == "__main__":
         author_email="jonath.re@gmail.com",
         long_description=long_description,
         long_description_content_type="text/x-rst",
-        packages=find_packages(),
+        packages=find_packages(include=["jchord"]),
         classifiers=[
             "Development Status :: 4 - Beta",
             "Intended Audience :: Developers",

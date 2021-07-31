@@ -5,19 +5,21 @@ from jchord.core import Note
 from jchord.midi import PlayedNote, midi_to_note
 from jchord.progressions import MidiConversionSettings
 
+
 class MidiEffect(object):
     """Base class for MIDI effects"""
+
     def __init__(self, *args, **kwargs):
         """
         Nothing to configure
         """
 
     def set_settings(self, settings: MidiConversionSettings):
-       """
-       Makes the MIDI conversion settings available.
-       This is always applied before apply() during the MIDI conversion
-       """
-       self.settings = settings
+        """
+        Makes the MIDI conversion settings available.
+        This is always applied before apply() during the MIDI conversion
+        """
+        self.settings = settings
 
     def apply(self, chord: List[PlayedNote]):
         """
@@ -25,10 +27,12 @@ class MidiEffect(object):
         """
         raise NotImplementedError
 
+
 class Chain(MidiEffect):
     """
     Used to combine several effects in a row
     """
+
     def __init__(self, *effects):
         self.effects = effects
 
@@ -48,6 +52,7 @@ class Inverter(MidiEffect):
 
     This only matters if the notes have different times
     """
+
     def apply(self, chord):
         return list(reversed(chord))
 
@@ -58,6 +63,7 @@ class AlternatingInverter(MidiEffect):
 
     Could be used to implement some kind of strumming effect
     """
+
     def __init__(self, init_state=1):
         self.state = init_state
 
@@ -69,15 +75,19 @@ class AlternatingInverter(MidiEffect):
             self.state = 0
             return list(reversed(chord))
 
+
 class Transposer(MidiEffect):
     """
     Transposes all the notes by the specified interval
     """
+
     def __init__(self, interval):
         self.interval = interval
 
     def apply(self, chord):
-        return sorted(list({ note._replace(note=note.note + self.interval) for note in chord }))
+        return sorted(
+            list({note._replace(note=note.note + self.interval) for note in chord})
+        )
 
 
 class Doubler(MidiEffect):
@@ -86,6 +96,7 @@ class Doubler(MidiEffect):
 
     Duplicated notes will not be present
     """
+
     def __init__(self, interval):
         self.transposer = Transposer(interval)
 
@@ -98,6 +109,7 @@ class Spreader(MidiEffect):
     Spreads the notes in time by the specified amount
     Jitter can be used to randomize the spread by some amount
     """
+
     def __init__(self, amount, jitter):
         """
         Parameters:
@@ -110,7 +122,9 @@ class Spreader(MidiEffect):
     def apply(self, chord):
         displacement = 0
         for i, note in enumerate(chord):
-            chord[i] = note._replace(time=note.time + displacement + self.jitter * (random.random() * 2 - 1))
+            chord[i] = note._replace(
+                time=note.time + displacement + self.jitter * (random.random() * 2 - 1)
+            )
             displacement += self.amount
         return chord
 
@@ -119,6 +133,7 @@ class Arpeggiator(MidiEffect):
     """
     Arpeggiation effect
     """
+
     def __init__(self, rate: float, pattern: list, sticky=False):
         """
         Parameters:
@@ -154,12 +169,14 @@ class Arpeggiator(MidiEffect):
                 indices = [indices]
             for index in indices:
                 note = chord[index % len(chord)]
-                out.append(PlayedNote(
-                    time=note.time + int(ticks_per_note * i),
-                    duration=ticks_per_note,
-                    note=note.note,
-                    velocity=self.settings.velocity
-                ))
+                out.append(
+                    PlayedNote(
+                        time=note.time + int(ticks_per_note * i),
+                        duration=ticks_per_note,
+                        note=note.note,
+                        velocity=self.settings.velocity,
+                    )
+                )
             i += 1
             total_duration += ticks_per_note
         self.offset += i * self.sticky
@@ -167,9 +184,8 @@ class Arpeggiator(MidiEffect):
 
 
 class Shuffle(MidiEffect):
-    def __init__(self, percent=100*2/3, base_rate=1/16, tolerance_ticks=100):
-        """
-        """
+    def __init__(self, percent=100 * 2 / 3, base_rate=1 / 16, tolerance_ticks=100):
+        """ """
         self.base_rate = base_rate
         self.percent = percent
         self.tolerance_ticks = tolerance_ticks
@@ -182,7 +198,7 @@ class Shuffle(MidiEffect):
             rel_time = note.time % two_dt
             if dt - self.tolerance_ticks <= rel_time <= dt + self.tolerance_ticks:
                 shift = (self.percent - 50) * dt / 100
-                out.append(note._replace(time=note.time+shift))
+                out.append(note._replace(time=note.time + shift))
             else:
                 out.append(note)
         return out
@@ -190,10 +206,11 @@ class Shuffle(MidiEffect):
 
 class VelocityControl(MidiEffect):
     def __init__(self, keyframes):
-        self.keyframes_ticks = sorted([(bar * 1920, velocity) for bar, velocity in keyframes])
-        self.duration = (
-              max(bar for bar, velocity in self.keyframes_ticks)
-            - min(bar for bar, velocity in self.keyframes_ticks)
+        self.keyframes_ticks = sorted(
+            [(bar * 1920, velocity) for bar, velocity in keyframes]
+        )
+        self.duration = max(bar for bar, velocity in self.keyframes_ticks) - min(
+            bar for bar, velocity in self.keyframes_ticks
         )
 
     def apply(self, chord):
@@ -215,6 +232,7 @@ class Harmonizer(MidiEffect):
     """
     Adds a transposed copy shifted by the specified interval
     """
+
     def __init__(self, scale, degrees, root):
         self.scale = scale
         self.degrees = degrees
@@ -230,14 +248,12 @@ class Harmonizer(MidiEffect):
             if offset not in self.scale:
                 raise ValueError(
                     "Note with MIDI number {} is not in the scale (offset from root is {}, should be one of: {})".format(
-                        note.note,
-                        offset,
-                        self.scale
+                        note.note, offset, self.scale
                     )
                 )
             degree_in = self.scale.index(offset)
             for degree in self.degrees:
                 scale_out = self.scale[(degree_in + degree - 1) % len(self.scale)]
                 semitones_diff = (scale_out - offset) % 12
-                out.append(note._replace(note=note.note+semitones_diff))
+                out.append(note._replace(note=note.note + semitones_diff))
         return out

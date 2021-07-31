@@ -1,7 +1,7 @@
 name: Tests
 on: [push]
 jobs:
-  Build:
+  Unit_Tests:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
@@ -19,9 +19,33 @@ jobs:
           python-version: ${{ matrix.python }}
       - name: Run tests
         run: |
-            pip install -r requirements_dev.txt
+            pip install -r requirements.txt -e .
+            pytest -vvv
+  Coverage:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Clone repo
+        uses: actions/checkout@v2
+      - name: Install Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.9
+      - name: Run tests
+        run: |
+            pip install -r requirements.txt -e .
             pytest --cov=jchord --cov-report=xml -vvv
       - name: Upload codecov report
         uses: codecov/codecov-action@v2
+  Repo_Health_Check:
+    runs-on: windows-latest
+    steps:
+      - name: Clone repo
+        uses: actions/checkout@v2
+      - name: Install Python
+        uses: actions/setup-python@v2
         with:
-          env_vars: OS,PYTHON
+          python-version: 3.9
+      - name: Run health check script
+        run: |
+          pip install -r requirements.txt -e .
+          python repo_check.py

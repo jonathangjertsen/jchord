@@ -215,9 +215,7 @@ def test_chord_from_name_modifications(name_in, modifications):
     ],
 )
 def test_chord_name_roundtrip(name_in, name_out):
-    assert (
-        Chord.from_semitones(Chord.from_name(name_in).semitones).name == name_out
-    )
+    assert Chord.from_semitones(Chord.from_name(name_in).semitones).name == name_out
 
 
 @pytest.mark.parametrize(

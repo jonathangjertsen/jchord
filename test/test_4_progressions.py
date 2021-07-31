@@ -81,22 +81,19 @@ def test_whitespace():
 
 
 def test_multiline():
-    assert (
-        ChordProgression.from_string(
-            """C Fm C G7
+    assert ChordProgression.from_string(
+        """C Fm C G7
                C E7 Am G"""
-        ).progression
-        == [
-            ChordWithRoot.from_name("C"),
-            ChordWithRoot.from_name("Fm"),
-            ChordWithRoot.from_name("C"),
-            ChordWithRoot.from_name("G7"),
-            ChordWithRoot.from_name("C"),
-            ChordWithRoot.from_name("E7"),
-            ChordWithRoot.from_name("Am"),
-            ChordWithRoot.from_name("G"),
-        ]
-    )
+    ).progression == [
+        ChordWithRoot.from_name("C"),
+        ChordWithRoot.from_name("Fm"),
+        ChordWithRoot.from_name("C"),
+        ChordWithRoot.from_name("G7"),
+        ChordWithRoot.from_name("C"),
+        ChordWithRoot.from_name("E7"),
+        ChordWithRoot.from_name("Am"),
+        ChordWithRoot.from_name("G"),
+    ]
 
 
 def test_from_txt():
