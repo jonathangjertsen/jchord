@@ -1,6 +1,6 @@
 # jchord - Python toolkit for working with chord progressions
 
-[![Build Status](https://travis-ci.com/jonathangjertsen/jchord.svg?branch=master)](https://travis-ci.com/jonathangjertsen/jchord)
+[![Tests](https://github.com/jonathangjertsen/jchord/actions/workflows/build.yml/badge.svg)](https://github.com/jonathangjertsen/jchord/actions/workflows/build.yml)
 [![codecov](https://codecov.io/gh/jonathangjertsen/jchord/branch/master/graph/badge.svg)](https://codecov.io/gh/jonathangjertsen/jchord)
 
 ```
