@@ -60,13 +60,30 @@ class CompositeObject(object):
 
 
 class Note(CompositeObject):
-    """Represents an absolute note with a name and an octave.
-
-    Two `Note`s are equal if they have the same name and octave,
-    or if they have the same octave and their names are enharmonic
-    (so `Note('A#', 4) == Note('Gb', 4)`)
     """
+    Represents an absolute note with a name and an octave.
+    To create a Note, provide the name as a string and the octave as an integer:
 
+    >>> Note(name="A", octave=3)
+    Note('A', 3)
+
+    Two instances of ``Note`` are equal if they have the same name and octave,
+    or if they have the same octave and their names are enharmonic:
+
+    >>> Note('G#', 4) == Note('Ab', 4)
+    True
+    >>> Note('G#', 4) == Note('Ab', 3)
+    False
+
+    You can subtract two ``Note`` instances to get the number of semitones between them:
+
+    >>> Note('G#', 4) - Note('Ab', 3)
+    12
+    >>> Note('Ab', 3) - Note('G#', 4)
+    -12
+
+    ``Note`` is hashable, so instances can be used as dictionary keys or members of sets.
+    """
     def __init__(self, name: str, octave: int):
         self.name = name
         self.octave = octave
@@ -109,11 +126,12 @@ class Note(CompositeObject):
     def pitch(self) -> float:
         """Returns the absolute pitch of the note in Hz.
 
-        Examples (equalities are approximate):
-
-        * `Note("A", 4).pitch() == 440.0`
-        * `Note("A", 0).pitch() == 27.5`
-        * `Note("C", 4).pitch() == 261.62556`
+        >>> Note("A", 4).pitch()
+        440.0
+        >>> Note("A", 0).pitch()
+        27.5
+        >>> Note("C", 4).pitch()
+        261.6255653005986
         """
         from jchord import midi
 
@@ -140,10 +158,10 @@ class Note(CompositeObject):
     def transpose(self: "Note", shift: int) -> "Note":
         """Transposes the note by the given number of semitones.
 
-        Examples:
-
-        * `Note("C", 0).transpose(1) == Note("C#", 0)`
-        * `Note("C", 4).transpose(19) == Note("G", 5)`
+        >>> Note("C", 0).transpose(1)
+        Note('C#', 0)
+        >>> Note("C", 4).transpose(19)
+        Note('G', 5)
         """
         note = self
         if shift > 0:
@@ -154,15 +172,19 @@ class Note(CompositeObject):
                 note = note._shift_down()
         return note
 
-    def transpose_degree(self: "Note", shift: str) -> "Note":
-        """Transposes the given note by the given scale degree
-
-        Examples:
-
-        * `Note("C", 0).transpose_degree("b2") == Note("C#", 0)`
-        * `Note("C", 4).transpose_degree("12") == Note("G", 5)`
+    def transpose_degree(self: "Note", shift: str, down: bool=False) -> "Note":
         """
-        return self.transpose(degree_to_semitone(shift))
+        Transposes the given note by the given scale degree.
+
+        >>> Note("C", 0).transpose_degree("b2")
+        Note('C#', 0)
+        >>> Note("C", 4).transpose_degree("5")
+        Note('G', 4)
+        >>> Note("C", 4).transpose_degree("5", down=True)
+        Note('F', 3)
+        """
+        factor = -1 if down else 1
+        return self.transpose(factor * degree_to_semitone(shift))
 
 
 def split_to_base_and_shift(
