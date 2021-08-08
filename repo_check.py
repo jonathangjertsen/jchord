@@ -27,7 +27,7 @@ def fix_crlf():
             return
         if path.is_dir():
             for subpath in path.iterdir():
-                fix_crlf(subpath)
+                helper(subpath)
         else:
             try:
                 path.write_text(path.read_text().replace("\r\n", "\n"))
