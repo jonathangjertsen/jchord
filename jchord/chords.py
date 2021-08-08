@@ -108,7 +108,7 @@ def _name_options_triad_with_extension(
 
 def _name_options_triad_with_lower_note(
     lower_note: int, upper_triad: Iterable[int], _rec: int
-) -> list[str]:
+) -> List[str]:
     """
     Returns possible names for a triad with a lower note (a bass note)
     """
