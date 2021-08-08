@@ -53,9 +53,7 @@ class CompositeObject(object):
             raise StopIteration
 
     def __repr__(self):
-        return "{}({})".format(
-            type(self).__name__, ", ".join(repr(key) for key in self._keys())
-        )
+        return f"{type(self).__name__}({', '.join(repr(key) for key in self._keys())})"
 
 
 class Note(CompositeObject):
@@ -145,7 +143,7 @@ class Note(CompositeObject):
                     return Note(name=CHROMATIC[0], octave=self.octave + 1)
                 else:
                     return Note(name=CHROMATIC[i + 1], octave=self.octave)
-        raise RuntimeError("Can't shift up {}".format(self))
+        raise RuntimeError(f"Can't shift up {self}")
 
     def _shift_down(self: "Note") -> "Note":
         for i, other in enumerate(CHROMATIC):
@@ -154,7 +152,7 @@ class Note(CompositeObject):
                     return Note(name=CHROMATIC[-1], octave=self.octave - 1)
                 else:
                     return Note(name=CHROMATIC[i - 1], octave=self.octave)
-        raise RuntimeError("Can't shift down {}".format(self))
+        raise RuntimeError(f"Can't shift down {self}")
 
     def transpose(self: "Note", shift: int) -> "Note":
         """Transposes the note by the given number of semitones.
@@ -283,12 +281,12 @@ def semitone_to_degree_options(semitone: int, max_accidentals: int = 1) -> List[
         for n_accidentals in range(max_accidentals + 1):
             if semitone == cand_semitone - n_accidentals:
                 options_with_priority.append(
-                    ("{}{}".format("b" * n_accidentals, cand_degree), n_accidentals)
+                    (f"{'b' * n_accidentals}{cand_degree}", n_accidentals)
                 )
             if semitone == cand_semitone + n_accidentals:
                 options_with_priority.append(
                     (
-                        "{}{}".format("#" * n_accidentals, cand_degree),
+                        f"{'#' * n_accidentals}{cand_degree}",
                         n_accidentals + 0.5,
                     )
                 )

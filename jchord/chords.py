@@ -41,8 +41,7 @@ def _name_options_single_semitone(semitone: int) -> List[str]:
     Returns possible names for a group of 2 notes
     """
     interval_options = [
-        "{} interval".format(interval)
-        for interval in semitone_to_degree_options(semitone)
+        f"{interval} interval" for interval in semitone_to_degree_options(semitone)
     ]
     if semitone in DYADS:
         return [DYADS[semitone]] + interval_options
@@ -65,7 +64,7 @@ def _name_options_two_semitones(semitones: Sequence[int], _rec: int) -> List[str
         if 4 in semitones:
             return ["aug"]
     return [
-        option if "(no5)" in option else "{}(no5)".format(option)
+        option if "(no5)" in option else f"{option}(no5)"
         for option in semitones_to_name_options(list(set(semitones) | {7}), _rec - 1)
         if "/" not in option
     ]
@@ -76,9 +75,9 @@ def _with_extension(base: str, extension: str) -> str:
     Adds an extension to a base name
     """
     if "sus" in base:
-        return "{}{}".format(extension, base)
+        return f"{extension}{base}"
     else:
-        return "{}{}".format(base, extension)
+        return f"{base}{extension}"
 
 
 def _name_options_triad_with_extension(
@@ -115,14 +114,14 @@ def _name_options_triad_with_lower_note(
     bass_degree = semitone_to_degree_options(12 - lower_note)[0]
     upper_triad_shifted = [semitone - lower_note for semitone in upper_triad]
     options = [
-        "{}/{}".format(option, bass_degree)
+        f"{option}/{bass_degree}"
         for option in semitones_to_name_options(set(upper_triad_shifted), _rec - 1)
     ]
     base_degree, _ = split_to_base_and_shift(bass_degree, name_before_accidental=False)
     return [
         option
         for option in options
-        if not (bass_degree in option and "(no{})".format(base_degree) in option)
+        if not (bass_degree in option and f"(no{base_degree})" in option)
     ]
 
 
@@ -359,7 +358,7 @@ _MODIFICATIONS = [
     _IntervalsModification(token="b13", apply=_semitone_replacer(21, 10, 14, 17, 20)),
     _IntervalsModification(token="#13", apply=_semitone_replacer(21, 10, 14, 17, 22)),
     *[
-        _IntervalsModification(token="inv{}".format(x), apply=_semitone_rotator(x))
+        _IntervalsModification(token=f"inv{x}", apply=_semitone_rotator(x))
         for x in range(1, 10)
     ],
 ]
@@ -555,8 +554,8 @@ class Intervals(CompositeObject):
         prev_inv = self._inversions
         new_inv = (prev_inv + n) % len(semitones)
         if recalculate_name:
-            prev_inv_identifier = "inv{}".format(prev_inv)
-            new_inv_identifier = "inv{}".format(new_inv)
+            prev_inv_identifier = f"inv{prev_inv}"
+            new_inv_identifier = f"inv{new_inv}"
             name = self.name.replace(prev_inv_identifier, "") + new_inv_identifier
         else:
             name = self.name
@@ -642,7 +641,7 @@ class Chord(CompositeObject):
             new_root = (
                 Note(root.name, 0).transpose(12 - degree_to_semitone(bass_degree)).name
             )
-            name = "{}{}/{}".format(new_root, chord_name, root.name)
+            name = f"{new_root}{chord_name}/{root.name}"
         else:
             name = root.name + chord.name
         return cls(name, root, chord)

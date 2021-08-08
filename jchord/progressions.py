@@ -277,7 +277,7 @@ class ChordProgression(CompositeObject):
         repeat_options = {"replay", "hold"}
         assert (
             settings.repeat in repeat_options
-        ), "repeat argument must be one of: {}".format(repeat_options)
+        ), f"repeat argument must be one of: {repeat_options}"
 
         import mido
 
@@ -382,15 +382,11 @@ class Song(CompositeObject):
                     break
 
             if multiplier > 1:
-                section_name = "{} (x{})".format(section.name, multiplier)
+                section_name = f"{section.name} (x{multiplier})"
             else:
                 section_name = section.name
 
-            out.append(
-                "{}{}{}{}".format(
-                    section_name, newline, "=" * len(section_name), newline
-                )
-            )
+            out.append(f"{section_name}{newline}{'=' * len(section_name)}{newline}")
             out.append(
                 section.progression.to_string(
                     chords_per_row=chords_per_row,

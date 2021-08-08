@@ -264,7 +264,7 @@ def test_chord_repr(name_in, repr_out):
 )
 def test_chord_add_root(name_in, octave):
     name_then_root = Intervals.from_name(name_in).with_root(Note("A#", octave))
-    name_and_root = Chord.from_name("{}A#{}".format(octave, name_in))
+    name_and_root = Chord.from_name(f"{octave}A#{name_in}")
     assert name_then_root == name_and_root
 
 
