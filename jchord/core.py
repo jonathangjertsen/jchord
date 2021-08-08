@@ -2,8 +2,7 @@
 Basic utilities for working with notes, base classes for objects etc.
 """
 import itertools
-from collections import namedtuple
-from typing import Hashable, List, Set
+from typing import Hashable, List
 
 from jchord.knowledge import MAJOR_SCALE_OFFSETS, CHROMATIC, ENHARMONIC
 

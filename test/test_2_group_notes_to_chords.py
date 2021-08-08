@@ -1,7 +1,3 @@
-from collections import namedtuple
-
-import pytest
-
 from jchord.group_notes_to_chords import group_notes_to_chords
 
 

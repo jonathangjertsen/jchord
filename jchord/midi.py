@@ -3,7 +3,7 @@ Tools for working with MIDI.
 """
 from collections import defaultdict, namedtuple
 from enum import IntEnum
-from typing import Dict, List
+from typing import List
 
 from jchord.knowledge import CHROMATIC, MAJOR_FROM_C, MAJOR_SCALE_OFFSETS
 from jchord.core import Note, split_to_base_and_shift

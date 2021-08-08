@@ -5,7 +5,6 @@ from jchord.chords import (
     ChordWithRoot,
     InvalidChord,
     semitones_to_chord_name_options,
-    select_name,
 )
 
 import pytest
@@ -244,7 +243,7 @@ def test_chord_from_name_intervals(name_in, int_out):
         ("major", "Chord(name='major', semitones=[0, 4, 7])"),
         ("minor", "Chord(name='minor', semitones=[0, 3, 7])"),
         ("5", "Chord(name='5', semitones=[0, 7])"),
-        ("", "Chord(name='major', semitones=[0, 4, 7])"),
+        ("", "Chord(name='', semitones=[0, 4, 7])"),
     ],
 )
 def test_chord_repr(name_in, repr_out):
@@ -330,7 +329,7 @@ def test_chord_transpose(name_in, name_out, shift):
 
 
 @pytest.mark.parametrize("name_in", ["Amajor", "Bminor", "D"])
-def test_chord_repr(name_in):
+def test_chord_with_root_repr(name_in):
     assert ChordWithRoot.from_name(name_in) == eval(
         repr(ChordWithRoot.from_name(name_in))
     )

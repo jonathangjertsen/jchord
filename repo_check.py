@@ -80,6 +80,15 @@ def pytest():
 
 
 @task
+def pyflakes():
+    print("========== Running pyflakes...")
+    proc = run(["pyflakes", "jchord", "test"])
+    if proc.returncode != 0:
+        print("pyflakes failed.")
+        sys.exit(1)
+
+
+@task
 def doctest():
     print("========== Checking if doctests pass...")
     proc = run(
@@ -99,12 +108,17 @@ def doctest():
 
 
 if __name__ == "__main__":
+    git = "git" in sys.argv
+
     fix_crlf()
-    check_clean()
+    if git:
+        check_clean()
+    pyflakes()
     format()
     pytest()
     doctest()
     build_docs()
     fix_crlf()
-    check_clean()
+    if git:
+        check_clean()
     print("OK, everything is up to date")

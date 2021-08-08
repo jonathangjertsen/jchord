@@ -151,7 +151,6 @@ class Arpeggiator(MidiEffect):
         self.offset = 0
 
     def apply(self, chord):
-        displacement = 0
         min_start = float("inf")
         max_stop = -float("inf")
         for note in chord:

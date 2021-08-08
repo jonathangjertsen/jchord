@@ -1,7 +1,6 @@
 """
 Tools for working with chords.
 """
-from collections import deque
 from typing import Hashable, List, Optional, Set, Tuple
 
 from jchord.knowledge import (

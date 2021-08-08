@@ -1,6 +1,6 @@
 from collections import defaultdict
 from math import exp, ceil
-from typing import List, Dict
+from typing import List
 
 from jchord.midi import MidiNote
 
@@ -66,7 +66,6 @@ def group_notes_to_chords(notes: List[MidiNote], kernel=None) -> List[List[MidiN
     kde_threshold *= 0.95
 
     # Do grouping
-    was_in_chord = False
     chords = []
     cur_chord = []
     for i, kde_val in enumerate(kde):

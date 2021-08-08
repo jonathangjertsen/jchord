@@ -2,9 +2,8 @@ import os
 
 import pytest
 
-from jchord.core import Note
 from jchord.midi import note_to_midi
-from jchord.chords import Chord, ChordWithRoot
+from jchord.chords import ChordWithRoot
 from jchord.progressions import (
     ChordProgression,
     InvalidProgression,
@@ -12,6 +11,14 @@ from jchord.progressions import (
     SongSection,
     MidiConversionSettings,
 )
+
+# These imports are not used directly, but is needed by eval(repr(x)) statements
+from jchord.core import Note
+from jchord.chords import Chord
+
+# pyflakes doesn't like the imports above, workaround:
+assert Note
+assert Chord
 
 
 def test_empty_progression():

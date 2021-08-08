@@ -1,12 +1,11 @@
 """
 Tools for working with chord progressions.
 """
-from collections import defaultdict, namedtuple
-from math import ceil
+from collections import namedtuple
 from typing import Hashable, List, Set, Union
 
 from jchord.knowledge import REPETITION_SYMBOL
-from jchord.core import CompositeObject, Note
+from jchord.core import CompositeObject
 from jchord.chords import ChordWithRoot
 from jchord.midi import read_midi_file, notes_to_messages, MidiNote
 from jchord.group_notes_to_chords import group_notes_to_chords
@@ -48,7 +47,7 @@ class MidiConversionSettings(object):
         beats_per_chord: Union[int, list] = 2,
         velocity: int = 100,
         repeat: str = "replay",
-        effect: "MidiEffect" = None,
+        effect=None,
     ):
         self.filename = filename
         self.instrument = instrument
@@ -370,7 +369,6 @@ class Song(CompositeObject):
     ):
         """Returns the string representation of the song."""
         out = []
-        prev_section = None
         multiplier = 1
         for i, section in enumerate(self.sections):
             if multiplier > 1:
@@ -401,7 +399,6 @@ class Song(CompositeObject):
                 )
             )
             out.append(newline)
-            prev_section = section
         combined = "".join(out)
         combined = combined.replace(3 * newline, 2 * newline)
         combined = combined.strip() + newline

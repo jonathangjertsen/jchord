@@ -48,4 +48,4 @@ jobs:
       - name: Run health check script
         run: |
           pip install -r requirements.txt -e .
-          python repo_check.py
+          python repo_check.py git
