@@ -18,15 +18,15 @@ Objects at a glance
 These are the key objects defined by `jchord`:
 
 * ``Note``
+* ``Intervals``
 * ``Chord``
-* ``ChordWithRoot``
 * ``ChordProgression``
 * ``Song``
 
 The highest-level object is ``Song``.
 A ``Song`` has a ``sections`` property, which is a list of ``ChordProgression`` objects.
-A ``ChordProgression`` has a ``progression`` property, which is a list of ``ChordWithRoot`` objects.
-A ``ChordWithRoot`` object has a ``chord`` property, which is a ``Chord`` object; and a ``root`` property, which is a ``Note`` object.
+A ``ChordProgression`` has a ``progression`` property, which is a list of ``Chord`` objects.
+A ``Chord`` object has a ``chord`` property, which is a ``Intervals`` object; and a ``root`` property, which is a ``Note`` object.
 
 Working with individual notes: ``Note``
 ---------------------------------------
@@ -38,7 +38,7 @@ It is identified by its pitch class and octave according to `Scientific pitch no
 .. autoclass:: jchord.Note
    :members:
 
-Working with individual chords: ``Chord`` and ``ChordWithRoot``
+Working with individual chords: ``Intervals`` and ``Chord``
 ---------------------------------------------------------------
 
 The meaning of a chord is slightly ambiguous, and jchord has two classes to disambiguate
@@ -46,13 +46,13 @@ between the case where we refer to a chord *with* a root (say, "Am7" or "C#maj7#
 the case where we refer to the interval structure without reference to any particular root note
 (say, "maj7" or "min11"):
 
-* ``ChordWithRoot`` refers to a root note AND the interval structure.
-* ``Chord`` refers to just the interval structure.
+* ``Chord`` refers to a root note AND the interval structure.
+* ``Intervals`` refers to just the interval structure.
 
+.. autoclass:: jchord.Intervals
+   :members: interval_sequence, add_semitone, remove_semitone, rotate_semitones, with_root
 .. autoclass:: jchord.Chord
-   :members: intervals, add_semitone, remove_semitone, rotate_semitones, with_root
-.. autoclass:: jchord.ChordWithRoot
-   :members: semitones, bass, intervals, midi, transpose
+   :members: semitones, bass, interval_sequence, midi, transpose
 .. autoclass:: jchord.InvalidChord
 
 Working with chord progressions: ``ChordProgression``

@@ -1,7 +1,7 @@
 import os
 
 from jchord.core import Note
-from jchord.chords import Chord, ChordWithRoot, InvalidChord
+from jchord.chords import Intervals, Chord, InvalidChord
 from jchord.progressions import ChordProgression, MidiConversionSettings
 
 
@@ -9,7 +9,7 @@ def make_midi_file(chord_names, beats_per_chord, out_file):
     chords = []
     for name in chord_names:
         try:
-            chord = ChordWithRoot.from_name(name)
+            chord = Chord.from_name(name)
         except InvalidChord:
             chord = ChordProgression.DUMMY_CHORD
         chords.append(chord)
@@ -55,41 +55,45 @@ def test_github_issue_61_progression():
     prog = ChordProgression.from_string("4F -- 3Am -- 4Dm7 -- 4F --")
     assert prog == ChordProgression(
         [
-            ChordWithRoot(
+            Chord(
                 name="F",
                 root=Note("F", 4),
-                chord=Chord(name="major", semitones=[0, 4, 7]),
+                intervals=Intervals(name="major", semitones=[0, 4, 7]),
             ),
-            ChordWithRoot(
+            Chord(
                 name="F",
                 root=Note("F", 4),
-                chord=Chord(name="major", semitones=[0, 4, 7]),
+                intervals=Intervals(name="major", semitones=[0, 4, 7]),
             ),
-            ChordWithRoot(
-                name="Am", root=Note("A", 3), chord=Chord(name="m", semitones=[0, 3, 7])
+            Chord(
+                name="Am",
+                root=Note("A", 3),
+                intervals=Intervals(name="m", semitones=[0, 3, 7]),
             ),
-            ChordWithRoot(
-                name="Am", root=Note("A", 3), chord=Chord(name="m", semitones=[0, 3, 7])
+            Chord(
+                name="Am",
+                root=Note("A", 3),
+                intervals=Intervals(name="m", semitones=[0, 3, 7]),
             ),
-            ChordWithRoot(
+            Chord(
                 name="Dm7",
                 root=Note("D", 4),
-                chord=Chord(name="m7", semitones=[0, 3, 7, 10]),
+                intervals=Intervals(name="m7", semitones=[0, 3, 7, 10]),
             ),
-            ChordWithRoot(
+            Chord(
                 name="Dm7",
                 root=Note("D", 4),
-                chord=Chord(name="m7", semitones=[0, 3, 7, 10]),
+                intervals=Intervals(name="m7", semitones=[0, 3, 7, 10]),
             ),
-            ChordWithRoot(
+            Chord(
                 name="F",
                 root=Note("F", 4),
-                chord=Chord(name="major", semitones=[0, 4, 7]),
+                intervals=Intervals(name="major", semitones=[0, 4, 7]),
             ),
-            ChordWithRoot(
+            Chord(
                 name="F",
                 root=Note("F", 4),
-                chord=Chord(name="major", semitones=[0, 4, 7]),
+                intervals=Intervals(name="major", semitones=[0, 4, 7]),
             ),
         ]
     )
@@ -97,11 +101,11 @@ def test_github_issue_61_progression():
 
 def test_github_issue_61_slash_chord_with_octave():
     """https://github.com/jonathangjertsen/jchord/issues/61#issuecomment-777625321"""
-    chord = ChordWithRoot.from_name("5C/E")
-    assert chord == ChordWithRoot(
+    chord = Chord.from_name("5C/E")
+    assert chord == Chord(
         name="C/E",
         root=Note("C", 5),
-        chord=Chord(name="major", semitones=[-8, 0, 4, 7]),
+        intervals=Intervals(name="major", semitones=[-8, 0, 4, 7]),
     )
     assert chord.bass == Note("E", 4)
 
@@ -112,23 +116,25 @@ def test_github_issue_8_sloppy_midi():
     )
     assert prog == ChordProgression(
         [
-            ChordWithRoot(
+            Chord(
                 name="A#min",
                 root=Note("A#", 3),
-                chord=Chord(name="min", semitones=[0, 3, 7]),
+                intervals=Intervals(name="min", semitones=[0, 3, 7]),
             ),
-            ChordWithRoot(
-                name="D#", root=Note("D#", 4), chord=Chord(name="", semitones=[0, 4, 7])
+            Chord(
+                name="D#",
+                root=Note("D#", 4),
+                intervals=Intervals(name="", semitones=[0, 4, 7]),
             ),
-            ChordWithRoot(
+            Chord(
                 name="D#min",
                 root=Note("D#", 4),
-                chord=Chord(name="min", semitones=[0, 3, 7]),
+                intervals=Intervals(name="min", semitones=[0, 3, 7]),
             ),
-            ChordWithRoot(
+            Chord(
                 name="A#min/G#",
                 root=Note("G#", 3),
-                chord=Chord(name="min/b7", semitones=[0, 5, 9, 14]),
+                intervals=Intervals(name="min/b7", semitones=[0, 5, 9, 14]),
             ),
         ]
     )

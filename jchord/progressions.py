@@ -6,7 +6,7 @@ from typing import Hashable, List, Set, Union
 
 from jchord.knowledge import REPETITION_SYMBOL
 from jchord.core import CompositeObject
-from jchord.chords import ChordWithRoot
+from jchord.chords import Chord
 from jchord.midi import read_midi_file, notes_to_messages, MidiNote
 from jchord.group_notes_to_chords import group_notes_to_chords
 
@@ -15,7 +15,7 @@ class InvalidProgression(Exception):
     """Raised when encountering what seems like an invalid chord progression."""
 
 
-def _string_to_progression(string: str) -> List[ChordWithRoot]:
+def _string_to_progression(string: str) -> List[Chord]:
     string = string.strip()
 
     if string == "":
@@ -34,7 +34,7 @@ def _string_to_progression(string: str) -> List[ChordWithRoot]:
 
             progression.append(progression[-1])
         else:
-            progression.append(ChordWithRoot.from_name(name))
+            progression.append(Chord.from_name(name))
     return progression
 
 
@@ -74,7 +74,7 @@ class ChordProgression(CompositeObject):
     Use the ``from_string`` method to generate a chord progression from a string.
 
     >>> ChordProgression.from_string("Dm7 -- Gm7 Am7")
-    ChordProgression([ChordWithRoot(name='Dm7', root=Note('D', 4), chord=Chord(name='m7', semitones=[0, 3, 7, 10])), ChordWithRoot(name='Dm7', root=Note('D', 4), chord=Chord(name='m7', semitones=[0, 3, 7, 10])), ChordWithRoot(name='Gm7', root=Note('G', 4), chord=Chord(name='m7', semitones=[0, 3, 7, 10])), ChordWithRoot(name='Am7', root=Note('A', 4), chord=Chord(name='m7', semitones=[0, 3, 7, 10]))])
+    ChordProgression([Chord(name='Dm7', root=Note('D', 4), intervals=Intervals(name='m7', semitones=[0, 3, 7, 10])), Chord(name='Dm7', root=Note('D', 4), intervals=Intervals(name='m7', semitones=[0, 3, 7, 10])), Chord(name='Gm7', root=Note('G', 4), intervals=Intervals(name='m7', semitones=[0, 3, 7, 10])), Chord(name='Am7', root=Note('A', 4), intervals=Intervals(name='m7', semitones=[0, 3, 7, 10]))])
 
     **From a text file**
 
@@ -117,7 +117,7 @@ class ChordProgression(CompositeObject):
 
     DUMMY_CHORD = _DummyChord()
 
-    def __init__(self, progression: List[ChordWithRoot]):
+    def __init__(self, progression: List[Chord]):
         self.progression = progression
 
     def _keys(self) -> Hashable:
@@ -152,15 +152,15 @@ class ChordProgression(CompositeObject):
         notes = read_midi_file(filename)
         progression = []
         for chord in group_notes_to_chords(notes):
-            progression.append(ChordWithRoot.from_midi([note.note for note in chord]))
+            progression.append(Chord.from_midi([note.note for note in chord]))
         return cls(progression)
 
-    def chords(self) -> Set[ChordWithRoot]:
+    def chords(self) -> Set[Chord]:
         """
         Returns the set of chords in the progression.
 
         >>> ChordProgression.from_string("Am7 D7").chords() # doctest: +SKIP
-        {ChordWithRoot(name='D7', root=Note('D', 4), chord=Chord(name='7', semitones=[0, 4, 7, 10])), ChordWithRoot(name='Am7', root=Note('A', 4), chord=Chord(name='m7', semitones=[0, 3, 7, 10]))}
+        {Chord(name='D7', root=Note('D', 4), intervals=Intervals(name='7', semitones=[0, 4, 7, 10])), Chord(name='Am7', root=Note('A', 4), intervals=Intervals(name='m7', semitones=[0, 3, 7, 10]))}
         """
         return set(self.progression)
 

@@ -3,7 +3,7 @@ import os
 import pytest
 
 from jchord.midi import note_to_midi
-from jchord.chords import ChordWithRoot
+from jchord.chords import Chord
 from jchord.progressions import (
     ChordProgression,
     InvalidProgression,
@@ -14,11 +14,11 @@ from jchord.progressions import (
 
 # These imports are not used directly, but is needed by eval(repr(x)) statements
 from jchord.core import Note
-from jchord.chords import Chord
+from jchord.chords import Intervals
 
 # pyflakes doesn't like the imports above, workaround:
 assert Note
-assert Chord
+assert Intervals
 
 
 def test_empty_progression():
@@ -26,17 +26,15 @@ def test_empty_progression():
 
 
 def test_single_progression():
-    assert ChordProgression.from_string("Cm").progression == [
-        ChordWithRoot.from_name("Cm")
-    ]
+    assert ChordProgression.from_string("Cm").progression == [Chord.from_name("Cm")]
 
 
 def test_longer_progression():
     assert ChordProgression.from_string("C Fm C G7").progression == [
-        ChordWithRoot.from_name("C"),
-        ChordWithRoot.from_name("Fm"),
-        ChordWithRoot.from_name("C"),
-        ChordWithRoot.from_name("G7"),
+        Chord.from_name("C"),
+        Chord.from_name("Fm"),
+        Chord.from_name("C"),
+        Chord.from_name("G7"),
     ]
 
 
@@ -45,34 +43,32 @@ def test_empty_chords():
 
 
 def test_single_chords():
-    assert ChordProgression.from_string("Cm").chords() == {
-        ChordWithRoot.from_name("Cm")
-    }
+    assert ChordProgression.from_string("Cm").chords() == {Chord.from_name("Cm")}
 
 
 def test_longer_chords():
     assert ChordProgression.from_string("C Fm C G7").chords() == {
-        ChordWithRoot.from_name("C"),
-        ChordWithRoot.from_name("Fm"),
-        ChordWithRoot.from_name("G7"),
+        Chord.from_name("C"),
+        Chord.from_name("Fm"),
+        Chord.from_name("G7"),
     }
 
 
 def test_repetition():
     assert ChordProgression.from_string("C -- Fm G7").progression == [
-        ChordWithRoot.from_name("C"),
-        ChordWithRoot.from_name("C"),
-        ChordWithRoot.from_name("Fm"),
-        ChordWithRoot.from_name("G7"),
+        Chord.from_name("C"),
+        Chord.from_name("C"),
+        Chord.from_name("Fm"),
+        Chord.from_name("G7"),
     ]
 
 
 def test_explicit_octave():
     assert ChordProgression.from_string("4C -- +3Fm -2G7").progression == [
-        ChordWithRoot.from_name("+4C"),
-        ChordWithRoot.from_name("4C"),
-        ChordWithRoot.from_name("3Fm"),
-        ChordWithRoot.from_name("-2G7"),
+        Chord.from_name("+4C"),
+        Chord.from_name("4C"),
+        Chord.from_name("3Fm"),
+        Chord.from_name("-2G7"),
     ]
 
 
@@ -92,14 +88,14 @@ def test_multiline():
         """C Fm C G7
                C E7 Am G"""
     ).progression == [
-        ChordWithRoot.from_name("C"),
-        ChordWithRoot.from_name("Fm"),
-        ChordWithRoot.from_name("C"),
-        ChordWithRoot.from_name("G7"),
-        ChordWithRoot.from_name("C"),
-        ChordWithRoot.from_name("E7"),
-        ChordWithRoot.from_name("Am"),
-        ChordWithRoot.from_name("G"),
+        Chord.from_name("C"),
+        Chord.from_name("Fm"),
+        Chord.from_name("C"),
+        Chord.from_name("G7"),
+        Chord.from_name("C"),
+        Chord.from_name("E7"),
+        Chord.from_name("Am"),
+        Chord.from_name("G"),
     ]
 
 

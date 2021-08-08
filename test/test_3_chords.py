@@ -1,10 +1,10 @@
 from jchord.knowledge import CHORD_NAMES, CHORD_ALIASES
 from jchord.core import Note
 from jchord.chords import (
+    Intervals,
     Chord,
-    ChordWithRoot,
     InvalidChord,
-    semitones_to_chord_name_options,
+    semitones_to_name_options,
 )
 
 import pytest
@@ -21,13 +21,13 @@ import pytest
     ],
 )
 def test_chord_from_semitones(semi_in, semi_out):
-    assert Chord.from_semitones(semi_in).semitones == semi_out
+    assert Intervals.from_semitones(semi_in).semitones == semi_out
 
 
 @pytest.mark.parametrize(
     "semitones, options, selected",
     [
-        (set(list(range(100))), [], Chord.UNNAMED),
+        (set(list(range(100))), [], Intervals.UNNAMED),
         (set(), ["note"], "note"),
         ({0}, ["note"], "note"),
         ({3}, ["min(no5)", "b3 interval", "#2 interval"], "min(no5)"),
@@ -49,7 +49,7 @@ def test_chord_from_semitones(semi_in, semi_out):
         ({3, 6, 9}, ["dim7", "dim/6"], "dim7"),
         ({4, 8, 11}, ["augmaj7", "/b6"], "augmaj7"),
         ({0, 7, 10, 13}, ["dim/4", "phryg7"], "phryg7"),
-        ({1, 2, 3}, [], Chord.UNNAMED),
+        ({1, 2, 3}, [], Intervals.UNNAMED),
         ({3, 10}, ["min7(no5)"], "min7(no5)"),
         ({4, 10}, ["7(no5)"], "7(no5)"),
         ({4, 11}, ["maj7(no5)"], "maj7(no5)"),
@@ -61,13 +61,13 @@ def test_chord_from_semitones(semi_in, semi_out):
         ({7, 10, 12, 15}, ["min7"], "min7"),
         ({2, 7, 10, 12}, ["7sus2"], "7sus2"),
         ({5, 7, 10, 12}, ["7sus4"], "7sus4"),
-        ({2, 7, 11, 12}, ["maj7sus2"], "maj7sus4"),
+        ({2, 7, 11, 12}, ["maj7sus2"], "maj7sus2"),
     ],
 )
 def test_semitones_to_chord_options(semitones, options, selected):
-    computed_options = semitones_to_chord_name_options(semitones)
+    computed_options = semitones_to_name_options(semitones)
     assert set(computed_options) >= set(options)
-    Chord.from_semitones(semitones).name == selected
+    assert Intervals.from_semitones(semitones).name == selected
 
 
 @pytest.mark.parametrize(
@@ -79,7 +79,7 @@ def test_semitones_to_chord_options(semitones, options, selected):
     ],
 )
 def test_chord_from_degrees(deg_in, semi_out):
-    assert Chord.from_degrees(deg_in).semitones == semi_out
+    assert Intervals.from_degrees(deg_in).semitones == semi_out
 
 
 @pytest.mark.parametrize(
@@ -129,7 +129,7 @@ def test_chord_from_degrees(deg_in, semi_out):
     ],
 )
 def test_chord_from_name_semitones(name_in, semi_out):
-    assert Chord.from_name(name_in).semitones == semi_out
+    assert Intervals.from_name(name_in).semitones == semi_out
 
 
 @pytest.mark.parametrize(
@@ -171,7 +171,7 @@ def test_chord_from_name_semitones(name_in, semi_out):
     ],
 )
 def test_chord_from_name_modifications(name_in, modifications):
-    assert Chord.from_name(name_in).modifications == modifications
+    assert Intervals.from_name(name_in).modifications == modifications
 
 
 # These could be improved
@@ -186,35 +186,38 @@ def test_chord_from_name_modifications(name_in, modifications):
         ("sus2", "sus2"),
         ("sus4", "sus4"),
         ("7sus4", "7sus4"),
-        ("m7sus4b9no5", Chord.UNNAMED),
-        ("augsus2", Chord.UNNAMED),
+        ("m7sus4b9no5", Intervals.UNNAMED),
+        ("augsus2", Intervals.UNNAMED),
         ("major7", "maj7"),
         ("m7b5", "min7b5"),
         ("min7b5", "min7b5"),
         ("ø", "min7b5"),
         ("o", "dim7"),
-        ("13", Chord.UNNAMED),
-        ("13no5no7b11#9", Chord.UNNAMED),
+        ("13", Intervals.UNNAMED),
+        ("13no5no7b11#9", Intervals.UNNAMED),
         ("13b11#9no5no7", "maj7sus4(no5)/b6"),
-        ("7#9", Chord.UNNAMED),
-        ("7b9", Chord.UNNAMED),
-        ("7b11", Chord.UNNAMED),
-        ("7#11", Chord.UNNAMED),
-        ("7b13", Chord.UNNAMED),
-        ("7#13", Chord.UNNAMED),
+        ("7#9", Intervals.UNNAMED),
+        ("7b9", Intervals.UNNAMED),
+        ("7b11", Intervals.UNNAMED),
+        ("7#11", Intervals.UNNAMED),
+        ("7b13", Intervals.UNNAMED),
+        ("7#13", Intervals.UNNAMED),
         ("addb9", "dim/7"),
         ("add9", "min7(no5)/b6"),
         ("add#9", "minmaj7(no5)/b6"),
         ("addb11", ""),
-        ("add11", Chord.UNNAMED),
-        ("add#11", Chord.UNNAMED),
-        ("addb13", Chord.UNNAMED),
-        ("add13", Chord.UNNAMED),
+        ("add11", Intervals.UNNAMED),
+        ("add#11", Intervals.UNNAMED),
+        ("addb13", Intervals.UNNAMED),
+        ("add13", Intervals.UNNAMED),
         ("add#13", "7"),
     ],
 )
 def test_chord_name_roundtrip(name_in, name_out):
-    assert Chord.from_semitones(Chord.from_name(name_in).semitones).name == name_out
+    assert (
+        Intervals.from_semitones(Intervals.from_name(name_in).semitones).name
+        == name_out
+    )
 
 
 @pytest.mark.parametrize(
@@ -234,21 +237,21 @@ def test_chord_name_roundtrip(name_in, name_out):
     ],
 )
 def test_chord_from_name_intervals(name_in, int_out):
-    assert Chord.from_name(name_in).intervals() == int_out
+    assert Intervals.from_name(name_in).interval_sequence() == int_out
 
 
 @pytest.mark.parametrize(
     "name_in, repr_out",
     [
-        ("major", "Chord(name='major', semitones=[0, 4, 7])"),
-        ("minor", "Chord(name='minor', semitones=[0, 3, 7])"),
-        ("5", "Chord(name='5', semitones=[0, 7])"),
-        ("", "Chord(name='', semitones=[0, 4, 7])"),
+        ("major", "Intervals(name='major', semitones=[0, 4, 7])"),
+        ("minor", "Intervals(name='minor', semitones=[0, 3, 7])"),
+        ("5", "Intervals(name='5', semitones=[0, 7])"),
+        ("", "Intervals(name='', semitones=[0, 4, 7])"),
     ],
 )
 def test_chord_repr(name_in, repr_out):
-    assert repr(Chord.from_name(name_in)) == repr_out
-    assert Chord.from_name(name_in) == eval(repr_out)
+    assert repr(Intervals.from_name(name_in)) == repr_out
+    assert Intervals.from_name(name_in) == eval(repr_out)
 
 
 @pytest.mark.parametrize(
@@ -260,15 +263,15 @@ def test_chord_repr(name_in, repr_out):
     ],
 )
 def test_chord_add_root(name_in, octave):
-    name_then_root = Chord.from_name(name_in).with_root(Note("A#", octave))
-    name_and_root = ChordWithRoot.from_name("{}A#{}".format(octave, name_in))
+    name_then_root = Intervals.from_name(name_in).with_root(Note("A#", octave))
+    name_and_root = Chord.from_name("{}A#{}".format(octave, name_in))
     assert name_then_root == name_and_root
 
 
 @pytest.mark.parametrize("name_in", ["goop", "blap", "m8", "A/G/G"])
 def test_chord_from_invalid_name(name_in):
     with pytest.raises(InvalidChord):
-        Chord.from_name(name_in)
+        Intervals.from_name(name_in)
 
 
 @pytest.mark.parametrize(
@@ -286,8 +289,8 @@ def test_chord_from_invalid_name(name_in):
     ],
 )
 def test_chord_with_root(name_in, root_out, semi_out):
-    assert ChordWithRoot.from_name(name_in).semitones == semi_out
-    assert ChordWithRoot.from_name(name_in).root.name == root_out
+    assert Chord.from_name(name_in).semitones == semi_out
+    assert Chord.from_name(name_in).root.name == root_out
 
 
 @pytest.mark.parametrize(
@@ -307,32 +310,28 @@ def test_chord_with_root(name_in, root_out, semi_out):
     ],
 )
 def test_chord_with_root_intervals(name_in, int_out):
-    assert ChordWithRoot.from_name(name_in).intervals() == int_out
+    assert Chord.from_name(name_in).interval_sequence() == int_out
 
 
 @pytest.mark.parametrize("name_in", ["H", "Amoop"])
 def test_chord_with_root_invalid_name(name_in):
     with pytest.raises(InvalidChord):
-        assert ChordWithRoot.from_name(name_in)
+        assert Chord.from_name(name_in)
 
 
 @pytest.mark.parametrize("name_in, midi", [("0A", [21, 25, 28])])
 def test_chord_note_to_midi(name_in, midi):
-    assert ChordWithRoot.from_name(name_in).midi() == midi
+    assert Chord.from_name(name_in).midi() == midi
 
 
 @pytest.mark.parametrize("name_in, shift, name_out", [("A", 2, "B")])
 def test_chord_transpose(name_in, name_out, shift):
-    assert ChordWithRoot.from_name(name_in).transpose(shift) == ChordWithRoot.from_name(
-        name_out
-    )
+    assert Chord.from_name(name_in).transpose(shift) == Chord.from_name(name_out)
 
 
 @pytest.mark.parametrize("name_in", ["Amajor", "Bminor", "D"])
 def test_chord_with_root_repr(name_in):
-    assert ChordWithRoot.from_name(name_in) == eval(
-        repr(ChordWithRoot.from_name(name_in))
-    )
+    assert Chord.from_name(name_in) == eval(repr(Chord.from_name(name_in)))
 
 
 @pytest.mark.parametrize(
@@ -353,7 +352,7 @@ def test_chord_with_root_repr(name_in):
     ],
 )
 def test_chord_from_root_and_semitone(root, semitones, name):
-    assert ChordWithRoot.from_root_and_semitones(Note(root, 4), semitones).name == name
+    assert Chord.from_root_and_semitones(Note(root, 4), semitones).name == name
 
 
 @pytest.mark.parametrize(
@@ -366,4 +365,4 @@ def test_chord_from_root_and_semitone(root, semitones, name):
     ],
 )
 def test_chord_from_midi(midi, name):
-    assert ChordWithRoot.from_midi(midi).name == name
+    assert Chord.from_midi(midi).name == name

@@ -5,10 +5,8 @@ from jchord.midi_effects import (
     Chain,
     Doubler,
     Arpeggiator,
-    VelocityControl,
     Spreader,
     Transposer,
-    Shuffle,
 )
 
 progression = ChordProgression.from_string(

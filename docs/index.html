@@ -86,15 +86,15 @@ converts it back to a string and then creates a midi file from it.</p>
 <p>These are the key objects defined by <cite>jchord</cite>:</p>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">Note</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">Intervals</span></code></p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">Chord</span></code></p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">ChordWithRoot</span></code></p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">ChordProgression</span></code></p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">Song</span></code></p></li>
 </ul>
 <p>The highest-level object is <code class="docutils literal notranslate"><span class="pre">Song</span></code>.
 A <code class="docutils literal notranslate"><span class="pre">Song</span></code> has a <code class="docutils literal notranslate"><span class="pre">sections</span></code> property, which is a list of <code class="docutils literal notranslate"><span class="pre">ChordProgression</span></code> objects.
-A <code class="docutils literal notranslate"><span class="pre">ChordProgression</span></code> has a <code class="docutils literal notranslate"><span class="pre">progression</span></code> property, which is a list of <code class="docutils literal notranslate"><span class="pre">ChordWithRoot</span></code> objects.
-A <code class="docutils literal notranslate"><span class="pre">ChordWithRoot</span></code> object has a <code class="docutils literal notranslate"><span class="pre">chord</span></code> property, which is a <code class="docutils literal notranslate"><span class="pre">Chord</span></code> object; and a <code class="docutils literal notranslate"><span class="pre">root</span></code> property, which is a <code class="docutils literal notranslate"><span class="pre">Note</span></code> object.</p>
+A <code class="docutils literal notranslate"><span class="pre">ChordProgression</span></code> has a <code class="docutils literal notranslate"><span class="pre">progression</span></code> property, which is a list of <code class="docutils literal notranslate"><span class="pre">Chord</span></code> objects.
+A <code class="docutils literal notranslate"><span class="pre">Chord</span></code> object has a <code class="docutils literal notranslate"><span class="pre">chord</span></code> property, which is a <code class="docutils literal notranslate"><span class="pre">Intervals</span></code> object; and a <code class="docutils literal notranslate"><span class="pre">root</span></code> property, which is a <code class="docutils literal notranslate"><span class="pre">Note</span></code> object.</p>
 </section>
 <section id="working-with-individual-notes-note">
 <h2>Working with individual notes: <code class="docutils literal notranslate"><span class="pre">Note</span></code><a class="headerlink" href="#working-with-individual-notes-note" title="Permalink to this headline">¶</a></h2>
@@ -168,98 +168,99 @@ or if they have the same octave and their names are enharmonic:</p>
 </dd></dl>
 
 </section>
-<section id="working-with-individual-chords-chord-and-chordwithroot">
-<h2>Working with individual chords: <code class="docutils literal notranslate"><span class="pre">Chord</span></code> and <code class="docutils literal notranslate"><span class="pre">ChordWithRoot</span></code><a class="headerlink" href="#working-with-individual-chords-chord-and-chordwithroot" title="Permalink to this headline">¶</a></h2>
+<section id="working-with-individual-chords-intervals-and-chord">
+<h2>Working with individual chords: <code class="docutils literal notranslate"><span class="pre">Intervals</span></code> and <code class="docutils literal notranslate"><span class="pre">Chord</span></code><a class="headerlink" href="#working-with-individual-chords-intervals-and-chord" title="Permalink to this headline">¶</a></h2>
 <p>The meaning of a chord is slightly ambiguous, and jchord has two classes to disambiguate
 between the case where we refer to a chord <em>with</em> a root (say, “Am7” or “C#maj7#11”), and
 the case where we refer to the interval structure without reference to any particular root note
 (say, “maj7” or “min11”):</p>
 <ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">ChordWithRoot</span></code> refers to a root note AND the interval structure.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">Chord</span></code> refers to just the interval structure.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">Chord</span></code> refers to a root note AND the interval structure.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">Intervals</span></code> refers to just the interval structure.</p></li>
 </ul>
 <dl class="py class">
-<dt class="sig sig-object py" id="jchord.Chord">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">jchord.</span></span><span class="sig-name descname"><span class="pre">Chord</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">semitones</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">implicit_zero</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source_chord</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#jchord.Chord" title="Permalink to this definition">¶</a></dt>
-<dd><p>Represents a <em>chord quality</em>, that is, not with a root.
-Examples of chord qualities are major, minor, dominant, major 7, etc.</p>
-<p>There are several ways to construct a <code class="docutils literal notranslate"><span class="pre">Chord</span></code>. You can either specify the name or the
+<dt class="sig sig-object py" id="jchord.Intervals">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">jchord.</span></span><span class="sig-name descname"><span class="pre">Intervals</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">semitones</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">implicit_zero</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source_chord</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#jchord.Intervals" title="Permalink to this definition">¶</a></dt>
+<dd><p>Represents an <em>interval structure</em> or <em>chord quality</em>, which can be thought of as a chord without
+reference to any particular root note.
+Examples of interval structures are major, minor, dominant, major 7, etc.</p>
+<p>There are several ways to construct <code class="docutils literal notranslate"><span class="pre">Intervals</span></code>. You can either specify the name or the
 interval structure of the chord, and the other will be inferred.</p>
 <p>To <strong>specify the name and infer the semitones</strong>, use <code class="docutils literal notranslate"><span class="pre">from_name</span></code>:</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">Chord</span><span class="o">.</span><span class="n">from_name</span><span class="p">(</span><span class="s2">&quot;maj7&quot;</span><span class="p">)</span>
-<span class="go">Chord(name=&#39;maj7&#39;, semitones=[0, 4, 7, 11])</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">Chord</span><span class="o">.</span><span class="n">from_name</span><span class="p">(</span><span class="s2">&quot;7sus4#13&quot;</span><span class="p">)</span>
-<span class="go">Chord(name=&#39;7sus4#13&#39;, semitones=[0, 5, 7, 10, 14, 17, 22])</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">Intervals</span><span class="o">.</span><span class="n">from_name</span><span class="p">(</span><span class="s2">&quot;maj7&quot;</span><span class="p">)</span>
+<span class="go">Intervals(name=&#39;maj7&#39;, semitones=[0, 4, 7, 11])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Intervals</span><span class="o">.</span><span class="n">from_name</span><span class="p">(</span><span class="s2">&quot;7sus4#13&quot;</span><span class="p">)</span>
+<span class="go">Intervals(name=&#39;7sus4#13&#39;, semitones=[0, 5, 7, 10, 14, 17, 22])</span>
 </pre></div>
 </div>
-<p>If no chord can be generated from the name, an <code class="docutils literal notranslate"><span class="pre">InvalidChòrd</span></code> exception is raised.</p>
+<p>If nothing can be generated from the name, an <code class="docutils literal notranslate"><span class="pre">InvalidChord</span></code> exception is raised.</p>
 <p>To <strong>specify the semitones and infer the name</strong>, use <code class="docutils literal notranslate"><span class="pre">from_semitones</span></code> or <code class="docutils literal notranslate"><span class="pre">from_degrees</span></code>.</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">Chord</span><span class="o">.</span><span class="n">from_semitones</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">11</span><span class="p">])</span>
-<span class="go">Chord(name=&#39;minmaj7&#39;, semitones=[0, 3, 7, 11])</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">Chord</span><span class="o">.</span><span class="n">from_semitones</span><span class="p">([</span><span class="mi">3</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">11</span><span class="p">])</span> <span class="c1"># the 0 is optional</span>
-<span class="go">Chord(name=&#39;minmaj7&#39;, semitones=[0, 3, 7, 11])</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">Chord</span><span class="o">.</span><span class="n">from_semitones</span><span class="p">([</span><span class="mi">3</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">11</span><span class="p">],</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;mMaj7&#39;</span><span class="p">)</span> <span class="c1"># you can override the name</span>
-<span class="go">Chord(name=&#39;mMaj7&#39;, semitones=[0, 3, 7, 11])</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">Chord</span><span class="o">.</span><span class="n">from_semitones</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">])</span> <span class="c1"># no common name</span>
-<span class="go">Chord(name=&#39;&lt;unknown&gt;&#39;, semitones=[0, 1, 2, 3, 4])</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">Intervals</span><span class="o">.</span><span class="n">from_semitones</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">11</span><span class="p">])</span>
+<span class="go">Intervals(name=&#39;minmaj7&#39;, semitones=[0, 3, 7, 11])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Intervals</span><span class="o">.</span><span class="n">from_semitones</span><span class="p">([</span><span class="mi">3</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">11</span><span class="p">])</span> <span class="c1"># the 0 is optional</span>
+<span class="go">Intervals(name=&#39;minmaj7&#39;, semitones=[0, 3, 7, 11])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Intervals</span><span class="o">.</span><span class="n">from_semitones</span><span class="p">([</span><span class="mi">3</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">11</span><span class="p">],</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;mMaj7&#39;</span><span class="p">)</span> <span class="c1"># you can override the name</span>
+<span class="go">Intervals(name=&#39;mMaj7&#39;, semitones=[0, 3, 7, 11])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Intervals</span><span class="o">.</span><span class="n">from_semitones</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">])</span> <span class="c1"># no common name</span>
+<span class="go">Intervals(name=&#39;&lt;unknown&gt;&#39;, semitones=[0, 1, 2, 3, 4])</span>
 </pre></div>
 </div>
 <dl class="py method">
-<dt class="sig sig-object py" id="jchord.Chord.add_semitone">
-<span class="sig-name descname"><span class="pre">add_semitone</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">semitone</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">recalculate_name</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#jchord.Chord" title="jchord.chords.Chord"><span class="pre">jchord.chords.Chord</span></a></span></span><a class="headerlink" href="#jchord.Chord.add_semitone" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="jchord.Intervals.add_semitone">
+<span class="sig-name descname"><span class="pre">add_semitone</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">semitone</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">recalculate_name</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#jchord.Intervals" title="jchord.chords.Intervals"><span class="pre">jchord.chords.Intervals</span></a></span></span><a class="headerlink" href="#jchord.Intervals.add_semitone" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns a new <code class="docutils literal notranslate"><span class="pre">Chord</span></code> where the given semitone (as a difference from the root
 degree) has been added. The name will be recalculated unless the optional parameter
 <code class="docutils literal notranslate"><span class="pre">recalculate_name</span></code> is set to <code class="docutils literal notranslate"><span class="pre">False</span></code>.</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">Chord</span><span class="o">.</span><span class="n">from_name</span><span class="p">(</span><span class="s2">&quot;m&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">add_semitone</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
-<span class="go">Chord(name=&#39;min7&#39;, semitones=[0, 3, 7, 10])</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">Intervals</span><span class="o">.</span><span class="n">from_name</span><span class="p">(</span><span class="s2">&quot;m&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">add_semitone</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+<span class="go">Intervals(name=&#39;min7&#39;, semitones=[0, 3, 7, 10])</span>
 </pre></div>
 </div>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="jchord.Chord.intervals">
-<span class="sig-name descname"><span class="pre">intervals</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#jchord.Chord.intervals" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="jchord.Intervals.interval_sequence">
+<span class="sig-name descname"><span class="pre">interval_sequence</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#jchord.Intervals.interval_sequence" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns the list of internal intervals in the chord.</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">Chord</span><span class="o">.</span><span class="n">from_name</span><span class="p">(</span><span class="s2">&quot;minor&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">intervals</span><span class="p">()</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">Intervals</span><span class="o">.</span><span class="n">from_name</span><span class="p">(</span><span class="s2">&quot;minor&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">interval_sequence</span><span class="p">()</span>
 <span class="go">[3, 4]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">Chord</span><span class="o">.</span><span class="n">from_name</span><span class="p">(</span><span class="s2">&quot;major7&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">intervals</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Intervals</span><span class="o">.</span><span class="n">from_name</span><span class="p">(</span><span class="s2">&quot;major7&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">interval_sequence</span><span class="p">()</span>
 <span class="go">[4, 3, 4]</span>
 </pre></div>
 </div>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="jchord.Chord.remove_semitone">
-<span class="sig-name descname"><span class="pre">remove_semitone</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">semitone</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">recalculate_name</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#jchord.Chord" title="jchord.chords.Chord"><span class="pre">jchord.chords.Chord</span></a></span></span><a class="headerlink" href="#jchord.Chord.remove_semitone" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="jchord.Intervals.remove_semitone">
+<span class="sig-name descname"><span class="pre">remove_semitone</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">semitone</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">recalculate_name</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#jchord.Intervals" title="jchord.chords.Intervals"><span class="pre">jchord.chords.Intervals</span></a></span></span><a class="headerlink" href="#jchord.Intervals.remove_semitone" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns a new <code class="docutils literal notranslate"><span class="pre">Chord</span></code> where the given semitone (as a difference from the root
 degree) has been removed (if it was present). The name will be recalculated unless
 the optional parameter <code class="docutils literal notranslate"><span class="pre">recalculate_name</span></code> is set to <code class="docutils literal notranslate"><span class="pre">False</span></code>.</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">Chord</span><span class="o">.</span><span class="n">from_name</span><span class="p">(</span><span class="s2">&quot;maj7&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">remove_semitone</span><span class="p">(</span><span class="mi">11</span><span class="p">)</span>
-<span class="go">Chord(name=&#39;&#39;, semitones=[0, 4, 7])</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">Intervals</span><span class="o">.</span><span class="n">from_name</span><span class="p">(</span><span class="s2">&quot;maj7&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">remove_semitone</span><span class="p">(</span><span class="mi">11</span><span class="p">)</span>
+<span class="go">Intervals(name=&#39;&#39;, semitones=[0, 4, 7])</span>
 </pre></div>
 </div>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="jchord.Chord.rotate_semitones">
-<span class="sig-name descname"><span class="pre">rotate_semitones</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">recalculate_name</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#jchord.Chord" title="jchord.chords.Chord"><span class="pre">jchord.chords.Chord</span></a></span></span><a class="headerlink" href="#jchord.Chord.rotate_semitones" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns a new <code class="docutils literal notranslate"><span class="pre">Chord</span></code> where the semitones have been rotated, <code class="docutils literal notranslate"><span class="pre">n</span></code> times.
+<dt class="sig sig-object py" id="jchord.Intervals.rotate_semitones">
+<span class="sig-name descname"><span class="pre">rotate_semitones</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">recalculate_name</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#jchord.Intervals" title="jchord.chords.Intervals"><span class="pre">jchord.chords.Intervals</span></a></span></span><a class="headerlink" href="#jchord.Intervals.rotate_semitones" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a new <code class="docutils literal notranslate"><span class="pre">Intervals</span></code> where the semitones have been rotated, <code class="docutils literal notranslate"><span class="pre">n</span></code> times.
 In other words, <code class="docutils literal notranslate"><span class="pre">chord.rotate_semitones(1)</span></code> is the 1st inversion of
 <code class="docutils literal notranslate"><span class="pre">chord</span></code>, <code class="docutils literal notranslate"><span class="pre">chord.rotate_semitones(2)</span></code> is the 2nd inversion, etc.
 The name will be recalculated unless the optional parameter <code class="docutils literal notranslate"><span class="pre">recalculate_name</span></code> is
 set to False.</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">Chord</span><span class="o">.</span><span class="n">from_name</span><span class="p">(</span><span class="s2">&quot;maj7&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">rotate_semitones</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
-<span class="go">Chord(name=&#39;maj7inv2&#39;, semitones=[7, 11, 12, 16], implicit_zero=False)</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">Intervals</span><span class="o">.</span><span class="n">from_name</span><span class="p">(</span><span class="s2">&quot;maj7&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">rotate_semitones</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+<span class="go">Intervals(name=&#39;maj7inv2&#39;, semitones=[7, 11, 12, 16], implicit_zero=False)</span>
 </pre></div>
 </div>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="jchord.Chord.with_root">
-<span class="sig-name descname"><span class="pre">with_root</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">root</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="#jchord.Note" title="jchord.core.Note"><span class="pre">jchord.core.Note</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#jchord.ChordWithRoot" title="jchord.chords.ChordWithRoot"><span class="pre">jchord.chords.ChordWithRoot</span></a></span></span><a class="headerlink" href="#jchord.Chord.with_root" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns a <code class="docutils literal notranslate"><span class="pre">ChordWithRoot</span></code> based on the chord and the provided root.</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">Chord</span><span class="o">.</span><span class="n">from_name</span><span class="p">(</span><span class="s2">&quot;m&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">with_root</span><span class="p">(</span><span class="n">Note</span><span class="p">(</span><span class="s2">&quot;A&quot;</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span>
-<span class="go">ChordWithRoot(name=&#39;Am&#39;, root=Note(&#39;A&#39;, 5), chord=Chord(name=&#39;m&#39;, semitones=[0, 3, 7]))</span>
+<dt class="sig sig-object py" id="jchord.Intervals.with_root">
+<span class="sig-name descname"><span class="pre">with_root</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">root</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="#jchord.Note" title="jchord.core.Note"><span class="pre">jchord.core.Note</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#jchord.Chord" title="jchord.chords.Chord"><span class="pre">jchord.chords.Chord</span></a></span></span><a class="headerlink" href="#jchord.Intervals.with_root" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a <code class="docutils literal notranslate"><span class="pre">Chord</span></code> based on the chord and the provided root.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">Intervals</span><span class="o">.</span><span class="n">from_name</span><span class="p">(</span><span class="s2">&quot;m&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">with_root</span><span class="p">(</span><span class="n">Note</span><span class="p">(</span><span class="s2">&quot;A&quot;</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span>
+<span class="go">Chord(name=&#39;Am&#39;, root=Note(&#39;A&#39;, 5), intervals=Intervals(name=&#39;m&#39;, semitones=[0, 3, 7]))</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -267,85 +268,85 @@ set to False.</p>
 </dd></dl>
 
 <dl class="py class">
-<dt class="sig sig-object py" id="jchord.ChordWithRoot">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">jchord.</span></span><span class="sig-name descname"><span class="pre">ChordWithRoot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">root</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="#jchord.Note" title="jchord.core.Note"><span class="pre">jchord.core.Note</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">chord</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="#jchord.Chord" title="jchord.chords.Chord"><span class="pre">jchord.chords.Chord</span></a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#jchord.ChordWithRoot" title="Permalink to this definition">¶</a></dt>
-<dd><p>Represents a chord with a chord quality and a root note.</p>
-<p>There are several ways to construct a <code class="docutils literal notranslate"><span class="pre">ChordWithRoot</span></code>. You can either specify the name
+<dt class="sig sig-object py" id="jchord.Chord">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">jchord.</span></span><span class="sig-name descname"><span class="pre">Chord</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">root</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="#jchord.Note" title="jchord.core.Note"><span class="pre">jchord.core.Note</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">intervals</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="#jchord.Intervals" title="jchord.chords.Intervals"><span class="pre">jchord.chords.Intervals</span></a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#jchord.Chord" title="Permalink to this definition">¶</a></dt>
+<dd><p>Represents a concrete chord with a root note and an interval structure.</p>
+<p>There are several ways to construct a <code class="docutils literal notranslate"><span class="pre">Chord</span></code>. You can either specify the name
 or a root note + interval structure of the chord, and the other will be inferred.</p>
 <p>To <strong>specify the name and infer the notes</strong>, use <code class="docutils literal notranslate"><span class="pre">from_name</span></code>:</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">ChordWithRoot</span><span class="o">.</span><span class="n">from_name</span><span class="p">(</span><span class="s2">&quot;Amaj7&quot;</span><span class="p">)</span>
-<span class="go">ChordWithRoot(name=&#39;Amaj7&#39;, root=Note(&#39;A&#39;, 4), chord=Chord(name=&#39;maj7&#39;, semitones=[0, 4, 7, 11]))</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">ChordWithRoot</span><span class="o">.</span><span class="n">from_name</span><span class="p">(</span><span class="s2">&quot;B7sus4#13&quot;</span><span class="p">)</span>
-<span class="go">ChordWithRoot(name=&#39;B7sus4#13&#39;, root=Note(&#39;B&#39;, 4), chord=Chord(name=&#39;7sus4#13&#39;, semitones=[0, 5, 7, 10, 14, 17, 22]))</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">Chord</span><span class="o">.</span><span class="n">from_name</span><span class="p">(</span><span class="s2">&quot;Amaj7&quot;</span><span class="p">)</span>
+<span class="go">Chord(name=&#39;Amaj7&#39;, root=Note(&#39;A&#39;, 4), intervals=Intervals(name=&#39;maj7&#39;, semitones=[0, 4, 7, 11]))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Chord</span><span class="o">.</span><span class="n">from_name</span><span class="p">(</span><span class="s2">&quot;B7sus4#13&quot;</span><span class="p">)</span>
+<span class="go">Chord(name=&#39;B7sus4#13&#39;, root=Note(&#39;B&#39;, 4), intervals=Intervals(name=&#39;7sus4#13&#39;, semitones=[0, 5, 7, 10, 14, 17, 22]))</span>
 </pre></div>
 </div>
-<p><code class="docutils literal notranslate"><span class="pre">ChordWithRoot</span></code> supports all the same names as <code class="docutils literal notranslate"><span class="pre">Chord</span></code>, as well as slash chords.</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">ChordWithRoot</span><span class="o">.</span><span class="n">from_name</span><span class="p">(</span><span class="s2">&quot;Amaj7/C&quot;</span><span class="p">)</span>
-<span class="go">ChordWithRoot(name=&#39;Amaj7/C&#39;, root=Note(&#39;A&#39;, 4), chord=Chord(name=&#39;&lt;unknown&gt;&#39;, semitones=[-9, 0, 4, 7, 11]))</span>
+<p><code class="docutils literal notranslate"><span class="pre">Chord</span></code> supports all the same names as <code class="docutils literal notranslate"><span class="pre">Intervals</span></code>, as well as slash chords.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">Chord</span><span class="o">.</span><span class="n">from_name</span><span class="p">(</span><span class="s2">&quot;Amaj7/C&quot;</span><span class="p">)</span>
+<span class="go">Chord(name=&#39;Amaj7/C&#39;, root=Note(&#39;A&#39;, 4), intervals=Intervals(name=&#39;&lt;unknown&gt;&#39;, semitones=[-9, 0, 4, 7, 11]))</span>
 </pre></div>
 </div>
 <p>If no chord can be generated from the name, an <code class="docutils literal notranslate"><span class="pre">InvalidChòrd</span></code> exception is raised.</p>
 <p>To <strong>specify the root and semitones and infer the name</strong>, use <code class="docutils literal notranslate"><span class="pre">from_root_and_semitones</span></code>.</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">ChordWithRoot</span><span class="o">.</span><span class="n">from_root_and_semitones</span><span class="p">(</span><span class="n">Note</span><span class="p">(</span><span class="s1">&#39;A&#39;</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">11</span><span class="p">])</span>
-<span class="go">ChordWithRoot(name=&#39;Aminmaj7&#39;, root=Note(&#39;A&#39;, 5), chord=Chord(name=&#39;minmaj7&#39;, semitones=[0, 3, 7, 11]))</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">Chord</span><span class="o">.</span><span class="n">from_root_and_semitones</span><span class="p">(</span><span class="n">Note</span><span class="p">(</span><span class="s1">&#39;A&#39;</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">11</span><span class="p">])</span>
+<span class="go">Chord(name=&#39;Aminmaj7&#39;, root=Note(&#39;A&#39;, 5), intervals=Intervals(name=&#39;minmaj7&#39;, semitones=[0, 3, 7, 11]))</span>
 </pre></div>
 </div>
 <p>In addition to the methods above, you can specify a <strong>set of MIDI values</strong>:</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">ChordWithRoot</span><span class="o">.</span><span class="n">from_midi</span><span class="p">({</span> <span class="mi">77</span><span class="p">,</span> <span class="mi">80</span><span class="p">,</span> <span class="mi">84</span> <span class="p">})</span>
-<span class="go">ChordWithRoot(name=&#39;Fmin&#39;, root=Note(&#39;F&#39;, 5), chord=Chord(name=&#39;min&#39;, semitones=[0, 3, 7]))</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">Chord</span><span class="o">.</span><span class="n">from_midi</span><span class="p">({</span> <span class="mi">77</span><span class="p">,</span> <span class="mi">80</span><span class="p">,</span> <span class="mi">84</span> <span class="p">})</span>
+<span class="go">Chord(name=&#39;Fmin&#39;, root=Note(&#39;F&#39;, 5), intervals=Intervals(name=&#39;min&#39;, semitones=[0, 3, 7]))</span>
 </pre></div>
 </div>
 <dl class="py property">
-<dt class="sig sig-object py" id="jchord.ChordWithRoot.bass">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">bass</span></span><em class="property"><span class="pre">:</span> <span class="pre">jchord.core.Note</span></em><a class="headerlink" href="#jchord.ChordWithRoot.bass" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="jchord.Chord.bass">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">bass</span></span><em class="property"><span class="pre">:</span> <span class="pre">jchord.core.Note</span></em><a class="headerlink" href="#jchord.Chord.bass" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns the lowest note in the chord.</p>
 <p>Unless the chord is a slash chord, this is the same as <code class="docutils literal notranslate"><span class="pre">chord.root</span></code>.</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">ChordWithRoot</span><span class="o">.</span><span class="n">from_name</span><span class="p">(</span><span class="s2">&quot;Am7&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">bass</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">Chord</span><span class="o">.</span><span class="n">from_name</span><span class="p">(</span><span class="s2">&quot;Am7&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">bass</span>
 <span class="go">Note(&#39;A&#39;, 4)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">ChordWithRoot</span><span class="o">.</span><span class="n">from_name</span><span class="p">(</span><span class="s2">&quot;Am7/B&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">bass</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Chord</span><span class="o">.</span><span class="n">from_name</span><span class="p">(</span><span class="s2">&quot;Am7/B&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">bass</span>
 <span class="go">Note(&#39;B&#39;, 3)</span>
 </pre></div>
 </div>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="jchord.ChordWithRoot.intervals">
-<span class="sig-name descname"><span class="pre">intervals</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#jchord.ChordWithRoot.intervals" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="jchord.Chord.interval_sequence">
+<span class="sig-name descname"><span class="pre">interval_sequence</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#jchord.Chord.interval_sequence" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns the semitones in the chord.</p>
 <p>Returns the list of internal intervals in the chord.</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">ChordWithRoot</span><span class="o">.</span><span class="n">from_name</span><span class="p">(</span><span class="s2">&quot;Aminor&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">intervals</span><span class="p">()</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">Chord</span><span class="o">.</span><span class="n">from_name</span><span class="p">(</span><span class="s2">&quot;Aminor&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">interval_sequence</span><span class="p">()</span>
 <span class="go">[3, 4]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">ChordWithRoot</span><span class="o">.</span><span class="n">from_name</span><span class="p">(</span><span class="s2">&quot;Amajor7&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">intervals</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Chord</span><span class="o">.</span><span class="n">from_name</span><span class="p">(</span><span class="s2">&quot;Amajor7&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">interval_sequence</span><span class="p">()</span>
 <span class="go">[4, 3, 4]</span>
 </pre></div>
 </div>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="jchord.ChordWithRoot.midi">
-<span class="sig-name descname"><span class="pre">midi</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#jchord.ChordWithRoot.midi" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="jchord.Chord.midi">
+<span class="sig-name descname"><span class="pre">midi</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#jchord.Chord.midi" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns the list of MIDI note values in the chord.</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">ChordWithRoot</span><span class="o">.</span><span class="n">from_name</span><span class="p">(</span><span class="s2">&quot;Amajor7&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">midi</span><span class="p">()</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">Chord</span><span class="o">.</span><span class="n">from_name</span><span class="p">(</span><span class="s2">&quot;Amajor7&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">midi</span><span class="p">()</span>
 <span class="go">[69, 73, 76, 80]</span>
 </pre></div>
 </div>
 </dd></dl>
 
 <dl class="py property">
-<dt class="sig sig-object py" id="jchord.ChordWithRoot.semitones">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">semitones</span></span><em class="property"><span class="pre">:</span> <span class="pre">List[int]</span></em><a class="headerlink" href="#jchord.ChordWithRoot.semitones" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="jchord.Chord.semitones">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">semitones</span></span><em class="property"><span class="pre">:</span> <span class="pre">List[int]</span></em><a class="headerlink" href="#jchord.Chord.semitones" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns the semitones in the chord.</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">ChordWithRoot</span><span class="o">.</span><span class="n">from_name</span><span class="p">(</span><span class="s2">&quot;Am7&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">semitones</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">Chord</span><span class="o">.</span><span class="n">from_name</span><span class="p">(</span><span class="s2">&quot;Am7&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">semitones</span>
 <span class="go">[0, 3, 7, 10]</span>
 </pre></div>
 </div>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="jchord.ChordWithRoot.transpose">
-<span class="sig-name descname"><span class="pre">transpose</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">shift</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#jchord.ChordWithRoot" title="jchord.chords.ChordWithRoot"><span class="pre">jchord.chords.ChordWithRoot</span></a></span></span><a class="headerlink" href="#jchord.ChordWithRoot.transpose" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="jchord.Chord.transpose">
+<span class="sig-name descname"><span class="pre">transpose</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">shift</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#jchord.Chord" title="jchord.chords.Chord"><span class="pre">jchord.chords.Chord</span></a></span></span><a class="headerlink" href="#jchord.Chord.transpose" title="Permalink to this definition">¶</a></dt>
 <dd><p>Transposes the chord by the given shift (in semitones).</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">ChordWithRoot</span><span class="o">.</span><span class="n">from_name</span><span class="p">(</span><span class="s2">&quot;Amajor7&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="o">-</span><span class="mi">12</span><span class="p">)</span><span class="o">.</span><span class="n">midi</span><span class="p">()</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">Chord</span><span class="o">.</span><span class="n">from_name</span><span class="p">(</span><span class="s2">&quot;Amajor7&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="o">-</span><span class="mi">12</span><span class="p">)</span><span class="o">.</span><span class="n">midi</span><span class="p">()</span>
 <span class="go">[57, 61, 64, 68]</span>
 </pre></div>
 </div>
@@ -365,13 +366,13 @@ or a root note + interval structure of the chord, and the other will be inferred
 <p>A chord progression is represented as a list of chords, one after another.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="jchord.ChordProgression">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">jchord.</span></span><span class="sig-name descname"><span class="pre">ChordProgression</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">progression</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#jchord.ChordWithRoot" title="jchord.chords.ChordWithRoot"><span class="pre">jchord.chords.ChordWithRoot</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#jchord.ChordProgression" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">jchord.</span></span><span class="sig-name descname"><span class="pre">ChordProgression</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">progression</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#jchord.Chord" title="jchord.chords.Chord"><span class="pre">jchord.chords.Chord</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#jchord.ChordProgression" title="Permalink to this definition">¶</a></dt>
 <dd><p>Represents a chord progression.</p>
 <p>There are many ways to create a <code class="docutils literal notranslate"><span class="pre">ChordProgression</span></code> object.</p>
 <p><strong>From a string</strong></p>
 <p>Use the <code class="docutils literal notranslate"><span class="pre">from_string</span></code> method to generate a chord progression from a string.</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">ChordProgression</span><span class="o">.</span><span class="n">from_string</span><span class="p">(</span><span class="s2">&quot;Dm7 -- Gm7 Am7&quot;</span><span class="p">)</span>
-<span class="go">ChordProgression([ChordWithRoot(name=&#39;Dm7&#39;, root=Note(&#39;D&#39;, 4), chord=Chord(name=&#39;m7&#39;, semitones=[0, 3, 7, 10])), ChordWithRoot(name=&#39;Dm7&#39;, root=Note(&#39;D&#39;, 4), chord=Chord(name=&#39;m7&#39;, semitones=[0, 3, 7, 10])), ChordWithRoot(name=&#39;Gm7&#39;, root=Note(&#39;G&#39;, 4), chord=Chord(name=&#39;m7&#39;, semitones=[0, 3, 7, 10])), ChordWithRoot(name=&#39;Am7&#39;, root=Note(&#39;A&#39;, 4), chord=Chord(name=&#39;m7&#39;, semitones=[0, 3, 7, 10]))])</span>
+<span class="go">ChordProgression([Chord(name=&#39;Dm7&#39;, root=Note(&#39;D&#39;, 4), intervals=Intervals(name=&#39;m7&#39;, semitones=[0, 3, 7, 10])), Chord(name=&#39;Dm7&#39;, root=Note(&#39;D&#39;, 4), intervals=Intervals(name=&#39;m7&#39;, semitones=[0, 3, 7, 10])), Chord(name=&#39;Gm7&#39;, root=Note(&#39;G&#39;, 4), intervals=Intervals(name=&#39;m7&#39;, semitones=[0, 3, 7, 10])), Chord(name=&#39;Am7&#39;, root=Note(&#39;A&#39;, 4), intervals=Intervals(name=&#39;m7&#39;, semitones=[0, 3, 7, 10]))])</span>
 </pre></div>
 </div>
 <p><strong>From a text file</strong></p>
@@ -413,10 +414,10 @@ For best results, the MIDI file should contain a single instrument with chords p
 </div>
 <dl class="py method">
 <dt class="sig sig-object py" id="jchord.ChordProgression.chords">
-<span class="sig-name descname"><span class="pre">chords</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Set</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#jchord.ChordWithRoot" title="jchord.chords.ChordWithRoot"><span class="pre">jchord.chords.ChordWithRoot</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#jchord.ChordProgression.chords" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">chords</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Set</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#jchord.Chord" title="jchord.chords.Chord"><span class="pre">jchord.chords.Chord</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#jchord.ChordProgression.chords" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns the set of chords in the progression.</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">ChordProgression</span><span class="o">.</span><span class="n">from_string</span><span class="p">(</span><span class="s2">&quot;Am7 D7&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">chords</span><span class="p">()</span> 
-<span class="go">{ChordWithRoot(name=&#39;D7&#39;, root=Note(&#39;D&#39;, 4), chord=Chord(name=&#39;7&#39;, semitones=[0, 4, 7, 10])), ChordWithRoot(name=&#39;Am7&#39;, root=Note(&#39;A&#39;, 4), chord=Chord(name=&#39;m7&#39;, semitones=[0, 3, 7, 10]))}</span>
+<span class="go">{Chord(name=&#39;D7&#39;, root=Note(&#39;D&#39;, 4), intervals=Intervals(name=&#39;7&#39;, semitones=[0, 4, 7, 10])), Chord(name=&#39;Am7&#39;, root=Note(&#39;A&#39;, 4), intervals=Intervals(name=&#39;m7&#39;, semitones=[0, 3, 7, 10]))}</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -522,7 +523,7 @@ This is always applied before apply() during the MIDI conversion</p>
 <li><a class="reference internal" href="#api-reference">API reference</a><ul>
 <li><a class="reference internal" href="#objects-at-a-glance">Objects at a glance</a></li>
 <li><a class="reference internal" href="#working-with-individual-notes-note">Working with individual notes: <code class="docutils literal notranslate"><span class="pre">Note</span></code></a></li>
-<li><a class="reference internal" href="#working-with-individual-chords-chord-and-chordwithroot">Working with individual chords: <code class="docutils literal notranslate"><span class="pre">Chord</span></code> and <code class="docutils literal notranslate"><span class="pre">ChordWithRoot</span></code></a></li>
+<li><a class="reference internal" href="#working-with-individual-chords-intervals-and-chord">Working with individual chords: <code class="docutils literal notranslate"><span class="pre">Intervals</span></code> and <code class="docutils literal notranslate"><span class="pre">Chord</span></code></a></li>
 <li><a class="reference internal" href="#working-with-chord-progressions-chordprogression">Working with chord progressions: <code class="docutils literal notranslate"><span class="pre">ChordProgression</span></code></a></li>
 <li><a class="reference internal" href="#midi-features">MIDI features</a></li>
 </ul>

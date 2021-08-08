@@ -82,7 +82,7 @@ def pytest():
 @task
 def pyflakes():
     print("========== Running pyflakes...")
-    proc = run(["pyflakes", "jchord", "test"])
+    proc = run(["pyflakes", "jchord", "test", "examples"])
     if proc.returncode != 0:
         print("pyflakes failed.")
         sys.exit(1)
