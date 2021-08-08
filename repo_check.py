@@ -3,9 +3,12 @@ from subprocess import run
 import sys
 
 TASKS = {}
+
+
 def task(func):
     TASKS[func.__name__] = func
     return func
+
 
 @task
 def build_docs():
@@ -15,9 +18,11 @@ def build_docs():
         print("sphinx-build failed.")
         sys.exit(1)
 
+
 @task
 def fix_crlf():
     print("========== Removing CRLF...")
+
     def helper(path):
         path_str = str(path)
         if any(
@@ -33,7 +38,9 @@ def fix_crlf():
                 path.write_text(path.read_text().replace("\r\n", "\n"))
             except UnicodeDecodeError:
                 pass
+
     helper(Path("."))
+
 
 @task
 def check_clean():
@@ -53,6 +60,7 @@ def check_clean():
         )
         sys.exit(1)
 
+
 @task
 def format():
     print("========== Formatting python code...")
@@ -61,6 +69,7 @@ def format():
         print("black failed.")
         sys.exit(1)
 
+
 @task
 def pytest():
     print("========== Checking if tests pass...")
@@ -68,6 +77,7 @@ def pytest():
     if proc.returncode != 0:
         print("pytest failed.")
         sys.exit(1)
+
 
 @task
 def doctest():

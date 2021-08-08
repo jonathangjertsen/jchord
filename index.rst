@@ -68,5 +68,6 @@ MIDI features
 -------------
 
 .. automodule:: jchord.midi
+   :noindex:
 .. autoclass:: jchord.midi_effects.MidiEffect
    :members: set_settings, apply
