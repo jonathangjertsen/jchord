@@ -7,6 +7,12 @@ jchord - toolkit for working with chord progressions
 .. image:: https://codecov.io/gh/jonathangjertsen/jchord/branch/master/graph/badge.svg
     :target: https://codecov.io/gh/jonathangjertsen/jchord
 
+
+.. note::
+    This project is in the middle of a usability overhaul.
+    The latest release on PyPI and the current master branch don't match.
+    Apologies for the inconvenience.
+
 ``jchord`` provides tools for working with chord progressions.
 
 ``jchord``:
