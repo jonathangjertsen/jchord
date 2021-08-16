@@ -8,10 +8,10 @@ jchord - toolkit for working with chord progressions
     :target: https://codecov.io/gh/jonathangjertsen/jchord
 
 
-.. note::
-    This project is in the middle of a usability overhaul.
-    The latest release on PyPI and the current master branch don't match.
-    Apologies for the inconvenience.
+**NOTE: This project is in the middle of a usability overhaul.
+Therefore the latest release on PyPI and the current master branch don't match.
+For the source of the v2.0.0 release please see: https://github.com/jonathangjertsen/jchord/tree/v2.0.0
+Apologies for the inconvenience**
 
 ``jchord`` provides tools for working with chord progressions.
 
