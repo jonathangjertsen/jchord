@@ -14,7 +14,7 @@ What's this then?
 
 * has object representations for notes, chords, and progressions (in the Western 12-tone system)
 * knows about naming conventions for chords, and can convert back and forth between objects and names
-* can be used as a converter between strings, text files, XLSX files, PDFs and MIDI files.
+* can be used as a converter between strings, text files, XLSX files, PDFs and MIDI files (see "converter script" below)
 
 Get it
 ======
@@ -28,7 +28,33 @@ Installation with dependencies for reading and writing MIDI/XLSX/PDF files:
    ``pip install jchord[midi,xlsx,pdf]``
 
 
-Using jchord
+Convert between formats
+=======================
+
+.. highlight:: none
+
+If you just want the converter functionality, invoke `jchord` on the command line::
+
+   usage: jchord [-h] [--midi MIDI] [--pdf PDF] file_in file_out
+
+   Converts between different representations of the same format
+
+   positional arguments:
+     file_in      Input progression as string, .txt, .xlsx or .midi
+     file_out     Output file as .txt, .xlsx, .midi or .pdf
+
+   optional arguments:
+     -h, --help   show this help message and exit
+     --midi MIDI  comma separated list of arguments for midi, e.g. tempo=8,beats_per_chord=2
+     --pdf PDF    comma separated list of arguments for pdf, e.g. chords_per_row=8,fontsize=30
+
+..higlight:: bash
+
+Example::
+
+   jchord "Cm A E7 F#m7" example.mid --midi tempo=80,beats_per_chord=1
+
+As a library
 ============
 
 .. highlight:: python

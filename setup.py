@@ -33,6 +33,10 @@ if __name__ == "__main__":
             "xlsx": ["openpyxl"],
             "pdf": ["reportlab"],
         },
+        entry_points="""
+            [console_scripts]
+            jchord=jchord.convert:main
+        """,
         license="MIT",
         zip_safe=False,
         project_urls={

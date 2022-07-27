@@ -50,10 +50,12 @@ class MidiConversionSettings(object):
         effect=None,
     ):
         self.filename = filename
-        self.instrument = instrument
-        self.tempo = tempo
+        self.instrument = int(instrument)
+        self.tempo = int(tempo)
+        if isinstance(beats_per_chord, str):
+            beats_per_chord = float(beats_per_chord)
         self.beats_per_chord = beats_per_chord
-        self.velocity = velocity
+        self.velocity = int(velocity)
         self.repeat = repeat
         self.effect = effect
         self.progression = None
@@ -157,6 +159,8 @@ class ChordProgression(CompositeObject):
         for chord in group_notes_to_chords(notes):
             progression.append(Chord.from_midi([note.note for note in chord]))
         return cls(progression)
+
+    from_midi = from_midi_file
 
     def chords(self) -> Set[Chord]:
         """
@@ -299,7 +303,7 @@ class ChordProgression(CompositeObject):
         mid.tracks.append(track)
 
         # Ensure beats_per_chord is a list
-        if isinstance(settings.beats_per_chord, int):
+        if isinstance(settings.beats_per_chord, (int, float)):
             settings.beats_per_chord = [
                 settings.beats_per_chord for _ in range(len(self.progression))
             ]
@@ -434,6 +438,14 @@ class Song(CompositeObject):
             This feature requires ``reportlab``, which you can get with ``pip install reportlab``.
         """
         from reportlab.pdfgen.canvas import Canvas
+
+        fontsize = float(fontsize)
+        chords_per_row = int(chords_per_row)
+        margin_factor_w = float(margin_factor_w)
+        margin_factor_h = float(margin_factor_h)
+        spacing_factor_w = float(spacing_factor_w)
+        spacing_factor_h = float(spacing_factor_h)
+        spacing_min_h = float(spacing_min_h)
 
         canvas = Canvas(filename)
         canvas.setFont(font, fontsize)

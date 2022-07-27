@@ -46,7 +46,7 @@
 <ul class="simple">
 <li><p>has object representations for notes, chords, and progressions (in the Western 12-tone system)</p></li>
 <li><p>knows about naming conventions for chords, and can convert back and forth between objects and names</p></li>
-<li><p>can be used as a converter between strings, text files, XLSX files, PDFs and MIDI files.</p></li>
+<li><p>can be used as a converter between strings, text files, XLSX files, PDFs and MIDI files (see “converter script” below)</p></li>
 </ul>
 </section>
 <section id="get-it">
@@ -60,8 +60,31 @@
 <div><p><code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">jchord[midi,xlsx,pdf]</span></code></p>
 </div></blockquote>
 </section>
-<section id="using-jchord">
-<h1>Using jchord<a class="headerlink" href="#using-jchord" title="Permalink to this heading">¶</a></h1>
+<section id="convert-between-formats">
+<h1>Convert between formats<a class="headerlink" href="#convert-between-formats" title="Permalink to this heading">¶</a></h1>
+<p>If you just want the converter functionality, invoke <cite>jchord</cite> on the command line:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>usage: jchord [-h] [--midi MIDI] [--pdf PDF] file_in file_out
+
+Converts between different representations of the same format
+
+positional arguments:
+  file_in      Input progression as string, .txt, .xlsx or .midi
+  file_out     Output file as .txt, .xlsx, .midi or .pdf
+
+optional arguments:
+  -h, --help   show this help message and exit
+  --midi MIDI  comma separated list of arguments for midi, e.g. tempo=8,beats_per_chord=2
+  --pdf PDF    comma separated list of arguments for pdf, e.g. chords_per_row=8,fontsize=30
+</pre></div>
+</div>
+<p>..higlight:: bash</p>
+<p>Example:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>jchord &quot;Cm A E7 F#m7&quot; example.mid --midi tempo=80,beats_per_chord=1
+</pre></div>
+</div>
+</section>
+<section id="as-a-library">
+<h1>As a library<a class="headerlink" href="#as-a-library" title="Permalink to this heading">¶</a></h1>
 <p>Here is an example that parses a chord progression written as a string, transposes it upwards by 2 semitones,
 converts it back to a string and then creates a midi file from it.:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">jchord</span> <span class="kn">import</span> <span class="n">ChordProgression</span><span class="p">,</span> <span class="n">MidiConversionSettings</span>
@@ -103,7 +126,8 @@ G       C#o     D69     --
 <li><a class="reference internal" href="#">jchord - toolkit for working with chord progressions</a></li>
 <li><a class="reference internal" href="#what-s-this-then">What’s this then?</a></li>
 <li><a class="reference internal" href="#get-it">Get it</a></li>
-<li><a class="reference internal" href="#using-jchord">Using jchord</a></li>
+<li><a class="reference internal" href="#convert-between-formats">Convert between formats</a></li>
+<li><a class="reference internal" href="#as-a-library">As a library</a></li>
 <li><a class="reference internal" href="#id1">Documentation</a></li>
 <li><a class="reference internal" href="#contributing">Contributing</a></li>
 </ul>
