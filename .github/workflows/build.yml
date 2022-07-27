@@ -36,6 +36,7 @@ jobs:
             pytest --cov=jchord --cov-report=xml -vvv
       - name: Upload codecov report
         uses: codecov/codecov-action@v2
+        continue-on-error: true
   Repo_Health_Check:
     runs-on: windows-latest
     steps:
