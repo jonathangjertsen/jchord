@@ -41,25 +41,45 @@
 <h1>jchord - toolkit for working with chord progressions<a class="headerlink" href="#jchord-toolkit-for-working-with-chord-progressions" title="Permalink to this heading">¶</a></h1>
 <a class="reference external image-reference" href="https://github.com/jonathangjertsen/jchord/actions/workflows/build.yml"><img alt="https://github.com/jonathangjertsen/jchord/actions/workflows/build.yml/badge.svg" src="https://github.com/jonathangjertsen/jchord/actions/workflows/build.yml/badge.svg" /></a>
 <a class="reference external image-reference" href="https://codecov.io/gh/jonathangjertsen/jchord"><img alt="https://codecov.io/gh/jonathangjertsen/jchord/branch/master/graph/badge.svg" src="https://codecov.io/gh/jonathangjertsen/jchord/branch/master/graph/badge.svg" /></a>
-<p><code class="docutils literal notranslate"><span class="pre">jchord</span></code> provides tools for working with chord progressions.</p>
-<p><code class="docutils literal notranslate"><span class="pre">jchord</span></code>:</p>
+</section>
+<section id="what-s-this-then">
+<h1>What’s this then?<a class="headerlink" href="#what-s-this-then" title="Permalink to this heading">¶</a></h1>
+<p><code class="docutils literal notranslate"><span class="pre">jchord</span></code> is a Python package which provides tools for working with chord progressions. <code class="docutils literal notranslate"><span class="pre">jchord</span></code>:</p>
 <ul class="simple">
 <li><p>has object representations for notes, chords, and progressions (in the Western 12-tone system)</p></li>
 <li><p>knows about naming conventions for chords, and can convert back and forth between objects and names</p></li>
 <li><p>can be used as a converter between strings, text files, XLSX files, and MIDI files.</p></li>
 </ul>
+</section>
+<section id="get-it">
+<h1>Get it<a class="headerlink" href="#get-it" title="Permalink to this heading">¶</a></h1>
+<p>Basic installation:</p>
+<blockquote>
+<div><p><code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">jchord</span></code></p>
+</div></blockquote>
+<p>Installation with dependencies for reading and writing MIDI/XLSX files:</p>
+<blockquote>
+<div><p><code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">jchord[midi,xlsx]</span></code></p>
+</div></blockquote>
+</section>
+<section id="using-jchord">
+<h1>Using jchord<a class="headerlink" href="#using-jchord" title="Permalink to this heading">¶</a></h1>
 <p>Here is an example that parses a chord progression written as a string, transposes it upwards by 2 semitones,
 converts it back to a string and then creates a midi file from it.</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">jchord</span> <span class="kn">import</span> <span class="n">ChordProgression</span><span class="p">,</span> <span class="n">MidiConversionSettings</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">prog</span> <span class="o">=</span> <span class="n">ChordProgression</span><span class="o">.</span><span class="n">from_string</span><span class="p">(</span><span class="s2">&quot;C -- Fm7 -- C -- G7 -- C -- E7 Am F Bm7b5 E7 Am9 F Bo C69 --&quot;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">prog</span> <span class="o">=</span> <span class="n">prog</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="o">+</span><span class="mi">2</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">prog</span><span class="o">.</span><span class="n">to_string</span><span class="p">())</span>
-<span class="go">D       --      Gm7     --</span>
-<span class="go">D       --      A7      --</span>
-<span class="go">D       --      F#7     Bm</span>
-<span class="go">G       C#m7b5  F#7     Bm9</span>
-<span class="go">G       C#o     D69     --</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">prog</span><span class="o">.</span><span class="n">to_midi</span><span class="p">(</span><span class="n">MidiConversionSettings</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="s2">&quot;example.midi&quot;</span><span class="p">,</span> <span class="n">tempo</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">beats_per_chord</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">instrument</span><span class="o">=</span><span class="mi">4</span><span class="p">))</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">jchord</span> <span class="kn">import</span> <span class="n">ChordProgression</span><span class="p">,</span> <span class="n">MidiConversionSettings</span>
+
+<span class="n">prog</span> <span class="o">=</span> <span class="n">ChordProgression</span><span class="o">.</span><span class="n">from_string</span><span class="p">(</span><span class="s2">&quot;C -- Fm7 -- C -- G7 -- C -- E7 Am F Bm7b5 E7 Am9 F Bo C69 --&quot;</span><span class="p">)</span>
+<span class="n">prog</span> <span class="o">=</span> <span class="n">prog</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="o">+</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">prog</span><span class="o">.</span><span class="n">to_string</span><span class="p">()</span>
+<span class="n">prog</span><span class="o">.</span><span class="n">to_midi</span><span class="p">(</span><span class="n">MidiConversionSettings</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="s2">&quot;example.midi&quot;</span><span class="p">,</span> <span class="n">tempo</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">beats_per_chord</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">instrument</span><span class="o">=</span><span class="mi">4</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>Output:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>D       --      Gm7     --
+D       --      A7      --
+D       --      F#7     Bm
+G       C#m7b5  F#7     Bm9
+G       C#o     D69     --
 </pre></div>
 </div>
 <p>For more examples, see the <a class="reference external" href="https://jonathangjertsen.github.io/jchord/#examples">documentation</a>.</p>
@@ -70,9 +90,106 @@ converts it back to a string and then creates a midi file from it.</p>
 </section>
 <section id="contributing">
 <h1>Contributing<a class="headerlink" href="#contributing" title="Permalink to this heading">¶</a></h1>
+<p>To contribute, open an issue or create a Pull Request in the <a class="reference external" href="https://github.com/jonathangjertsen/jchord">Github repo</a>.</p>
 </section>
 <section id="examples">
 <h1>Examples<a class="headerlink" href="#examples" title="Permalink to this heading">¶</a></h1>
+<p>The following examples make use of the MIDI subsystem in <code class="docutils literal notranslate"><span class="pre">jchord</span></code>, which uses the <code class="docutils literal notranslate"><span class="pre">mido</span></code> package.
+Installing with <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">jchord[midi]</span></code> will ensure this package is installed.</p>
+<section id="example-autumn-leaves-in-two-styles">
+<h2>Example: Autumn Leaves in two styles<a class="headerlink" href="#example-autumn-leaves-in-two-styles" title="Permalink to this heading">¶</a></h2>
+<p>This example generates two MIDI files: one with fancy synth arpeggios, another with a basic strumming guitar.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">jchord.progressions</span> <span class="kn">import</span> <span class="n">ChordProgression</span><span class="p">,</span> <span class="n">MidiConversionSettings</span>
+<span class="kn">from</span> <span class="nn">jchord.midi</span> <span class="kn">import</span> <span class="n">Instrument</span>
+<span class="kn">from</span> <span class="nn">jchord.midi_effects</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">Chain</span><span class="p">,</span>
+    <span class="n">Doubler</span><span class="p">,</span>
+    <span class="n">Arpeggiator</span><span class="p">,</span>
+    <span class="n">Spreader</span><span class="p">,</span>
+    <span class="n">Transposer</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">progression</span> <span class="o">=</span> <span class="n">ChordProgression</span><span class="o">.</span><span class="n">from_string</span><span class="p">(</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Dm    --  G          -- C      Cadd9   Fmaj7  --</span>
+<span class="sd">Dm    --  E          -- Am     --      Am9    --</span>
+<span class="sd">Dm7   --  G7         -- C      C7      Fmaj7  Fmaj7add6</span>
+<span class="sd">Dm9   --  E7         -- Am     --      Amadd6 --</span>
+<span class="sd">Esus4 E7  Am         --</span>
+<span class="sd">Dm7   --  G          -- Cmaj9  Cmaj9/G Fmaj7  --</span>
+<span class="sd">Dm    --  E          -- Amadd9 Am/G    Am/F#  Fmaj7</span>
+<span class="sd">E7b9  --  Amadd6add9 -- --     --      Am     --</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="p">)</span>
+
+<span class="n">progression</span><span class="o">.</span><span class="n">to_midi</span><span class="p">(</span>
+    <span class="n">MidiConversionSettings</span><span class="p">(</span>
+        <span class="n">filename</span><span class="o">=</span><span class="s2">&quot;autumn_leaves_arpeggiated.midi&quot;</span><span class="p">,</span>
+        <span class="n">tempo</span><span class="o">=</span><span class="mi">110</span><span class="p">,</span>
+        <span class="n">beats_per_chord</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+        <span class="n">instrument</span><span class="o">=</span><span class="n">Instrument</span><span class="o">.</span><span class="n">VoiceOohs</span><span class="p">,</span>
+        <span class="n">effect</span><span class="o">=</span><span class="n">Chain</span><span class="p">(</span>
+            <span class="n">Doubler</span><span class="p">(</span><span class="mi">12</span><span class="p">),</span>
+            <span class="n">Arpeggiator</span><span class="p">(</span>
+                <span class="n">rate</span><span class="o">=</span><span class="mi">1</span> <span class="o">/</span> <span class="mi">16</span><span class="p">,</span>
+                <span class="n">pattern</span><span class="o">=</span><span class="p">[</span>
+                    <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span>  <span class="mi">1</span><span class="p">,</span>      <span class="mi">2</span><span class="p">,</span>   <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span>
+                    <span class="mi">2</span><span class="p">,</span>       <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span> <span class="mi">2</span><span class="p">,</span>   <span class="mi">3</span><span class="p">,</span>
+                    <span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>  <span class="mi">3</span><span class="p">,</span>      <span class="mi">4</span><span class="p">,</span>   <span class="mi">5</span><span class="p">,</span>
+                    <span class="p">(</span><span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="o">-</span><span class="mi">3</span><span class="p">,</span>    <span class="o">-</span><span class="mi">4</span><span class="p">,</span>  <span class="o">-</span><span class="mi">5</span><span class="p">,</span>
+                <span class="p">],</span>
+                <span class="n">sticky</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="p">),</span>
+    <span class="p">)</span>
+<span class="p">)</span>
+
+<span class="n">progression</span><span class="o">.</span><span class="n">to_midi</span><span class="p">(</span>
+    <span class="n">MidiConversionSettings</span><span class="p">(</span>
+        <span class="n">filename</span><span class="o">=</span><span class="s2">&quot;autumn_leaves_strummed.midi&quot;</span><span class="p">,</span>
+        <span class="n">tempo</span><span class="o">=</span><span class="mi">180</span><span class="p">,</span>
+        <span class="n">beats_per_chord</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+        <span class="n">instrument</span><span class="o">=</span><span class="n">Instrument</span><span class="o">.</span><span class="n">AcousticGuitarSteel</span><span class="p">,</span>
+        <span class="n">effect</span><span class="o">=</span><span class="n">Chain</span><span class="p">(</span><span class="n">Transposer</span><span class="p">(</span><span class="o">-</span><span class="mi">12</span><span class="p">),</span> <span class="n">Spreader</span><span class="p">(</span><span class="n">amount</span><span class="o">=</span><span class="mi">30</span><span class="p">,</span> <span class="n">jitter</span><span class="o">=</span><span class="mi">6</span><span class="p">)),</span>
+        <span class="n">velocity</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span>
+    <span class="p">)</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="example-parse-midi">
+<h2>Example: Parse MIDI<a class="headerlink" href="#example-parse-midi" title="Permalink to this heading">¶</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">jchord</span></code> can parse MIDI files that are a sequence of block chords.
+It uses a kernel density estimation algorithm to group notes into chords, allowing it to handle slight imperfections.
+If the file has arpeggios, melodies or other flourishes, it will not work.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">from</span> <span class="nn">jchord</span> <span class="kn">import</span> <span class="n">ChordProgression</span>
+
+<span class="n">prog</span> <span class="o">=</span> <span class="n">ChordProgression</span><span class="o">.</span><span class="n">from_midi_file</span><span class="p">(</span><span class="n">Path</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">parent</span> <span class="o">/</span> <span class="s2">&quot;test&quot;</span> <span class="o">/</span> <span class="s2">&quot;test_data&quot;</span> <span class="o">/</span> <span class="s2">&quot;issue_8.mid&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">prog</span><span class="o">.</span><span class="n">to_string</span><span class="p">())</span>
+</pre></div>
+</div>
+</section>
+<section id="example-harmonization">
+<h2>Example: Harmonization<a class="headerlink" href="#example-harmonization" title="Permalink to this heading">¶</a></h2>
+<p>This example shows the <code class="docutils literal notranslate"><span class="pre">Harmonizer</span></code> effect, building 7th chords from single notes. Use the <cite>n</cite> suffix to indicate a single note.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">jchord.midi</span> <span class="kn">import</span> <span class="n">Instrument</span>
+<span class="kn">from</span> <span class="nn">jchord.midi_effects</span> <span class="kn">import</span> <span class="n">Harmonizer</span>
+
+<span class="n">progression</span> <span class="o">=</span> <span class="n">ChordProgression</span><span class="o">.</span><span class="n">from_string</span><span class="p">(</span><span class="s2">&quot;&quot;&quot;Fn Gn En An&quot;&quot;&quot;</span><span class="p">)</span>
+
+<span class="n">progression</span><span class="o">.</span><span class="n">to_midi</span><span class="p">(</span>
+    <span class="n">MidiConversionSettings</span><span class="p">(</span>
+        <span class="n">filename</span><span class="o">=</span><span class="s2">&quot;harmonizer.midi&quot;</span><span class="p">,</span>
+        <span class="n">tempo</span><span class="o">=</span><span class="mi">85</span><span class="p">,</span>
+        <span class="n">beats_per_chord</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+        <span class="n">instrument</span><span class="o">=</span><span class="n">Instrument</span><span class="o">.</span><span class="n">VoiceOohs</span><span class="p">,</span>
+        <span class="n">effect</span><span class="o">=</span><span class="n">Harmonizer</span><span class="p">(</span><span class="n">scale</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">9</span><span class="p">,</span> <span class="mi">11</span><span class="p">],</span> <span class="n">degrees</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">7</span><span class="p">],</span> <span class="n">root</span><span class="o">=</span><span class="s2">&quot;C&quot;</span><span class="p">),</span>
+    <span class="p">)</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</section>
 </section>
 <section id="api-reference">
 <h1>API reference<a class="headerlink" href="#api-reference" title="Permalink to this heading">¶</a></h1>
@@ -513,9 +630,17 @@ This is always applied before apply() during the MIDI conversion</p>
     <h3><a href="#">Table of Contents</a></h3>
     <ul>
 <li><a class="reference internal" href="#">jchord - toolkit for working with chord progressions</a></li>
+<li><a class="reference internal" href="#what-s-this-then">What’s this then?</a></li>
+<li><a class="reference internal" href="#get-it">Get it</a></li>
+<li><a class="reference internal" href="#using-jchord">Using jchord</a></li>
 <li><a class="reference internal" href="#id1">Documentation</a></li>
 <li><a class="reference internal" href="#contributing">Contributing</a></li>
-<li><a class="reference internal" href="#examples">Examples</a></li>
+<li><a class="reference internal" href="#examples">Examples</a><ul>
+<li><a class="reference internal" href="#example-autumn-leaves-in-two-styles">Example: Autumn Leaves in two styles</a></li>
+<li><a class="reference internal" href="#example-parse-midi">Example: Parse MIDI</a></li>
+<li><a class="reference internal" href="#example-harmonization">Example: Harmonization</a></li>
+</ul>
+</li>
 <li><a class="reference internal" href="#api-reference">API reference</a><ul>
 <li><a class="reference internal" href="#objects-at-a-glance">Objects at a glance</a></li>
 <li><a class="reference internal" href="#working-with-individual-notes-note">Working with individual notes: <code class="docutils literal notranslate"><span class="pre">Note</span></code></a></li>

@@ -39,25 +39,45 @@
 <h1>jchord - toolkit for working with chord progressions<a class="headerlink" href="#jchord-toolkit-for-working-with-chord-progressions" title="Permalink to this heading">¶</a></h1>
 <a class="reference external image-reference" href="https://github.com/jonathangjertsen/jchord/actions/workflows/build.yml"><img alt="https://github.com/jonathangjertsen/jchord/actions/workflows/build.yml/badge.svg" src="https://github.com/jonathangjertsen/jchord/actions/workflows/build.yml/badge.svg" /></a>
 <a class="reference external image-reference" href="https://codecov.io/gh/jonathangjertsen/jchord"><img alt="https://codecov.io/gh/jonathangjertsen/jchord/branch/master/graph/badge.svg" src="https://codecov.io/gh/jonathangjertsen/jchord/branch/master/graph/badge.svg" /></a>
-<p><code class="docutils literal notranslate"><span class="pre">jchord</span></code> provides tools for working with chord progressions.</p>
-<p><code class="docutils literal notranslate"><span class="pre">jchord</span></code>:</p>
+</section>
+<section id="what-s-this-then">
+<h1>What’s this then?<a class="headerlink" href="#what-s-this-then" title="Permalink to this heading">¶</a></h1>
+<p><code class="docutils literal notranslate"><span class="pre">jchord</span></code> is a Python package which provides tools for working with chord progressions. <code class="docutils literal notranslate"><span class="pre">jchord</span></code>:</p>
 <ul class="simple">
 <li><p>has object representations for notes, chords, and progressions (in the Western 12-tone system)</p></li>
 <li><p>knows about naming conventions for chords, and can convert back and forth between objects and names</p></li>
 <li><p>can be used as a converter between strings, text files, XLSX files, and MIDI files.</p></li>
 </ul>
+</section>
+<section id="get-it">
+<h1>Get it<a class="headerlink" href="#get-it" title="Permalink to this heading">¶</a></h1>
+<p>Basic installation:</p>
+<blockquote>
+<div><p><code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">jchord</span></code></p>
+</div></blockquote>
+<p>Installation with dependencies for reading and writing MIDI/XLSX files:</p>
+<blockquote>
+<div><p><code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">jchord[midi,xlsx]</span></code></p>
+</div></blockquote>
+</section>
+<section id="using-jchord">
+<h1>Using jchord<a class="headerlink" href="#using-jchord" title="Permalink to this heading">¶</a></h1>
 <p>Here is an example that parses a chord progression written as a string, transposes it upwards by 2 semitones,
 converts it back to a string and then creates a midi file from it.</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">jchord</span> <span class="kn">import</span> <span class="n">ChordProgression</span><span class="p">,</span> <span class="n">MidiConversionSettings</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">prog</span> <span class="o">=</span> <span class="n">ChordProgression</span><span class="o">.</span><span class="n">from_string</span><span class="p">(</span><span class="s2">&quot;C -- Fm7 -- C -- G7 -- C -- E7 Am F Bm7b5 E7 Am9 F Bo C69 --&quot;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">prog</span> <span class="o">=</span> <span class="n">prog</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="o">+</span><span class="mi">2</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">prog</span><span class="o">.</span><span class="n">to_string</span><span class="p">())</span>
-<span class="go">D       --      Gm7     --</span>
-<span class="go">D       --      A7      --</span>
-<span class="go">D       --      F#7     Bm</span>
-<span class="go">G       C#m7b5  F#7     Bm9</span>
-<span class="go">G       C#o     D69     --</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">prog</span><span class="o">.</span><span class="n">to_midi</span><span class="p">(</span><span class="n">MidiConversionSettings</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="s2">&quot;example.midi&quot;</span><span class="p">,</span> <span class="n">tempo</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">beats_per_chord</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">instrument</span><span class="o">=</span><span class="mi">4</span><span class="p">))</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">jchord</span> <span class="kn">import</span> <span class="n">ChordProgression</span><span class="p">,</span> <span class="n">MidiConversionSettings</span>
+
+<span class="n">prog</span> <span class="o">=</span> <span class="n">ChordProgression</span><span class="o">.</span><span class="n">from_string</span><span class="p">(</span><span class="s2">&quot;C -- Fm7 -- C -- G7 -- C -- E7 Am F Bm7b5 E7 Am9 F Bo C69 --&quot;</span><span class="p">)</span>
+<span class="n">prog</span> <span class="o">=</span> <span class="n">prog</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="o">+</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">prog</span><span class="o">.</span><span class="n">to_string</span><span class="p">()</span>
+<span class="n">prog</span><span class="o">.</span><span class="n">to_midi</span><span class="p">(</span><span class="n">MidiConversionSettings</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="s2">&quot;example.midi&quot;</span><span class="p">,</span> <span class="n">tempo</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">beats_per_chord</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">instrument</span><span class="o">=</span><span class="mi">4</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>Output:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>D       --      Gm7     --
+D       --      A7      --
+D       --      F#7     Bm
+G       C#m7b5  F#7     Bm9
+G       C#o     D69     --
 </pre></div>
 </div>
 <p>For more examples, see the <a class="reference external" href="https://jonathangjertsen.github.io/jchord/#examples">documentation</a>.</p>
@@ -68,6 +88,7 @@ converts it back to a string and then creates a midi file from it.</p>
 </section>
 <section id="contributing">
 <h1>Contributing<a class="headerlink" href="#contributing" title="Permalink to this heading">¶</a></h1>
+<p>To contribute, open an issue or create a Pull Request in the <a class="reference external" href="https://github.com/jonathangjertsen/jchord">Github repo</a>.</p>
 </section>
 
 
@@ -81,6 +102,9 @@ converts it back to a string and then creates a midi file from it.</p>
     <h3><a href="index.html">Table of Contents</a></h3>
     <ul>
 <li><a class="reference internal" href="#">jchord - toolkit for working with chord progressions</a></li>
+<li><a class="reference internal" href="#what-s-this-then">What’s this then?</a></li>
+<li><a class="reference internal" href="#get-it">Get it</a></li>
+<li><a class="reference internal" href="#using-jchord">Using jchord</a></li>
 <li><a class="reference internal" href="#id1">Documentation</a></li>
 <li><a class="reference internal" href="#contributing">Contributing</a></li>
 </ul>

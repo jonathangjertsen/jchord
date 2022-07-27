@@ -28,6 +28,10 @@ if __name__ == "__main__":
             "Programming Language :: Python :: 3.8",
             "Programming Language :: Python :: Implementation :: CPython",
         ],
+        extras_require={
+            "midi": ["mido"],
+            "xlsx": ["openpyxl"],
+        },
         license="MIT",
         zip_safe=False,
         project_urls={

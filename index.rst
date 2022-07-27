@@ -7,7 +7,37 @@
 Examples
 ========
 
+The following examples make use of the MIDI subsystem in ``jchord``, which uses the ``mido`` package.
+Installing with ``pip install jchord[midi]`` will ensure this package is installed.
 
+Example: Autumn Leaves in two styles
+------------------------------------
+
+This example generates two MIDI files: one with fancy synth arpeggios, another with a basic strumming guitar.
+
+.. literalinclude:: /examples/autumn_leaves.py
+   :language: python
+   :lines: 2-
+
+Example: Parse MIDI
+----------------------
+
+``jchord`` can parse MIDI files that are a sequence of block chords.
+It uses a kernel density estimation algorithm to group notes into chords, allowing it to handle slight imperfections.
+If the file has arpeggios, melodies or other flourishes, it will not work.
+
+.. literalinclude:: /examples/parse_midi.py
+   :language: python
+   :lines: 2-
+
+Example: Harmonization
+----------------------
+
+This example shows the ``Harmonizer`` effect, building 7th chords from single notes. Use the `n` suffix to indicate a single note.
+
+.. literalinclude:: /examples/harmonizer.py
+   :language: python
+   :lines: 2-
 
 API reference
 =============
