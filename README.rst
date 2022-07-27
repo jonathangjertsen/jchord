@@ -31,8 +31,6 @@ Installation with dependencies for reading and writing MIDI/XLSX/PDF files:
 Convert between formats
 =======================
 
-.. highlight:: none
-
 If you just want the converter functionality, invoke `jchord` on the command line::
 
    usage: jchord [-h] [--midi MIDI] [--pdf PDF] file_in file_out
@@ -48,16 +46,12 @@ If you just want the converter functionality, invoke `jchord` on the command lin
      --midi MIDI  comma separated list of arguments for midi, e.g. tempo=8,beats_per_chord=2
      --pdf PDF    comma separated list of arguments for pdf, e.g. chords_per_row=8,fontsize=30
 
-.. highlight:: bash
-
 Example::
 
    jchord "Cm A E7 F#m7" example.mid --midi tempo=80,beats_per_chord=1
 
 As a library
 ============
-
-.. highlight:: python
 
 Here is an example that parses a chord progression written as a string, transposes it upwards by 2 semitones,
 converts it back to a string and then creates a midi file from it.::
@@ -68,8 +62,6 @@ converts it back to a string and then creates a midi file from it.::
    prog = prog.transpose(+2)
    print(prog.to_string())
    prog.to_midi(MidiConversionSettings(filename="example.midi", tempo=100, beats_per_chord=2, instrument=4))
-
-.. highlight:: none
 
 Output::
 
