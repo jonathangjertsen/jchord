@@ -48,7 +48,7 @@ If you just want the converter functionality, invoke `jchord` on the command lin
      --midi MIDI  comma separated list of arguments for midi, e.g. tempo=8,beats_per_chord=2
      --pdf PDF    comma separated list of arguments for pdf, e.g. chords_per_row=8,fontsize=30
 
-..higlight:: bash
+.. higlight:: bash
 
 Example::
 
