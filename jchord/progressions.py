@@ -120,6 +120,9 @@ class ChordProgression(CompositeObject):
     def __init__(self, progression: List[Chord]):
         self.progression = progression
 
+    def __len__(self):
+        return len(self.progression)
+
     def _keys(self) -> Hashable:
         return (self.progression,)
 
@@ -262,6 +265,16 @@ class ChordProgression(CompositeObject):
 
         workbook.save(filename)
 
+    def to_pdf(self, filename, **kwargs):
+        """
+        Creates a PDF.
+
+        .. note::
+            This feature requires ``reportlab``, which you can get with ``pip install reportlab``.
+        """
+        song = Song([SongSection(filename, self)])
+        return song.to_pdf(filename, **kwargs)
+
     def to_midi(self, settings: MidiConversionSettings, **kwargs):
         """
         Saves the chord progression to a MIDI file.
@@ -400,3 +413,69 @@ class Song(CompositeObject):
         combined = combined.strip() + newline
         combined = newline.join(line.strip() for line in combined.split(newline))
         return combined
+
+    def to_pdf(
+        self,
+        filename,
+        *,
+        font="Helvetica",
+        fontsize=16,
+        chords_per_row: int = 4,
+        margin_factor_w=1.0,
+        margin_factor_h=1.0,
+        spacing_factor_w=1.0,
+        spacing_factor_h=1.0,
+        spacing_min_h=75,
+    ):
+        """
+        Creates a PDF.
+
+        .. note::
+            This feature requires ``reportlab``, which you can get with ``pip install reportlab``.
+        """
+        from reportlab.pdfgen.canvas import Canvas
+
+        canvas = Canvas(filename)
+        canvas.setFont(font, fontsize)
+        WIDTH, HEIGHT = canvas._pagesize
+        n_rows = (
+            sum(len(section.progression) for section in self.sections) / chords_per_row
+        )
+
+        SPACING_BASE_W = 600
+        SPACING_BASE_H = 750
+
+        spacing_w = spacing_factor_w * (
+            SPACING_BASE_W / (chords_per_row + 2 * margin_factor_w)
+        )
+        spacing_h = min(spacing_factor_h * SPACING_BASE_H / n_rows, spacing_min_h)
+
+        column = 0
+        row = 0
+        prev_chord = None
+        for name, progression in self.sections:
+            column += 1
+            canvas.drawString(
+                spacing_w * (row + margin_factor_w),
+                HEIGHT - spacing_h * (column + margin_factor_h),
+                name,
+            )
+            column += 1
+
+            for chord in progression.progression:
+                if prev_chord == chord:
+                    chord_name = REPETITION_SYMBOL
+                else:
+                    chord_name = chord.name
+                canvas.drawString(
+                    spacing_w * (row + margin_factor_w),
+                    HEIGHT - spacing_h * (column + margin_factor_h),
+                    chord_name,
+                )
+                row += 1
+                if row % chords_per_row == 0:
+                    row = 0
+                    column += 1
+                prev_chord = chord
+
+        canvas.save()

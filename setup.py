@@ -31,6 +31,7 @@ if __name__ == "__main__":
         extras_require={
             "midi": ["mido"],
             "xlsx": ["openpyxl"],
+            "pdf": ["reportlab"],
         },
         license="MIT",
         zip_safe=False,

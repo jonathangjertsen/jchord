@@ -6,6 +6,8 @@ __pycache__
 *.egg-info
 coverage.xml
 *.midi
+*.xlsx
+*.pdf
 docs/.doctrees/*
 docs/.buildinfo
 docs/_sources

@@ -14,7 +14,7 @@ What's this then?
 
 * has object representations for notes, chords, and progressions (in the Western 12-tone system)
 * knows about naming conventions for chords, and can convert back and forth between objects and names
-* can be used as a converter between strings, text files, XLSX files, and MIDI files.
+* can be used as a converter between strings, text files, XLSX files, PDFs and MIDI files.
 
 Get it
 ======
@@ -23,9 +23,9 @@ Basic installation:
 
    ``pip install jchord``
 
-Installation with dependencies for reading and writing MIDI/XLSX files:
+Installation with dependencies for reading and writing MIDI/XLSX/PDF files:
 
-   ``pip install jchord[midi,xlsx]``
+   ``pip install jchord[midi,xlsx,pdf]``
 
 
 Using jchord
